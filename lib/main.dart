@@ -59,12 +59,47 @@ class MyApp extends StatelessWidget {
                 Text(
                   'Jin Sarafoglou',
                   style:
-                      GoogleFonts.oswald(textStyle: TextStyle(fontSize: 27.0)),
+                      GoogleFonts.oswald(textStyle: TextStyle(fontSize: 30.0)),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(right: 5.0),
+                      child: Text(
+                        'My Rating:',
+                        style: GoogleFonts.oswald(
+                            textStyle: TextStyle(
+                          fontSize: 15.0,
+                        )),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 5.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          '4,3',
+                          style: GoogleFonts.oswald(
+                            textStyle: TextStyle(
+                              fontSize: 15.0,
+                            )
+                          ),
+                        ),
+                        Icon(
+                          Icons.star,
+                          size: 15.0,
+                        ),
+                      ],
+                    ),
+                    ),
+                  ],
                 ),
                 Row(
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.only(left: 15.0),
+                      padding: EdgeInsets.fromLTRB(15.0, 35.0, 0.0, 0.0),
                       child: Text(
                         'Personal Info',
                         style: GoogleFonts.oswald(
@@ -92,7 +127,7 @@ class MyApp extends StatelessWidget {
                 Row(
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.only(left: 15.0),
+                      padding: EdgeInsets.fromLTRB(15.0, 25.0, 0.0, 0.0),
                       child: Text(
                         'Car Info',
                         style: GoogleFonts.oswald(
@@ -113,7 +148,7 @@ class MyApp extends StatelessWidget {
                 Row(
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.only(left: 15.0),
+                      padding: EdgeInsets.fromLTRB(15.0, 25.0, 0.0, 0.0),
                       child: Text(
                         'Reviews',
                         style: GoogleFonts.oswald(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/screens/ProfileScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_app/screens/ProfileEditScreen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileEditScreen extends StatelessWidget {
   var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   var lightBlueColor = Colors.blue;
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
@@ -44,16 +44,15 @@ class ProfileScreen extends StatelessWidget {
                   margin:
                       EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      Icon(Icons.close),
                       IconButton(
-                          icon: Icon(Icons.check),
+                          icon: Icon(Icons.edit),
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfileEditScreen()),
+                                  builder: (context) => ProfileScreen()),
                             );
                           }),
                     ],
@@ -61,10 +60,10 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 CircleAvatar(
                     radius: 60.0,
-                    backgroundImage: new NetworkImage(
-                        'https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&ixid=eyJhcHBfaWQiOjE3Nzg0fQ')),
+                    backgroundImage:
+                        new NetworkImage('https://via.placeholder.com/150')),
                 Text(
-                  'Jin Sarafoglou',
+                  'Edit name',
                   style:
                       GoogleFonts.oswald(textStyle: TextStyle(fontSize: 30.0)),
                 ),

@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/screens/ProfileEditScreen.dart';
+import 'package:flutter_app/models/userModel.dart';
 
 class ProfileScreen extends StatelessWidget {
   var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   var lightBlueColor = Colors.blue;
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
+  final UserModel user;
+
+  ProfileScreen(this.user);
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -44,11 +50,10 @@ class ProfileScreen extends StatelessWidget {
                   margin:
                       EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      Icon(Icons.close),
                       IconButton(
-                          icon: Icon(Icons.check),
+                          icon: Icon(Icons.edit),
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -64,7 +69,7 @@ class ProfileScreen extends StatelessWidget {
                     backgroundImage: new NetworkImage(
                         'https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&ixid=eyJhcHBfaWQiOjE3Nzg0fQ')),
                 Text(
-                  'Jin Sarafoglou',
+                  '${user.name}',
                   style:
                       GoogleFonts.oswald(textStyle: TextStyle(fontSize: 30.0)),
                 ),
@@ -105,7 +110,7 @@ class ProfileScreen extends StatelessWidget {
                 Row(
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.fromLTRB(15.0, 35.0, 0.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(15.0, 15.0, 0.0, 0.0),
                       child: Text(
                         'Personal Info',
                         style: GoogleFonts.oswald(
@@ -120,14 +125,14 @@ class ProfileScreen extends StatelessWidget {
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.phone),
-                    title: Text('+30 6999999999'),
+                    title: Text('${user.phone}'),
                   ),
                 ),
                 Card(
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.email),
-                    title: Text('covid@coronavirius.com'),
+                    title: Text('${user.email}'),
                   ),
                 ),
                 Row(
@@ -148,7 +153,7 @@ class ProfileScreen extends StatelessWidget {
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.directions_car),
-                    title: Text('Mercendez Benz'),
+                    title: Text('${user.carInfo}'),
                   ),
                 ),
                 Row(

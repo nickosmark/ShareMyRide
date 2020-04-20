@@ -9,6 +9,7 @@ class ReviewsScreen extends StatelessWidget {
   final Color lightBlueColor = Colors.blue;
   final Color lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
   final String name = "Ketoyla Perry";
+  double revRating;
 
   @override
   Widget build(BuildContext context) {
@@ -44,17 +45,19 @@ class ReviewsScreen extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Container(
-                  padding: EdgeInsets.only(top: 10.0),
+                  padding: EdgeInsets.only(top: 20.0),
                   child: CircleAvatar(
                       radius: 60.0,
                       backgroundImage:
-                          new NetworkImage('https://via.placeholder.com/150')
-                  ),
+                          new NetworkImage('https://via.placeholder.com/150')),
                 ),
-                Text(
-                  name,
-                  style:
-                      GoogleFonts.oswald(textStyle: TextStyle(fontSize: 30.0)),
+                Container(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    name,
+                    style: GoogleFonts.oswald(
+                        textStyle: TextStyle(fontSize: 30.0)),
+                  ),
                 ),
                 RatingBar(
                   initialRating: 3,
@@ -62,12 +65,14 @@ class ReviewsScreen extends StatelessWidget {
                   direction: Axis.horizontal,
                   allowHalfRating: true,
                   itemCount: 5,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemPadding:
+                      EdgeInsets.symmetric(horizontal: 4.0, vertical: 10.0),
                   itemBuilder: (context, _) => Icon(
                     Icons.star,
                     color: Colors.amber,
                   ),
                   onRatingUpdate: (rating) {
+                    revRating = rating;
                     print(rating);
                   },
                 ),
@@ -79,17 +84,48 @@ class ReviewsScreen extends StatelessWidget {
                     maxLines: 5,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0)
-                        ),
-                        labelText: "Enter your review here"
-                      ),
-                      textAlignVertical: TextAlignVertical.top,
+                            borderRadius: BorderRadius.circular(10.0)),
+                        labelText: "Enter your review here"),
+                    textAlignVertical: TextAlignVertical.top,
                   ),
                 ),
                 Container(
                   padding: EdgeInsets.only(top: 50.0, bottom: 100.0),
                   child: RaisedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      /*
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false, // user must tap button!
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('This is the title.'),
+                            content: SingleChildScrollView(
+                              child: ListBody(
+                                children: <Widget>[
+                                  Text('This is a test alert dialog box.'),
+                                ],
+                              ),
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('I get it.'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              FlatButton(
+                                child: Text('Or not.'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      */
+                    }, //onPressed
                     child: Text(
                       "SUBMIT",
                       style: TextStyle(color: Colors.white),

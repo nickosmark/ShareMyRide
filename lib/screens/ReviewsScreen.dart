@@ -72,7 +72,7 @@ class ReviewsScreen extends StatelessWidget {
                   },
                 ),
                 Container(
-                  padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
+                  padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
                   child: TextField(
                     obscureText: false,
                     //expands: true,

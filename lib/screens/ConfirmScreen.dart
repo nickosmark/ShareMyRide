@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginScreen extends StatelessWidget {
+class ConfirmScreen extends StatelessWidget {
   var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   var lightBlueColor = Colors.blue;
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
@@ -38,7 +38,7 @@ class LoginScreen extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.only(left: 30.0, top: 50.0),
                       child: Text(
-                        "Phone",
+                        "Confirm",
                       ),
                     ),
                     Container(
@@ -48,7 +48,7 @@ class LoginScreen extends StatelessWidget {
                         obscureText: false,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: "Enter your phone number"),
+                            labelText: "Enter your confirmation code"),
                       ),
                     ),
                     Row(
@@ -59,7 +59,7 @@ class LoginScreen extends StatelessWidget {
                           child: RaisedButton(
                             onPressed: () {},
                             child: Text(
-                              "Next",
+                              "Confirm",
                               style: TextStyle(color: Colors.white),
                             ),
                             shape: RoundedRectangleBorder(

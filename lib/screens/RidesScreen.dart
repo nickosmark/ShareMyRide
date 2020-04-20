@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/models/reviewModel.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
+import 'package:flutter_app/widgets/reviewcard.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_app/models/reviewModel.dart';
 
-class ProfileEditScreen extends StatelessWidget {
+class RidesScreen extends StatelessWidget {
   var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   var lightBlueColor = Colors.blue;
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
+  //var review_1 = ReviewModel('https://randomuser.me/api/portraits/women/95.jpg','jinaa','shes the best', 5.0); 
 
   @override
   Widget build(BuildContext context) {
@@ -188,26 +190,7 @@ class ProfileEditScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Card(
-                  margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                        backgroundImage: new NetworkImage(
-                            'https://randomuser.me/api/portraits/women/95.jpg')),
-                    title: Text('Julia Alexandratou'),
-                    subtitle: Text('Amazing passenger!!'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text('4,5'),
-                        Icon(
-                          Icons.star,
-                          size: 15.0,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                //reviewCard(review_1.getUrl(),review_1.getName(),'sheee is the best', 5.0),
               ],
             ),
           ),

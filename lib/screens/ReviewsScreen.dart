@@ -24,22 +24,6 @@ class ReviewsScreen extends StatelessWidget {
         ),
       ),
       home: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text('HOME'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.drive_eta),
-              title: Text('RIDES'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              title: Text('PROFILE'),
-            ),
-          ],
-        ),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(

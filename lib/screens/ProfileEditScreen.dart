@@ -42,22 +42,6 @@ class _ProfileEditScreeState extends State<ProfileEditScreen> {
         ),
       ),
       home: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text('HOME'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.drive_eta),
-              title: Text('RIDES'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              title: Text('PROFILE'),
-            ),
-          ],
-        ),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
@@ -71,11 +55,11 @@ class _ProfileEditScreeState extends State<ProfileEditScreen> {
                       IconButton(
                           icon: Icon(Icons.close),
                           onPressed: () {
-                            
+                            final user = UserModel(name: nameControler.text, phone: phoneControler.text, email: emailControler.text, carInfo: carInfoControler.text);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfileScreen(null)),
+                                  builder: (context) => ProfileScreen(user)),
 
                             );
                           }),

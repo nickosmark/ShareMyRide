@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
-import 'package:flutter_app/widgets/reviewcard.dart';
+import 'package:flutter_app/widgets/ReviewCard.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_app/models/reviewModel.dart';
+import 'package:flutter_app/models/ReviewModel.dart';
 
 
 
@@ -26,22 +26,6 @@ class RidesScreen extends StatelessWidget {
         ),
       ),
       home: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text('HOME'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.drive_eta),
-              title: Text('RIDES'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              title: Text('PROFILE'),
-            ),
-          ],
-        ),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(

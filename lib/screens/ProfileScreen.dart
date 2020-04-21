@@ -1,13 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:flutter_app/models/ReviewModel.dart';
+import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/screens/ProfileEditScreen.dart';
+import 'package:flutter_app/widgets/ReviewCard.dart';
 
 class ProfileScreen extends StatelessWidget {
+  final UserModel userModel;
+
+  ProfileScreen({
+    @required this.userModel,
+  });
+
+  List<Widget> reviewWidgetList = [];
+
   var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   var lightBlueColor = Colors.blue;
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
+
   @override
   Widget build(BuildContext context) {
+    List<ReviewModel> reviewsListFromConstr = userModel.reviewsList;
+    if (reviewsListFromConstr.isEmpty) {
+      reviewWidgetList.add(
+        Text('You have no reviews yet'),
+      );
+    } else {
+      for (var item in reviewsListFromConstr) {
+        reviewWidgetList.add(ReviewCard(reviewModel: item));
+      }
+    }
     return MaterialApp(
       title: 'ShareMyRide',
       theme: ThemeData(
@@ -20,22 +43,6 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
       home: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text('HOME'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.drive_eta),
-              title: Text('RIDES'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              title: Text('PROFILE'),
-            ),
-          ],
-        ),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
@@ -44,11 +51,10 @@ class ProfileScreen extends StatelessWidget {
                   margin:
                       EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      Icon(Icons.close),
                       IconButton(
-                          icon: Icon(Icons.check),
+                          icon: Icon(Icons.edit),
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -60,11 +66,13 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 CircleAvatar(
-                    radius: 60.0,
-                    backgroundImage: new NetworkImage(
-                        'https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&ixid=eyJhcHBfaWQiOjE3Nzg0fQ')),
+                  radius: 60.0,
+                  backgroundImage: new NetworkImage(
+                    userModel.getUrlFromId(genderInput: userModel.gender),
+                  ),
+                ),
                 Text(
-                  'Jin Sarafoglou',
+                  userModel.name,
                   style:
                       GoogleFonts.oswald(textStyle: TextStyle(fontSize: 30.0)),
                 ),
@@ -87,7 +95,7 @@ class ProfileScreen extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Text(
-                            '4,3',
+                            userModel.getRatingAverage().toString(),
                             style: GoogleFonts.oswald(
                                 textStyle: TextStyle(
                               fontSize: 15.0,
@@ -120,14 +128,14 @@ class ProfileScreen extends StatelessWidget {
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.phone),
-                    title: Text('+30 6999999999'),
+                    title: Text(userModel.phone),
                   ),
                 ),
                 Card(
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.email),
-                    title: Text('covid@coronavirius.com'),
+                    title: Text(userModel.email),
                   ),
                 ),
                 Row(
@@ -148,7 +156,7 @@ class ProfileScreen extends StatelessWidget {
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.directions_car),
-                    title: Text('Mercendez Benz'),
+                    title: Text(userModel.carInfo),
                   ),
                 ),
                 Row(
@@ -165,47 +173,8 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                Card(
-                  margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                        backgroundImage: new NetworkImage(
-                            'https://images.unsplash.com/photo-1510227272981-87123e259b17?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=3759e09a5b9fbe53088b23c615b6312e')),
-                    title: Text('Jina Jinoglou'),
-                    subtitle: Text(
-                        'Amazing driver!! She helped me with my anxiety. The best part is that she is also a Trump supporter :)'),
-                    isThreeLine: true,
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text('5,0'),
-                        Icon(
-                          Icons.star,
-                          size: 15.0,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Card(
-                  margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                        backgroundImage: new NetworkImage(
-                            'https://randomuser.me/api/portraits/women/95.jpg')),
-                    title: Text('Julia Alexandratou'),
-                    subtitle: Text('Amazing passenger!!'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text('4,5'),
-                        Icon(
-                          Icons.star,
-                          size: 15.0,
-                        ),
-                      ],
-                    ),
-                  ),
+                Column(
+                  children: reviewWidgetList,
                 ),
               ],
             ),

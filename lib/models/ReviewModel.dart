@@ -1,16 +1,21 @@
 import 'dart:convert';
 
 class ReviewModel {
-  String imageurl;
+  String imageUrl;
   String name;
   String reviewText;
   double rating;
+
+
   ReviewModel({
-    this.imageurl,
+    this.imageUrl,
     this.name,
     this.reviewText,
     this.rating,
   });
+
+
+
 
 
 
@@ -21,7 +26,7 @@ class ReviewModel {
     double rating,
   }) {
     return ReviewModel(
-      imageurl: imageurl ?? this.imageurl,
+      imageUrl: imageurl ?? this.imageUrl,
       name: name ?? this.name,
       reviewText: reviewText ?? this.reviewText,
       rating: rating ?? this.rating,
@@ -30,7 +35,7 @@ class ReviewModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'imageurl': imageurl,
+      'imageurl': imageUrl,
       'name': name,
       'reviewText': reviewText,
       'rating': rating,
@@ -41,7 +46,7 @@ class ReviewModel {
     if (map == null) return null;
   
     return ReviewModel(
-      imageurl: map['imageurl'],
+      imageUrl: map['imageurl'],
       name: map['name'],
       reviewText: map['reviewText'],
       rating: map['rating'],
@@ -54,7 +59,7 @@ class ReviewModel {
 
   @override
   String toString() {
-    return 'ReviewModel(imageurl: $imageurl, name: $name, reviewText: $reviewText, rating: $rating)';
+    return 'ReviewModel(imageurl: $imageUrl, name: $name, reviewText: $reviewText, rating: $rating)';
   }
 
   @override
@@ -62,7 +67,7 @@ class ReviewModel {
     if (identical(this, o)) return true;
   
     return o is ReviewModel &&
-      o.imageurl == imageurl &&
+      o.imageUrl == imageUrl &&
       o.name == name &&
       o.reviewText == reviewText &&
       o.rating == rating;
@@ -70,7 +75,7 @@ class ReviewModel {
 
   @override
   int get hashCode {
-    return imageurl.hashCode ^
+    return imageUrl.hashCode ^
       name.hashCode ^
       reviewText.hashCode ^
       rating.hashCode;

@@ -1,6 +1,10 @@
+<<<<<<< HEAD
+import 'package:flutter/material.dart';
+=======
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+>>>>>>> master
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -8,6 +12,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+<<<<<<< HEAD
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.pink,
+      child: Center(
+        child:Text(
+          'Maps and find/create button here plss'
+        ),
+      ),
+    );
+  }
+=======
   Completer<GoogleMapController> _controler = Completer();
 
   @override
@@ -151,4 +169,5 @@ Widget _boxes(){
 }
 
 void _gotoLocation(double d, double e) {
+>>>>>>> master
 }

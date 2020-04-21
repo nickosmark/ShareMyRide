@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
+import 'package:flutter_app/models/ReviewModel.dart';
+=======
 import 'package:flutter_app/models/reviewModel.dart';
 import 'package:flutter_app/models/userModel.dart';
+>>>>>>> master
 import 'package:flutter_app/screens/ProfileScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 

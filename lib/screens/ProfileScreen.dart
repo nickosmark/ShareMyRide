@@ -1,19 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:flutter_app/models/ReviewModel.dart';
+import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/screens/ProfileEditScreen.dart';
+<<<<<<< HEAD
+import 'package:flutter_app/widgets/ReviewCard.dart';
+=======
 import 'package:flutter_app/models/userModel.dart';
+>>>>>>> master
 
 class ProfileScreen extends StatelessWidget {
+  final UserModel userModel;
+
+  ProfileScreen({
+    @required this.userModel,
+  });
+
+  List<Widget> reviewWidgetList = [];
+
   var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   var lightBlueColor = Colors.blue;
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
+<<<<<<< HEAD
+=======
   final UserModel user;
 
   ProfileScreen(this.user);
 
+>>>>>>> master
 
   @override
   Widget build(BuildContext context) {
+    List<ReviewModel> reviewsListFromConstr = userModel.reviewsList;
+    if (reviewsListFromConstr.isEmpty) {
+      reviewWidgetList.add(
+        Text('You have no reviews yet'),
+      );
+    } else {
+      for (var item in reviewsListFromConstr) {
+        reviewWidgetList.add(ReviewCard(reviewModel: item));
+      }
+    }
     return MaterialApp(
       title: 'ShareMyRide',
       theme: ThemeData(
@@ -49,11 +77,17 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 CircleAvatar(
-                    radius: 60.0,
-                    backgroundImage: new NetworkImage(
-                        'https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&ixid=eyJhcHBfaWQiOjE3Nzg0fQ')),
+                  radius: 60.0,
+                  backgroundImage: new NetworkImage(
+                    userModel.getUrlFromId(genderInput: userModel.gender),
+                  ),
+                ),
                 Text(
+<<<<<<< HEAD
+                  userModel.name,
+=======
                   '${user.name}',
+>>>>>>> master
                   style:
                       GoogleFonts.oswald(textStyle: TextStyle(fontSize: 30.0)),
                 ),
@@ -76,7 +110,7 @@ class ProfileScreen extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Text(
-                            '4,3',
+                            userModel.getRatingAverage().toString(),
                             style: GoogleFonts.oswald(
                                 textStyle: TextStyle(
                               fontSize: 15.0,
@@ -109,14 +143,22 @@ class ProfileScreen extends StatelessWidget {
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.phone),
+<<<<<<< HEAD
+                    title: Text(userModel.phone),
+=======
                     title: Text('${user.phone}'),
+>>>>>>> master
                   ),
                 ),
                 Card(
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.email),
+<<<<<<< HEAD
+                    title: Text(userModel.email),
+=======
                     title: Text('${user.email}'),
+>>>>>>> master
                   ),
                 ),
                 Row(
@@ -137,7 +179,11 @@ class ProfileScreen extends StatelessWidget {
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.directions_car),
+<<<<<<< HEAD
+                    title: Text(userModel.carInfo),
+=======
                     title: Text('${user.carInfo}'),
+>>>>>>> master
                   ),
                 ),
                 Row(
@@ -154,47 +200,8 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                Card(
-                  margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                        backgroundImage: new NetworkImage(
-                            'https://images.unsplash.com/photo-1510227272981-87123e259b17?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=3759e09a5b9fbe53088b23c615b6312e')),
-                    title: Text('Jina Jinoglou'),
-                    subtitle: Text(
-                        'Amazing driver!! She helped me with my anxiety. The best part is that she is also a Trump supporter :)'),
-                    isThreeLine: true,
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text('5,0'),
-                        Icon(
-                          Icons.star,
-                          size: 15.0,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Card(
-                  margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                        backgroundImage: new NetworkImage(
-                            'https://randomuser.me/api/portraits/women/95.jpg')),
-                    title: Text('Julia Alexandratou'),
-                    subtitle: Text('Amazing passenger!!'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text('4,5'),
-                        Icon(
-                          Icons.star,
-                          size: 15.0,
-                        ),
-                      ],
-                    ),
-                  ),
+                Column(
+                  children: reviewWidgetList,
                 ),
               ],
             ),

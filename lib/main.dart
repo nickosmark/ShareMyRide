@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/screens/ConfirmScreen.dart';
-=======
->>>>>>> master
 import 'package:flutter_app/screens/HomeScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/ProfileScreen.dart';
 import 'screens/ProfileEditScreen.dart';
 import 'screens/LoginScreen.dart';
-<<<<<<< HEAD
 import 'screens/RidesScreen.dart';
 import 'services/fakeDB.dart';
-=======
 import 'screens/ReviewsScreen.dart';
 import 'screens/ConfirmScreen.dart';
->>>>>>> master
 
 void main() => runApp(MyApp());
 
@@ -36,7 +30,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-<<<<<<< HEAD
       home: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
@@ -86,9 +79,3 @@ class _MyAppState extends State<MyApp> {
 //     );
 //   }
 // }
-=======
-      home: ProfileEditScreen()
-    );
-  }
-}
->>>>>>> master

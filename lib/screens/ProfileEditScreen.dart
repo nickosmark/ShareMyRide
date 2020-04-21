@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:flutter_app/models/ReviewModel.dart';
-=======
 import 'package:flutter_app/models/reviewModel.dart';
-import 'package:flutter_app/models/userModel.dart';
->>>>>>> master
+import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -59,22 +56,24 @@ class _ProfileEditScreeState extends State<ProfileEditScreen> {
                       IconButton(
                           icon: Icon(Icons.close),
                           onPressed: () {
-                            final user = UserModel(name: nameControler.text, phone: phoneControler.text, email: emailControler.text, carInfo: carInfoControler.text);
+                            final user = UserModel(id: 1, name: nameControler.text, gender: Gender.male, phone: phoneControler.text, email: emailControler.text, carInfo: carInfoControler.text,
+                            rating: 4.2, reviewsList: []);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfileScreen(user)),
+                                  builder: (context) => ProfileScreen(userModel: user,)),
 
                             );
                           }),
                           IconButton(
                           icon: Icon(Icons.check),
                           onPressed: () {
-                            final user = UserModel(name: nameControler.text, phone: phoneControler.text, email: emailControler.text, carInfo: carInfoControler.text);
+                            final user = UserModel(id: 1, name: nameControler.text, gender: Gender.male, phone: phoneControler.text, email: emailControler.text, carInfo: carInfoControler.text,
+                            rating: 4.2, reviewsList: []);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfileScreen(user)),
+                                  builder: (context) => ProfileScreen(userModel: user,)),
                             );
                           })
                     ],

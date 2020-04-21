@@ -15,10 +15,6 @@ class ReviewModel {
   });
 
 
-
-
-
-
   ReviewModel copyWith({
     String imageurl,
     String name,

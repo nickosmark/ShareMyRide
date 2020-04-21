@@ -9,6 +9,8 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="Share My Ride"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyBWVICFOmSbt_Z7cnt3swbt9LvZgQg-1uw"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

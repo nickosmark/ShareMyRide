@@ -4,7 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/screens/ProfileEditScreen.dart';
+<<<<<<< HEAD
 import 'package:flutter_app/widgets/ReviewCard.dart';
+=======
+import 'package:flutter_app/models/userModel.dart';
+>>>>>>> master
 
 class ProfileScreen extends StatelessWidget {
   final UserModel userModel;
@@ -18,6 +22,13 @@ class ProfileScreen extends StatelessWidget {
   var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   var lightBlueColor = Colors.blue;
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
+<<<<<<< HEAD
+=======
+  final UserModel user;
+
+  ProfileScreen(this.user);
+
+>>>>>>> master
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +83,11 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
+<<<<<<< HEAD
                   userModel.name,
+=======
+                  '${user.name}',
+>>>>>>> master
                   style:
                       GoogleFonts.oswald(textStyle: TextStyle(fontSize: 30.0)),
                 ),
@@ -113,7 +128,7 @@ class ProfileScreen extends StatelessWidget {
                 Row(
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.fromLTRB(15.0, 35.0, 0.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(15.0, 15.0, 0.0, 0.0),
                       child: Text(
                         'Personal Info',
                         style: GoogleFonts.oswald(
@@ -128,14 +143,22 @@ class ProfileScreen extends StatelessWidget {
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.phone),
+<<<<<<< HEAD
                     title: Text(userModel.phone),
+=======
+                    title: Text('${user.phone}'),
+>>>>>>> master
                   ),
                 ),
                 Card(
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.email),
+<<<<<<< HEAD
                     title: Text(userModel.email),
+=======
+                    title: Text('${user.email}'),
+>>>>>>> master
                   ),
                 ),
                 Row(
@@ -156,7 +179,11 @@ class ProfileScreen extends StatelessWidget {
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.directions_car),
+<<<<<<< HEAD
                     title: Text(userModel.carInfo),
+=======
+                    title: Text('${user.carInfo}'),
+>>>>>>> master
                   ),
                 ),
                 Row(

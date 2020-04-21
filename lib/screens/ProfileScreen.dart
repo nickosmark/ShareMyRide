@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/screens/ProfileEditScreen.dart';

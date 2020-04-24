@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/UserModel.dart';
-import 'package:flutter_app/screens/HomeScreen.dart';
+//import 'package:flutter_app/screens/HomeScreen.dart';
 import 'screens/ProfileScreen.dart';
 import 'screens/RidesScreen.dart';
 import 'services/fakeDB.dart';
+import 'package:flutter_app/screens/chrisHomeScreen.dart';
+//import 'package:flutter_app/screens/HomeScreen.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,7 +22,7 @@ class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
 
   //The screen showing first
-  Widget _selectedScreen = HomeScreen();
+  Widget _selectedScreen = chrisHomeScreen();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -47,7 +49,7 @@ class _MyAppState extends State<MyApp> {
               _selectedIndex = index;
               switch (_selectedIndex) {
                 case 0:
-                  _selectedScreen = HomeScreen();
+                  _selectedScreen = chrisHomeScreen();
                   break;
                 case 1:
                   _selectedScreen = RidesScreen();

@@ -17,7 +17,8 @@ environment:
   sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
-  google_maps_flutter: ^0.4.0
+  datetime_picker_formfield: ^1.0.0
+  google_maps_flutter: ^0.5.26+4
   google_fonts: ^0.4.3
   flutter_rating_bar: ^3.0.1+1
   flutter:
@@ -51,6 +52,7 @@ flutter:
   
   assets:
    - assets/images/login_icon.png
+   - assets/map_style.txt
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

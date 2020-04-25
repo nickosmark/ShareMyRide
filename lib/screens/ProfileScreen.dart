@@ -67,7 +67,7 @@ class ProfileScreen extends StatelessWidget {
                 CircleAvatar(
                   radius: 60.0,
                   backgroundImage: new NetworkImage(
-                    userModel.getUrlFromId(genderInput: userModel.gender),
+                    userModel.getUrlFromNameHash(genderInput: userModel.gender),
                   ),
                 ),
                 Text(

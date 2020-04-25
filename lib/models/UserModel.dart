@@ -32,7 +32,8 @@ class UserModel {
     this.reviewsList,
   });
   
-  String getUrlFromId({Gender genderInput}){
+  String getUrlFromNameHash({Gender genderInput}){
+    int id = this.name.hashCode % 100;
     switch (genderInput) {
       case Gender.male:
         return 'https://randomuser.me/api/portraits/men/$id.jpg';

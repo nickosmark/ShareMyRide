@@ -8,9 +8,9 @@ enum Status{
 }
 
 class RidesModel{
+  double fromWhere;
+  double toWhere;
   Status status;
   UserModel fellowTraveler;
-
-
 
 }

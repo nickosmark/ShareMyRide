@@ -9,6 +9,17 @@ enum Gender {
   nonBinary,
 }
 
+enum Status{
+  pending,
+  confirmed,
+  completed,
+}
+
+class UserRides {
+  Status status;
+
+}
+
 class UserModel {
 
   int id;
@@ -19,6 +30,7 @@ class UserModel {
   String carInfo;
   double rating;
   List<ReviewModel> reviewsList ;
+  List ridesList;
   //
   //Constructor
   UserModel({

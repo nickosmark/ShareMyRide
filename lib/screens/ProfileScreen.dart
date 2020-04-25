@@ -58,7 +58,7 @@ class ProfileScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfileEditScreen()),
+                                  builder: (context) => ProfileEditScreen(isNewUser: false,)),
                             );
                           }),
                     ],

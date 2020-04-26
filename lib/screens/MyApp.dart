@@ -35,7 +35,12 @@ class _MyAppState extends State<MyApp> {
   static var passengerr = FakeDB.randomPassenger12;
 
   //Create a random User. Can be driver or passenger
-  UserModel randomUser12 = driverr;
+  UserModel randomUser12 = passengerr;
+
+  void enimeroseTonBob(){
+    //TODO isDriver is
+    ridaki.driver.addToUserRideList(incomingRide: ridaki, fellow: passengerr, isDriver: true);
+  }
 
 
 
@@ -50,6 +55,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     //_selectedScreen = widget.selectedScreen;
+    enimeroseTonBob();
     _selectedIndex = widget.selectedIndex;
     switch (_selectedIndex) {
       case 0:
@@ -69,6 +75,14 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        fontFamily: 'oswald',
+        textTheme: TextTheme(
+          body1: TextStyle(
+            fontFamily: 'oswald',
+          ),
+        ),
+      ),
       home: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[

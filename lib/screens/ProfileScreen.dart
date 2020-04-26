@@ -38,7 +38,16 @@ class ProfileScreen extends StatelessWidget {
         accentColor: lightBlueColor,
         //cardColor: lightGreyBackground,
         textTheme: TextTheme(
-          body1: TextStyle(color: Color.fromRGBO(26, 26, 48, 1.0)),
+          body1: TextStyle(
+            color: darkBlueColor,
+            fontFamily: 'oswald',
+            fontSize: 12.0,
+          ),
+          subhead: TextStyle(
+            color: darkBlueColor,
+            fontFamily: 'oswald',
+            fontSize: 16.0,
+          ),
         ),
       ),
       home: Scaffold(

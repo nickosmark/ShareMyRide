@@ -98,12 +98,12 @@ class UserModel {
 
   //
 
-  void addToUserRideList({RidesModel incomingRide,UserModel user,bool isDriver}){
+  void addToUserRideList({RidesModel incomingRide,UserModel fellow,bool isDriver}){
     var userRide = UserRide(
         status: Status.pending,
         isDriver: isDriver,
         ride: incomingRide,
-        fellowTraveler: user,
+        fellowTraveler: fellow,
     );
 
     ridesList.add(userRide);

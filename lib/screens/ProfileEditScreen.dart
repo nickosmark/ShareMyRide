@@ -179,15 +179,20 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         Expanded(
                           flex:1,
                           child: Icon(
-                            Icons.child_care
+                            Icons.wc,
+                            color: Colors.black54,
                           ),
                         ),
                         Expanded(
-                          flex: 3,
+                          flex: 4,
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              'Enter your gender:',
+                              'Enter your gender',
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 16.0,
+                              ),
                             ),
                           ),
                         ),

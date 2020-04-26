@@ -233,7 +233,7 @@ class RidesScreen extends StatelessWidget {
             icon: Icon(
               Icons.access_time,
               size: 25.0,
-              color: Colors.redAccent,
+              color: lightBlueColor,
             ),
           ),
         ),

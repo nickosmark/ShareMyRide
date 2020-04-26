@@ -36,17 +36,19 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
 
-  void updateFakeUser() {
-    FakeDB.randomUser12.name = this.name;
-    FakeDB.randomUser12.phone = this.phone;
-    FakeDB.randomUser12.email = this.email;
-    FakeDB.randomUser12.gender = this.gender;
-  }
+
+  // Should pass User to profile edit screen
+//  void updateFakeUser() {
+//    FakeDB.randomUser12.name = this.name;
+//    FakeDB.randomUser12.phone = this.phone;
+//    FakeDB.randomUser12.email = this.email;
+//    FakeDB.randomUser12.gender = this.gender;
+//  }
 
   void iconsClickEventHandler(BuildContext context, String iconName) {
     if (iconName == 'check') {
       //TODO edit UserModel object. EDIT ! NOT CREATE!
-      updateFakeUser();
+      //updateFakeUser();
       //If the user is new navigate to Home Screen.If she
       //just edits her profile navigate to profile screen
       if (widget.isNewUser) {

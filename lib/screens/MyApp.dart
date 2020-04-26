@@ -19,8 +19,26 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  //Created a random User from fake DB.
-  UserModel randomUser12 = FakeDB.randomUser12;
+
+  //A typical passenger user story:
+  //Driver Bob creates RidesModel, RidesModel are public
+  //Passenger Alice Searches through RidesModel object list to find a ride that she wants
+  //Passenger Alice requests a Ride:
+  //sends the ride to driver Bob --> creates new UserRide to his UserModelObject-->
+  // ride1object.driver.addToUserRideList(ride1object,aliceUserObject,false) //false == not a driver
+  //At the same time she waits for a response,
+  //her Pending tab should have the drivers Bob name and the ride's from/to
+  //aliceUserObject.addToUserRideList(ride1object, bobUserObject, true)
+
+  static var ridaki = FakeDB.ride55; //gets created at home screen
+  static var driverr = FakeDB.randomDriver39;
+  static var passengerr = FakeDB.randomPassenger12;
+
+  //Create a random User. Can be driver or passenger
+  UserModel randomUser12 = driverr;
+
+
+
 
   //Selected Icon in the bottomNavBar
   int _selectedIndex = 0;
@@ -30,7 +48,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     //_selectedScreen = widget.selectedScreen;
     _selectedIndex = widget.selectedIndex;
@@ -39,7 +56,7 @@ class _MyAppState extends State<MyApp> {
         _selectedScreen = HomeScreen();
         break;
       case 1:
-        _selectedScreen = RidesScreen();
+        _selectedScreen = RidesScreen(userModel: randomUser12,);
         break;
       case 2:
         _selectedScreen = ProfileScreen(userModel: randomUser12);
@@ -78,7 +95,7 @@ class _MyAppState extends State<MyApp> {
                   _selectedScreen = HomeScreen();
                   break;
                 case 1:
-                  _selectedScreen = RidesScreen();
+                  _selectedScreen = RidesScreen(userModel: randomUser12);
                   break;
                 case 2:
                   _selectedScreen = ProfileScreen(userModel: randomUser12);

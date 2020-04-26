@@ -22,7 +22,7 @@ class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
 
   //The screen showing first
-  Widget _selectedScreen = chrisHomeScreen();
+  Widget _selectedScreen = ChrisHomeScreen();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
               _selectedIndex = index;
               switch (_selectedIndex) {
                 case 0:
-                  _selectedScreen = chrisHomeScreen();
+                  _selectedScreen = ChrisHomeScreen();
                   break;
                 case 1:
                   _selectedScreen = RidesScreen();

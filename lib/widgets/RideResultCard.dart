@@ -20,16 +20,22 @@ class RideResultCard extends StatelessWidget {
           backgroundImage: new NetworkImage('https://img.documentonews.gr/unsafe/1000x600/smart/http://img.dash.documentonews.gr/documento/imagegrid/2018/10/31/5bd98303cd3a18740d2cf935.jpg'),
           radius: 30.0,
         ),
-        title: Text('Json Antigoni'),
+        title: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Text('Json Antigoni'),
+        ),
         subtitle: Column(
           children: <Widget>[
+            SizedBox(
+              height: 10.0,
+            ),
             Text(from),
             Icon(
                 Icons.arrow_downward
             ),
             Text(to),
             SizedBox(
-              height: 30.0,
+              height: 25.0,
             ),
             FlatButton(
               color: Colors.black,

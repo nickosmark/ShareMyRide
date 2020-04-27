@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class RideResultCard extends StatelessWidget {
 
-
   String from;
   String to;
   String name = 'Json Antigoniiiiiiiiiii';

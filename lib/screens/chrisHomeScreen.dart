@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:flutter_app/widgets/RideResultCard.dart';
 
 class ChrisHomeScreen extends StatefulWidget {
   @override
@@ -23,6 +24,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   String to;
   String date;
   List<Widget> results;
+  RideResultCard resultCard = new RideResultCard();
 
   @override
   void dispose() {
@@ -96,7 +98,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                 date = dateController.text;
                 setState(() {
                   mode = 1;
-                  results = [_boxes(), _boxes(), _boxes()];
+                  results = [_listItem(), _listItem(), _listItem()];
                 });
               }, //onPressed
               label: Text('Search'),
@@ -197,95 +199,86 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   Scaffold searchScaffold() {
     return Scaffold(
       body: Stack(
-        children: <Widget>[_googleMap(context), _buildContainer1()],
+        children: <Widget>[_googleMap(context), _showResults()],
       ),
     );
   }
 
-  Widget _buildContainer() {
+  Widget _showResults() {
     return Align(
-      alignment: Alignment.bottomLeft,
-      child: Container(
-        color: Colors.grey,
-        height: 200.0,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: <Widget>[
-            SizedBox(
-              width: 10.0,
-              height: 10.0,
+        alignment: Alignment.bottomLeft,
+        child: SizedBox(
+          height: 230.0,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+              color: Colors.white,
             ),
-            _boxes(),
-            SizedBox(
-              width: 10.0,
-              height: 10.0,
-            ),
-            _boxes(),
-            SizedBox(
-              width: 10.0,
-              height: 10.0,
-            ),
-            _boxes(),
-          ],
-        ),
-      ),
-    );
-  }//buildContainer
-
-  Widget _buildContainer1() {
-    return Align(
-      alignment: Alignment.bottomLeft,
-      child: SizedBox(
-        height: 200.0,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.red,
-          ),
-          child: Column(
-            children: <Widget>[
-              Text('yo'),
-              Text('yo'),
-              Expanded(
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    SizedBox(width: 10.0,),
-                    _boxes(),
-                    SizedBox(width: 10.0,),
-                    _boxes(),
-                    SizedBox(width: 10.0,),
-                    _boxes(),
-                  ],
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Hey Xzhibit!',
+                      style: TextStyle(
+                        fontSize: 22.0
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'We have found these results for you.',
+                      style: TextStyle(
+                          fontSize: 15.0
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: <Widget>[
+                      SizedBox(
+                        width: 10.0,
+                      ),
+                      _listItem(),
+                      SizedBox(
+                        width: 10.0,
+                      ),
+                      _listItem(),
+                      SizedBox(
+                        width: 10.0,
+                      ),
+                      _listItem(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      )
-    );
-  }
+        ));
+  } //buildContainer
 
-  Widget _boxes() {
+  Widget _listItem() {
+    resultCard = new RideResultCard(from: from, to: to);
     return GestureDetector(
       onTap: () {
         setState(() {
           mode = 0;
         });
       },
-          child: Container(
-            color: Colors.white,
-            width: 250,
-            child: Column(
-              children: <Widget>[
-                Text(from, style: TextStyle(fontSize: 20.0),),
-                Text(to, style: TextStyle(fontSize: 20.0),),
-                Text(date, style: TextStyle(fontSize: 20.0),),
-              ],
-            ),
-          ),
-
+      child: Container(
+        width: 300,
+        child: resultCard
+      ),
     );
-  }
+  }//boxes
 } //build_end
 
 Marker firstmarker = Marker(

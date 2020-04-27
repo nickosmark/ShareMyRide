@@ -5,6 +5,7 @@ class RideResultCard extends StatelessWidget {
 
   String from;
   String to;
+  String name = 'Json Antigoniiiiiiiiiii';
 
   RideResultCard({
     this.from,
@@ -13,6 +14,7 @@ class RideResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double height = name.length < 23 ? 29.0 : 10.0;
     return Card(
       color: Colors.yellow[50],
       child: ListTile(
@@ -21,13 +23,13 @@ class RideResultCard extends StatelessWidget {
           radius: 30.0,
         ),
         title: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Text('Json Antigoni'),
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Text(name),
         ),
         subtitle: Column(
           children: <Widget>[
             SizedBox(
-              height: 10.0,
+              height: height,
             ),
             Text(from),
             Icon(
@@ -35,7 +37,7 @@ class RideResultCard extends StatelessWidget {
             ),
             Text(to),
             SizedBox(
-              height: 25.0,
+              height: 10,
             ),
             FlatButton(
               color: Colors.black,

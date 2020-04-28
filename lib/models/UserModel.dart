@@ -2,11 +2,32 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter_app/models/ReviewModel.dart';
+import 'package:flutter_app/models/RidesModel.dart';
 
 enum Gender {
   male,
   female,
   nonBinary,
+}
+
+enum Status{
+  pending,
+  confirmed,
+  completed,
+}
+
+class UserRide {
+  Status status;
+  bool isDriver;
+  RidesModel ride;
+  UserModel fellowTraveler;
+
+  UserRide({
+    this.status,
+    this.isDriver,
+    this.ride,
+    this.fellowTraveler,
+  });
 }
 
 class UserModel {
@@ -19,6 +40,7 @@ class UserModel {
   String carInfo;
   double rating;
   List<ReviewModel> reviewsList ;
+  List<UserRide> ridesList;
   //
   //Constructor
   UserModel({
@@ -30,9 +52,11 @@ class UserModel {
     this.carInfo,
     this.rating,
     this.reviewsList,
+    this.ridesList,
   });
   
-  String getUrlFromId({Gender genderInput}){
+  String getUrlFromNameHash({Gender genderInput}){
+    int id = this.name.hashCode % 100;
     switch (genderInput) {
       case Gender.male:
         return 'https://randomuser.me/api/portraits/men/$id.jpg';
@@ -70,9 +94,22 @@ class UserModel {
       }
     return sum/reviewsList.length;
     }
-    
-
   }
+
+  //
+
+  void addToUserRideList({RidesModel incomingRide,UserModel fellow,bool isDriver}){
+    var userRide = UserRide(
+        status: Status.pending,
+        isDriver: isDriver,
+        ride: incomingRide,
+        fellowTraveler: fellow,
+    );
+
+    ridesList.add(userRide);
+  }
+
+
 
 
 }

@@ -2,13 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:search_map_place/search_map_place.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter_app/widgets/RideResultCard.dart';
 import 'package:flutter_app/widgets/ReviewCard.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
-import 'package:flutter_app/screens/HomeScreen.dart';
 
 class ChrisHomeScreen extends StatefulWidget {
   @override
@@ -16,15 +17,25 @@ class ChrisHomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<ChrisHomeScreen> {
-  Completer<GoogleMapController> _controller = Completer();
+
+  GoogleMapController mapController;
+  double _originLatitude, _originLongitude;
+  LatLng startCoords;
+  double _destLatitude, _destLongitude;
+  Map<MarkerId, Marker> markers = {};
+  Map<PolylineId, Polyline> polylines = {};
+  List<LatLng> polylineCoordinates = [];
+  PolylinePoints polylinePoints = PolylinePoints();
+  String googleAPiKey = "AIzaSyBWVICFOmSbt_Z7cnt3swbt9LvZgQg-1uw";
   String _mapStyle;
-  final fromController = TextEditingController();
-  final toController = TextEditingController();
+
+  Completer<GoogleMapController> _controller = Completer();
+
   final dateController = TextEditingController();
   final format = DateFormat("dd-MM-yy HH:mm");
   int mode = 0;
-  String from;
-  String to;
+  String from = "";
+  String to = "";
   String date;
   List<Widget> results;
   RideResultCard resultCard = new RideResultCard();
@@ -36,8 +47,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   @override
   void dispose() {
-    fromController.dispose();
-    toController.dispose();
     dateController.dispose();
     super.dispose();
   }
@@ -50,7 +59,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     super.initState();
   }
 
-  double zoomVal = 0.5;
 
   @override
   Widget build(BuildContext context) {
@@ -68,23 +76,32 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     }
   }
 
-  Widget _googleMap(BuildContext context) {
+  Widget _googlemap(BuildContext context){
     return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: GoogleMap(
-        mapType: MapType.normal,
-        zoomControlsEnabled: false,
-        initialCameraPosition:
-            CameraPosition(target: LatLng(37.9838, 23.7275), zoom: 12),
-        onMapCreated: (GoogleMapController controller) {
-          controller.setMapStyle(_mapStyle);
-          _controller.complete(controller);
-        },
-        markers: {firstmarker, secondmarker},
+        initialCameraPosition: CameraPosition(
+            target: LatLng(37.9838, 23.7275),
+            zoom: 15
+        ),
+        myLocationEnabled: true,
+        tiltGesturesEnabled: true,
+        compassEnabled: true,
+        scrollGesturesEnabled: true,
+        zoomGesturesEnabled: true,
+        onMapCreated: _onMapCreated,
+        markers: Set<Marker>.of(markers.values),
+        polylines: Set<Polyline>.of(polylines.values),
       ),
     );
   }
+  void _onMapCreated(GoogleMapController controller) async{
+
+    mapController = controller;
+    mapController.setMapStyle(_mapStyle);
+  }
+
 
   Future<void> _gotoLocation(double lat, double long) async {
     final GoogleMapController controller = await _controller.future;
@@ -92,7 +109,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         target: LatLng(lat, long), zoom: 15, tilt: 50.0, bearing: 45.0)));
   }
 
-  Scaffold homeScaffold() {
+  Widget homeScaffold() {
     return Scaffold(
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -101,8 +118,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             padding: const EdgeInsets.all(4.0),
             child: FloatingActionButton.extended(
               onPressed: () {
-                from = fromController.text;
-                to = toController.text;
+                _removePolylines();
                 date = dateController.text;
                 setState(() {
                   mode = 1;
@@ -118,8 +134,8 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             padding: const EdgeInsets.all(4.0),
             child: FloatingActionButton.extended(
               onPressed: () {
-                String text1 = fromController.text + "\n";
-                String text2 = toController.text + "\n";
+                String text1 = from+  "\n";
+                String text2 = to+  "\n";
                 String text3 = dateController.text;
                 return showDialog(
                   context: context,
@@ -137,41 +153,125 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
           ),
         ],
       ),
-      body: Stack(
-        children: <Widget>[
-          _googleMap(context),
-          fillField("From: ", Colors.blue, 50.0, fromController),
-          fillField("To: ", Colors.red, 120.0, toController),
-          dateField(),
-        ],
+      body: SingleChildScrollView(
+        child: Stack(
+          children: <Widget>[
+            _googlemap(context),
+            dateField(),
+            fillField("To: ", Colors.red, 120.0, BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueRed
+            )),
+            fillField("From: ", Colors.blue, 50.0, BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueBlue
+            )),
+
+
+          ],
+        ),
       ),
     );
   }
 
-  Align fillField(String str, Color clr, double top, TextEditingController controller) {
+  Align fillField(String str, Color clr, double top, BitmapDescriptor bitmapDescriptor) {
     return Align(
         alignment: Alignment.topCenter,
         child: Padding(
-          padding: EdgeInsets.only(left: 10.0, right: 10.0, top: top),
-          child: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                prefixIcon: Icon(
-                  Icons.location_on,
-                  color: clr,
-                ),
-                labelText: str),
-          ),
+            padding: EdgeInsets.only(left: 10.0, right: 10.0, top: top),
+            child:
+            SearchMapPlaceWidget(
+              apiKey: googleAPiKey,
+              // The language of the autocompletion
+              language: 'el',
+              placeholder: str,
+              icon: IconData(0xe55f, fontFamily: 'MaterialIcons'),
+              iconColor: clr,
+              // The position used to give better recomendations. In this case we are using the user position
+              location: LatLng(37.9931036, 23.7301123),
+              radius: 30000,
+              onSelected: (Place place) async {
+                final geolocation = await place.geolocation;
+                startCoords = geolocation.coordinates;
+                if(str=="From: "){
+                  from = place.description;
+                  _originLatitude = startCoords.latitude;
+                  _originLongitude = startCoords.longitude;
+                }
+
+
+                _addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
+                if(str=="To: "){
+                  to = place.description;
+                  _destLatitude = startCoords.latitude;
+                  _destLongitude = startCoords.longitude;
+                  print("polyline called");
+                  _getPolyline();
+                }
+
+              },
+            )
+//          TextField(
+//            controller: controller,
+//            decoration: InputDecoration(
+//                filled: true,
+//                fillColor: Colors.white,
+//                prefixIcon: Icon(
+//                  Icons.location_on,
+//                  color: clr,
+//                ),
+//                labelText: str),
+//          ),
         ));
+  }
+  // method thad adds the polyline to the list of polylines
+  // that will display on map
+  _addPolyLine() {
+    PolylineId id = PolylineId("poly");
+    Polyline polyline = Polyline(
+        polylineId: id, color: Colors.blue, points: polylineCoordinates);
+    polylines[id] = polyline;
+    setState(() {});
+  }
+
+  // method that creates the polyline given the from and to geolocation
+  _getPolyline() async {
+    List<PointLatLng> result = await polylinePoints.getRouteBetweenCoordinates(
+      "AIzaSyBWVICFOmSbt_Z7cnt3swbt9LvZgQg-1uw",
+      _originLatitude,
+      _originLongitude,
+      _destLatitude,
+      _destLongitude,);
+    if (result.isNotEmpty) {
+      result.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    }
+    _addPolyLine();
+  }
+  _removePolylines(){
+    polylineCoordinates.clear();
+  }
+
+
+  // method that adds the marker to the map
+  _addMarker(LatLng position, String id, BitmapDescriptor descriptor, String info){
+    setState(() {
+      MarkerId markerId = MarkerId(id);
+      Marker marker =
+      Marker(markerId: markerId,
+          icon: descriptor,
+          position: position,
+          infoWindow: InfoWindow(title: info
+          ));
+      markers[markerId] = marker;
+    });
+
   }
 
   Align dateField() {
     return Align(
         alignment: Alignment.topCenter,
         child: Padding(
-            padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 190.0),
+            padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 190.0),
             child: DateTimeField(
               format: format,
               controller: dateController,
@@ -193,7 +293,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                   final time = await showTimePicker(
                     context: context,
                     initialTime:
-                        TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                    TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
                   );
                   return DateTimeField.combine(date, time);
                 } else {
@@ -206,7 +306,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   Scaffold searchScaffold() {
     return Scaffold(
       body: Stack(
-        children: <Widget>[_googleMap(context), _showResults(), _showDetails()],
+        children: <Widget>[_googlemap(context), _showResults(), _showDetails()],
       ),
     );
   }
@@ -358,7 +458,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                   ),
                   child: Padding(
                     padding:
-                        const EdgeInsets.only(top: 15.0, left: 5.0, right: 5.0),
+                    const EdgeInsets.only(top: 15.0, left: 5.0, right: 5.0),
                     child: Row(
                       children: <Widget>[
                         Expanded(
@@ -449,18 +549,4 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
 } //build_end
 
-Marker firstmarker = Marker(
-    markerId: MarkerId("mark1"),
-    position: LatLng(37.9833, 23.7272),
-    infoWindow: InfoWindow(title: "arxhPeous"),
-    icon: BitmapDescriptor.defaultMarkerWithHue(
-      BitmapDescriptor.hueBlue,
-    ));
 
-Marker secondmarker = Marker(
-    markerId: MarkerId("mark2"),
-    position: LatLng(37.9839, 23.7277),
-    infoWindow: InfoWindow(title: "telosPeous"),
-    icon: BitmapDescriptor.defaultMarkerWithHue(
-      BitmapDescriptor.hueRed,
-    ));

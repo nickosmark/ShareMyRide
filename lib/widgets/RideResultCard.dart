@@ -41,7 +41,7 @@ class RideResultCard extends StatelessWidget {
             FlatButton(
               color: Colors.black,
               textColor: Colors.white,
-              child: Text('Show more info'),
+              child: Text('Request Ride'),
               onPressed: () {
 
               },//onPressed

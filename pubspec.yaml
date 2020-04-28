@@ -7,8 +7,14 @@ environment:
   sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
-  google_maps_flutter: ^0.4.0
+
+  datetime_picker_formfield: ^1.0.0
+  google_maps_flutter: ^0.5.26+4
+  geolocator: ^5.0.0
+  search_map_place: ^0.3.0
+  flutter_polyline_points: ^0.1.0
   google_fonts: ^1.0.0
+
   flutter_rating_bar: ^3.0.1+1
   flutter:
     sdk: flutter
@@ -33,9 +39,10 @@ flutter:
 
   uses-material-design: true
 
-  
+
   assets:
-   - assets/images/login_icon.png
+    - assets/images/login_icon.png
+    - assets/map_style.txt
 
 
   fonts:

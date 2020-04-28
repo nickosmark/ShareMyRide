@@ -5,6 +5,9 @@ import 'package:flutter_app/screens/ProfileScreen.dart';
 import 'package:flutter_app/screens/RidesScreen.dart';
 import 'package:flutter_app/services/fakeDB.dart';
 
+import 'package:flutter_app/screens/chrisHomeScreen.dart';
+
+
 class MyApp extends StatefulWidget {
   final int selectedIndex;
 
@@ -59,7 +62,7 @@ class _MyAppState extends State<MyApp> {
     _selectedIndex = widget.selectedIndex;
     switch (_selectedIndex) {
       case 0:
-        _selectedScreen = HomeScreen();
+        _selectedScreen = chrisHomeScreen();
         break;
       case 1:
         _selectedScreen = RidesScreen(userModel: randomUser12,);
@@ -106,7 +109,8 @@ class _MyAppState extends State<MyApp> {
               _selectedIndex = index;
               switch (_selectedIndex) {
                 case 0:
-                  _selectedScreen = HomeScreen();
+                  _selectedScreen = chrisHomeScreen();
+
                   break;
                 case 1:
                   _selectedScreen = RidesScreen(userModel: randomUser12);

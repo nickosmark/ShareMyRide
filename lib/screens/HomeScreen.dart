@@ -20,23 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_left),
-          onPressed: (){
-
-          },
-        ),
-        title: Text("New York"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: (){
-
-            },
-          )
-        ],
-      ),
       body: Stack(
         children: <Widget>[
           _googlemap(context),

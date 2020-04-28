@@ -6,7 +6,7 @@ import 'screens/RidesScreen.dart';
 import 'services/fakeDB.dart';
 import 'package:flutter_app/screens/MyApp.dart';
 
-void main() => runApp(MyApp(selectedIndex: 1,));
+void main() => runApp(MyApp(selectedIndex: 0,));
 
 
 

@@ -191,6 +191,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
               onSelected: (Place place) async {
                 final geolocation = await place.geolocation;
                 startCoords = geolocation.coordinates;
+                mapController.animateCamera(CameraUpdate.newLatLngZoom(startCoords, 15));
                 if(str=="From: "){
                   from = place.description;
                   _originLatitude = startCoords.latitude;

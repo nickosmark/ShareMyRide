@@ -73,6 +73,10 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
           return searchScaffold();
         }
         break;
+      default:
+        {
+          return homeScaffold();
+        }
     }
   }
 
@@ -85,6 +89,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             target: LatLng(37.9838, 23.7275),
             zoom: 15
         ),
+        zoomControlsEnabled: false,
         myLocationEnabled: true,
         tiltGesturesEnabled: true,
         compassEnabled: true,
@@ -198,7 +203,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                   _originLongitude = startCoords.longitude;
                 }
 
-
                 _addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
                 if(str=="To: "){
                   to = place.description;
@@ -210,17 +214,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
               },
             )
-//          TextField(
-//            controller: controller,
-//            decoration: InputDecoration(
-//                filled: true,
-//                fillColor: Colors.white,
-//                prefixIcon: Icon(
-//                  Icons.location_on,
-//                  color: clr,
-//                ),
-//                labelText: str),
-//          ),
         ));
   }
   // method thad adds the polyline to the list of polylines
@@ -252,7 +245,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     polylineCoordinates.clear();
   }
 
-
   // method that adds the marker to the map
   _addMarker(LatLng position, String id, BitmapDescriptor descriptor, String info){
     setState(() {
@@ -265,25 +257,32 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
           ));
       markers[markerId] = marker;
     });
-
   }
 
   Align dateField() {
     return Align(
         alignment: Alignment.topCenter,
         child: Padding(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 190.0),
+            padding: EdgeInsets.only(left: 18.0, right: 18.0, top: 190.0),
             child: DateTimeField(
               format: format,
               controller: dateController,
               decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.white,
-                  prefixIcon: Icon(
-                    Icons.calendar_today,
-                    color: Colors.black38,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(5.0)
                   ),
-                  labelText: "Date: "),
+                  suffixIcon: Icon(
+                    Icons.calendar_today,
+                    color: Colors.black,
+                  ),
+                  fillColor: Colors.white,
+                  labelText: "Date: ",
+                  labelStyle: TextStyle(
+                    color: Colors.black
+                  )
+              ),
               onShowPicker: (context, currentValue) async {
                 final date = await showDatePicker(
                     context: context,

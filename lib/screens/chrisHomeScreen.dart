@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -33,7 +34,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   final dateController = TextEditingController();
   final format = DateFormat("dd-MM-yy HH:mm");
-  int mode = 0;
   String from = "";
   String to = "";
   String date;
@@ -43,7 +43,9 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       name:'Your dad/mom', reviewText:'The worst driver... Women drive better than non-binarys!', rating: 0.5);
   static ReviewCard reviewCard = new ReviewCard(reviewModel: reviewModel);
   List <ReviewCard> reviewList = [reviewCard, reviewCard, reviewCard, reviewCard, reviewCard, reviewCard];
-  bool showResults = true;
+  bool showStartingScreen = true;
+  bool showResults = false;
+  bool showDetails = false;
 
   @override
   void dispose() {
@@ -62,25 +64,10 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    switch (mode) {
-      case 0:
-        {
-          return homeScaffold();
-        }
-        break;
-      case 1:
-        {
-          return searchScaffold();
-        }
-        break;
-      default:
-        {
-          return homeScaffold();
-        }
-    }
+    return homeScaffold();
   }
 
-  Widget _googlemap(BuildContext context){
+  Widget _googleMap(BuildContext context){
     return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
@@ -102,7 +89,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     );
   }
   void _onMapCreated(GoogleMapController controller) async{
-
     mapController = controller;
     mapController.setMapStyle(_mapStyle);
   }
@@ -116,106 +102,45 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   Widget homeScaffold() {
     return Scaffold(
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: FloatingActionButton.extended(
-              onPressed: () {
-                _removePolylines();
-                date = dateController.text;
-                setState(() {
-                  mode = 1;
-                  results = [_listResultItem(), _listResultItem(), _listResultItem()];
-                });
-              }, //onPressed
-              label: Text('Search'),
-              icon: Icon(Icons.search),
-              backgroundColor: Colors.blue,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: FloatingActionButton.extended(
-              onPressed: () {
-                String text1 = from+  "\n";
-                String text2 = to+  "\n";
-                String text3 = dateController.text;
-                return showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      content: Text(text1 + text2 + text3),
-                    );
-                  },
-                );
-              }, //onPressed
-              label: Text('Create'),
-              icon: Icon(Icons.add),
-              backgroundColor: Colors.blue,
-            ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Stack(
+      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomPadding: false,
+      body: Stack(
           children: <Widget>[
-            _googlemap(context),
-            dateField(),
-            fillField("To: ", Colors.red, 120.0, BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueRed
-            )),
-            fillField("From: ", Colors.blue, 50.0, BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueBlue
-            )),
-
-
+            _googleMap(context),
+            _startingScreen(),
+            _resultsScreen(),
+            _detailsScreen()
           ],
-        ),
       ),
     );
   }
 
-  Align fillField(String str, Color clr, double top, BitmapDescriptor bitmapDescriptor) {
-    return Align(
-        alignment: Alignment.topCenter,
-        child: Padding(
-            padding: EdgeInsets.only(left: 10.0, right: 10.0, top: top),
-            child:
-            SearchMapPlaceWidget(
-              apiKey: googleAPiKey,
-              // The language of the autocompletion
-              language: 'el',
-              placeholder: str,
-              icon: IconData(0xe55f, fontFamily: 'MaterialIcons'),
-              iconColor: clr,
-              // The position used to give better recomendations. In this case we are using the user position
-              location: LatLng(37.9931036, 23.7301123),
-              radius: 30000,
-              onSelected: (Place place) async {
-                final geolocation = await place.geolocation;
-                startCoords = geolocation.coordinates;
-                mapController.animateCamera(CameraUpdate.newLatLngZoom(startCoords, 15));
-                if(str=="From: "){
-                  from = place.description;
-                  _originLatitude = startCoords.latitude;
-                  _originLongitude = startCoords.longitude;
-                }
-
-                _addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
-                if(str=="To: "){
-                  to = place.description;
-                  _destLatitude = startCoords.latitude;
-                  _destLongitude = startCoords.longitude;
-                  print("polyline called");
-                  _getPolyline();
-                }
-
-              },
-            )
-        ));
+  Widget _startingScreen(){
+    return Visibility(
+      visible: showStartingScreen,
+      child: Stack(
+        children: <Widget>[
+          SizedBox(
+            height: 250.0,
+            child: ListView(
+              children: <Widget>[
+                fillField("From: ", Colors.blue, 10.0, BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueBlue,
+                )),
+                fillField("To: ", Colors.red, 10.0, BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueRed
+                )),
+                dateField(),
+              ],
+            ),
+          ),
+          bottomLeftButton(80.0, Icons.search, "Search", _onSearchPressed),
+          bottomLeftButton(15.0, Icons.add, "Create", _addPolyLine),
+        ],
+      ),
+    );
   }
+
   // method thad adds the polyline to the list of polylines
   // that will display on map
   _addPolyLine() {
@@ -259,11 +184,52 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     });
   }
 
+  Align fillField(String str, Color clr, double top, BitmapDescriptor bitmapDescriptor) {
+    return Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+            padding: EdgeInsets.only(left: 10.0, right: 10.0, top: top),
+            child:
+            SearchMapPlaceWidget(
+              apiKey: googleAPiKey,
+              // The language of the autocompletion
+              language: 'el',
+              placeholder: str,
+              icon: IconData(0xe55f, fontFamily: 'MaterialIcons'),
+              iconColor: clr,
+              // The position used to give better recomendations. In this case we are using the user position
+              location: LatLng(37.9931036, 23.7301123),
+              radius: 30000,
+              onSelected: (Place place) async {
+                final geolocation = await place.geolocation;
+                startCoords = geolocation.coordinates;
+                mapController.animateCamera(CameraUpdate.newLatLngZoom(startCoords, 15));
+
+                if(str=="From: "){
+                  from = place.description;
+                  _originLatitude = startCoords.latitude;
+                  _originLongitude = startCoords.longitude;
+                }
+
+                _addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
+                if(str=="To: "){
+                  to = place.description;
+                  _removePolylines();
+                  _destLatitude = startCoords.latitude;
+                  _destLongitude = startCoords.longitude;
+                  _getPolyline();
+                }
+              },
+
+            )
+        ));
+  }
+
   Align dateField() {
     return Align(
         alignment: Alignment.topCenter,
         child: Padding(
-            padding: EdgeInsets.only(left: 18.0, right: 18.0, top: 190.0),
+            padding: EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
             child: DateTimeField(
               format: format,
               controller: dateController,
@@ -301,17 +267,71 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                 }
               },
             )));
-  }
+  }//dateField
 
-  Scaffold searchScaffold() {
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[_googlemap(context), _showResults(), _showDetails()],
+  Widget bottomLeftButton(double bottom, IconData icon, String label, Function onPressed) {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Visibility(
+        visible: true,
+        child: Padding(
+          padding: EdgeInsets.only(right: 10.0, bottom: bottom),
+          child: SizedBox(
+            height: 60.0,
+            width: 120.0,
+            child: FlatButton(
+              onPressed: () {
+                onPressed();
+              },
+              color: Colors.blue,
+              textColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                side: BorderSide.none,
+                borderRadius: BorderRadius.circular(50.0)
+              ),
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(icon),
+                  Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18.0
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _showResults() {
+  //the method called when the user presses the search button
+  _onSearchPressed() {
+    _removePolylines();
+    date = dateController.text;
+    setState(() {
+      showStartingScreen = false;
+      showResults = true;
+      results = [_listResultItem(), _listResultItem(), _listResultItem()];
+    });
+  }//onSearchPressed
+
+  //the method called when the user presses the create button
+  _onCreatePressed() {
+    _removePolylines();
+    date = dateController.text;
+    setState(() {
+
+    });
+  }//onCreatePressed
+
+  Widget _resultsScreen() {
     return Align(
         alignment: Alignment.bottomLeft,
         child: Visibility(
@@ -379,20 +399,19 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       onTap: () {
         setState(() {
           showResults = false;
+          showDetails = true;
         });
       },
       child: Container(width: 300, child: resultCard),
     );
   } //list items
 
-  Widget _showDetails() {
-
+  Widget _detailsScreen() {
     return Align(
       alignment: Alignment.bottomLeft,
       child: Visibility(
-        visible: !showResults,
+        visible: showDetails,
         child: GestureDetector(
-
           child: Stack(
             alignment: AlignmentDirectional.bottomCenter,
             children: <Widget>[

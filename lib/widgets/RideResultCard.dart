@@ -4,7 +4,7 @@ class RideResultCard extends StatelessWidget {
 
   String from;
   String to;
-  String name = 'Aleksandros Papaxrusan8opoulos';
+  String name = 'Aleksandros aleksandro';
 
   RideResultCard({
     this.from,
@@ -13,7 +13,6 @@ class RideResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double height = name.length < 23 ? 29.0 : 0.0;
     return Card(
       color: Colors.yellow[50],
       child: ListTile(
@@ -28,7 +27,7 @@ class RideResultCard extends StatelessWidget {
         subtitle: Column(
           children: <Widget>[
             SizedBox(
-              height: height,
+              height: 7.0,
             ),
             Text(from),
             Icon(

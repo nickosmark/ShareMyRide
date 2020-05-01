@@ -91,6 +91,30 @@ class FakeDB {
     ],
   );
 
+  static final ReviewModel review1 = new ReviewModel(
+    imageUrl: 'https://randomuser.me/api/portraits/men/52.jpg',
+    name: 'John Ioannides',
+    reviewText:
+    'God bless Trump!! America is the best country in the world but this driver is shit.',
+    rating: 5.0,
+  );
+
+  static final ReviewModel review2 = new ReviewModel(
+    imageUrl: 'https://randomuser.me/api/portraits/men/6.jpg',
+    name: 'Donald Trump',
+    reviewText: 'covfefe',
+    rating: 2.0,
+  );
+
+  static final ReviewModel review3 = new ReviewModel(
+    imageUrl: 'https://randomuser.me/api/portraits/men/17.jpg',
+    name: 'Kuriakos Mitsotakis',
+    reviewText: 'Menoume Spiti gia na exoume tin ugeia mas',
+    rating: 5.0,
+  );
+
+  static final List<ReviewModel> randomReviewList = [review1, review2, review3];
+
 
 }
 

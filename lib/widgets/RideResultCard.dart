@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/services/fakeDB.dart';
 
 class RideResultCard extends StatelessWidget {
 
-  String from;
-  String to;
-  String name = 'Aleksandros aleksandro';
+  final String from;
+  final String to;
+  final UserModel userModel;
 
   RideResultCard({
     this.from,
-    this.to
+    this.to,
+    this.userModel
   });
 
   @override
@@ -22,7 +25,7 @@ class RideResultCard extends StatelessWidget {
         ),
         title: Padding(
           padding: const EdgeInsets.only(top: 10.0),
-          child: Text(name),
+          child: Text(userModel.name),
         ),
         subtitle: Column(
           children: <Widget>[

@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,6 +10,7 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter_app/widgets/RideResultCard.dart';
 import 'package:flutter_app/widgets/ReviewCard.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
+import 'package:flutter_app/services/fakeDB.dart';
 
 class ChrisHomeScreen extends StatefulWidget {
   @override
@@ -39,8 +39,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   String date;
   List<Widget> results;
   RideResultCard resultCard = new RideResultCard();
-  static ReviewModel reviewModel = new ReviewModel(imageUrl: 'https://img.documentonews.gr/unsafe/1000x600/smart/http://img.dash.documentonews.gr/documento/imagegrid/2018/10/31/5bd98303cd3a18740d2cf935.jpg',
-      name:'Your dad/mom', reviewText:'The worst driver... Women drive better than non-binarys!', rating: 0.5);
+  static ReviewModel reviewModel = FakeDB.review1;
   static ReviewCard reviewCard = new ReviewCard(reviewModel: reviewModel);
   List <ReviewCard> reviewList = [reviewCard, reviewCard, reviewCard, reviewCard, reviewCard, reviewCard];
   bool showStartingScreen = true;

@@ -134,7 +134,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             ),
           ),
           bottomLeftButton(80.0, Icons.search, "Search", _onSearchPressed),
-          bottomLeftButton(15.0, Icons.add, "Create", _addPolyLine),
+          bottomLeftButton(15.0, Icons.add, "Create", _onCreatePressed),
         ],
       ),
     );
@@ -326,7 +326,12 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     _removePolylines();
     date = dateController.text;
     setState(() {
-
+      showDialog(context: context, child:
+      new AlertDialog(
+        title: new Text('$_originLatitude + $_originLongitude'),
+        content: new Text('$_destLatitude + $_destLongitude'),
+      )
+      );
     });
   }//onCreatePressed
 

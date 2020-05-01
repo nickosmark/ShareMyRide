@@ -2,6 +2,7 @@
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/models/RidesModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FakeDB {
 
@@ -43,9 +44,9 @@ class FakeDB {
   );
 
   static final RidesModel ride55 = RidesModel(
-    fromWhere: 37.0,
-    toWhere: 44.0,
-    dateTime: null,
+    randPoints: [new LatLng(38.236785, 23.94523), new LatLng(38.324466, 23.844654), new LatLng(38.787454, 23.563211), new LatLng(37.67887, 23.454545), new LatLng(37.67887, 22.45)],
+    toLatLng: new LatLng(38.67887, 23.45),
+    dateTime: new DateTime(2020),
     driver: randomDriver39,
   );
 

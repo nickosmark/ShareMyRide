@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/models/RidesModel.dart';
 import 'package:flutter_app/services/fakeDB.dart';
 
 class RideResultCard extends StatelessWidget {
@@ -20,7 +21,7 @@ class RideResultCard extends StatelessWidget {
       color: Colors.yellow[50],
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: new NetworkImage('https://img.documentonews.gr/unsafe/1000x600/smart/http://img.dash.documentonews.gr/documento/imagegrid/2018/10/31/5bd98303cd3a18740d2cf935.jpg'),
+          backgroundImage: new NetworkImage(userModel.getUrlFromNameHash()),
           radius: 30.0,
         ),
         title: Padding(

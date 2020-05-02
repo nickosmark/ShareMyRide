@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/screens/MyApp.dart';
+import 'package:flutter_app/services/DataBase.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatelessWidget {
+
+  final DataBase db;
+
+  LoginScreen({@required this.db});
+  String phoneInput;
   var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   var lightBlueColor = Colors.blue;
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
@@ -48,7 +55,12 @@ class LoginScreen extends StatelessWidget {
                         obscureText: false,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: "Enter your phone number"),
+                            labelText: "Enter your phone number",
+                        ),
+                        onChanged: (value){
+                          print(' typing : $value');
+                          phoneInput = value;
+                        },
                       ),
                     ),
                     Row(
@@ -57,7 +69,20 @@ class LoginScreen extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.only(top: 50.0, bottom: 80.0),
                           child: RaisedButton(
-                            onPressed: () {},
+                            onPressed: () async{
+                              //TODO this should be on a new Button. Pls change
+                              var result = await db.auth.getAnonUserSingInResult();
+                              if(result == null){
+                                print('problem with registationn :(((((((((((');
+                              }else{
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MyApp(db: this.db, selectedIndex: 0,),
+                                  ),
+                                );
+                              }
+                            },
                             child: Text(
                               "Next",
                               style: TextStyle(color: Colors.white),

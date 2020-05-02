@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/screens/AuthScreen.dart';
 import 'package:flutter_app/screens/MyApp.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
+import 'package:flutter_app/services/DataBase.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/services/fakeDB.dart';
 
@@ -12,8 +14,9 @@ import 'package:flutter_app/services/fakeDB.dart';
 class ProfileEditScreen extends StatefulWidget {
   //Checks if the User is a new User so that close and check buttons have different behaviour
   final bool isNewUser;
+  final DataBase db;
   //TODO oti ekana paei strafi xreiazetai kainourgio ProfileCreateScreen h passaro userModel
-  ProfileEditScreen({this.isNewUser});
+  ProfileEditScreen({this.db, this.isNewUser});
 
   @override
   _ProfileEditScreenState createState() => _ProfileEditScreenState();
@@ -45,6 +48,19 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 //    FakeDB.randomUser12.gender = this.gender;
 //  }
 
+  void deleteAccount() async {
+    var user = await widget.db.auth.getCurrentFireBaseUser();
+    print("deleting user...");
+    await user.delete();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AuthScreen(),
+      ),
+    );
+  }
+
+
   void iconsClickEventHandler(BuildContext context, String iconName) {
     if (iconName == 'check') {
       //TODO edit UserModel object. EDIT ! NOT CREATE!
@@ -72,6 +88,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     if (iconName == 'close') {
       if (widget.isNewUser) {
         //TODO DELETE ACCOUNT
+        deleteAccount();
       } else {
         Navigator.push(
           context,

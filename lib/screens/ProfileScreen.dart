@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/services/DataBase.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
@@ -7,8 +8,10 @@ import 'package:flutter_app/widgets/ReviewCard.dart';
 
 class ProfileScreen extends StatelessWidget {
   final UserModel userModel;
+  final DataBase db;
 
   ProfileScreen({
+    @required this.db,
     @required this.userModel,
   });
 
@@ -67,7 +70,7 @@ class ProfileScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfileEditScreen(isNewUser: false,)),
+                                  builder: (context) => ProfileEditScreen(db: this.db, isNewUser: false,)),
                             );
                           }),
                     ],

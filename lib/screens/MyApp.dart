@@ -3,19 +3,21 @@ import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/screens/HomeScreen.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
 import 'package:flutter_app/screens/RidesScreen.dart';
+import 'package:flutter_app/services/DataBase.dart';
 import 'package:flutter_app/services/fakeDB.dart';
 
 import 'package:flutter_app/screens/chrisHomeScreen.dart';
 
 
 class MyApp extends StatefulWidget {
+  final DataBase db;
   final int selectedIndex;
 
   // MyApp contsructor takes a selectedIndex;
   // 0 for HomeScreen
   // 1 for Rides
   // 2 for Profile
-  MyApp({this.selectedIndex});
+  MyApp({this.db,this.selectedIndex});
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -40,6 +42,7 @@ class _MyAppState extends State<MyApp> {
   //Create a random User. Can be driver or passenger
   UserModel randomUser12 = passengerr;
 
+  DataBase db;
   void enimeroseTonBob(){
     //TODO isDriver is
     ridaki.driver.addToUserRideList(incomingRide: ridaki, fellow: passengerr, isDriver: true);
@@ -58,7 +61,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     //_selectedScreen = widget.selectedScreen;
-    enimeroseTonBob();
+    //enimeroseTonBob();
+    db = widget.db;
     _selectedIndex = widget.selectedIndex;
     switch (_selectedIndex) {
       case 0:

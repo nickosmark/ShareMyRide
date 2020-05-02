@@ -89,11 +89,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       if (widget.isNewUser) {
         //TODO DELETE ACCOUNT
         deleteAccount();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AuthScreen(),
+          ),
+        );
       } else {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MyApp(selectedIndex: 2),
+            builder: (context) => MyApp(db: widget.db,selectedIndex: 2),
           ),
         );
       }
@@ -261,6 +267,31 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         border: OutlineInputBorder(),
                         icon: Icon(Icons.directions_car),
                         labelText: "Enter car information"),
+                  ),
+                ),
+                Container(
+                  child: RaisedButton(
+                    onPressed: () async{
+                      //delete user
+                      print("deleting user...");
+                      await deleteAccount();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AuthScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "DELETE USER!!!",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.0,
+                      ),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    color: Colors.blue,
                   ),
                 ),
               ],

@@ -64,7 +64,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   void iconsClickEventHandler(BuildContext context, String iconName) {
     if (iconName == 'check') {
       //TODO edit UserModel object. EDIT ! NOT CREATE!
+      //TODO check if phone, name,etc are null-> show a toast
       //updateFakeUser();
+      if(this.phone.isEmpty){
+          //show dialog
+      }else{
+        //update UserModel
+      }
       //If the user is new navigate to Home Screen.If she
       //just edits her profile navigate to profile screen
       if (widget.isNewUser) {
@@ -87,7 +93,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     //
     if (iconName == 'close') {
       if (widget.isNewUser) {
-        //TODO DELETE ACCOUNT
         deleteAccount();
         Navigator.push(
           context,
@@ -285,7 +290,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     child: Text(
                       "DELETE USER!!!",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.red,
                         fontSize: 15.0,
                       ),
                     ),

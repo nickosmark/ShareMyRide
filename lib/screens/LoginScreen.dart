@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/MyApp.dart';
+import 'package:flutter_app/screens/ProfileEditScreen.dart';
 import 'package:flutter_app/services/DataBase.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -69,19 +70,8 @@ class LoginScreen extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.only(top: 50.0, bottom: 80.0),
                           child: RaisedButton(
-                            onPressed: () async{
-                              //TODO this should be on a new Button. Pls change
-                              var result = await db.auth.getAnonUserSingInResult();
-                              if(result == null){
-                                print('problem with registationn :(((((((((((');
-                              }else{
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MyApp(db: this.db, selectedIndex: 0,),
-                                  ),
-                                );
-                              }
+                            onPressed: () {
+                              //TODO phone auth...
                             },
                             child: Text(
                               "Next",
@@ -102,7 +92,38 @@ class LoginScreen extends StatelessWidget {
                           child: Image.asset('assets/images/login_icon.png', color: darkBlueColor,),
                         )
                       ],
-                    )
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0.0, 25.0, 8.0, 0.0),
+                          child: InkWell(
+                            onTap: () async{
+                              var result = await db.auth.getAnonUserSingInResult();
+                              if(result == null){
+                                print('problem with registationn :(((((((((((');
+                              }else{
+                                //TODO not MyApp but ProfileEditScreen
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfileEditScreen(db: db, isNewUser: true),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Text(
+                              'Sign in anonymously',
+                              style: TextStyle(
+                                color: darkBlueColor,
+                                fontSize: 15.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

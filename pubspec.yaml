@@ -14,6 +14,10 @@ dependencies:
   search_map_place: ^0.3.0
   flutter_polyline_points: ^0.1.0
   google_fonts: ^1.0.0
+  firebase_core: ^0.4.4+3
+  firebase_auth: ^0.16.0
+  cloud_firestore: ^0.13.5
+  flutter_spinkit: ^4.1.2+1
 
   flutter_rating_bar: ^3.0.1+1
   flutter:

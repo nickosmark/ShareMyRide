@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/models/UserRide.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
 import 'package:flutter_app/widgets/ReviewCard.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -45,8 +46,8 @@ class RidesScreen extends StatelessWidget {
           if(item.isDriver){
             String url = item.fellowTraveler.getUrlFromNameHash(genderInput: item.fellowTraveler.gender);
             String name = item.fellowTraveler.name;
-            double fromWhere = item.ride.fromWhere;
-            double toWhere = item.ride.toWhere;
+            String fromWhere = item.ride.fromText;
+            String toWhere = item.ride.toText;
             pendingList.add(pendingCardDriver(url, name, fromWhere, toWhere));
           }else{
             //SHOW PASSENGER DATA
@@ -54,8 +55,8 @@ class RidesScreen extends StatelessWidget {
             // check if this is the same, should be the same??:
             // String url = item.ride.driver.getUrlFromNameHash() ;
             String name = item.fellowTraveler.name;
-            double fromWhere = item.ride.fromWhere;
-            double toWhere = item.ride.toWhere;
+            String fromWhere = item.ride.fromText;
+            String toWhere = item.ride.toText;
             pendingList.add(pendingCardPassenger(url, name, fromWhere, toWhere));
           }
 
@@ -181,7 +182,7 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget pendingCardDriver(String url, String name, double fromWhere, double toWhere){
+  Widget pendingCardDriver(String url, String name, String fromWhere, String toWhere){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
@@ -218,7 +219,7 @@ class RidesScreen extends StatelessWidget {
   }
 
   //Should show the name of the driver
-  Widget pendingCardPassenger(String url, String name, double fromWhere, double toWhere){
+  Widget pendingCardPassenger(String url, String name, String fromWhere, String toWhere){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(

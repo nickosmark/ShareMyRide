@@ -93,6 +93,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     //
     if (iconName == 'close') {
       if (widget.isNewUser) {
+        //DELETE user if he hasn't entered anything and
         deleteAccount();
         Navigator.push(
           context,

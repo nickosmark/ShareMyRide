@@ -1,10 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_app/models/RidesModel.dart';
+import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/services/Authenticator.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
 class DataBase {
   final Authenticator auth;
   final db = Firestore.instance;
+  final Geoflutterfire geo = Geoflutterfire();
   DataBase({this.auth});
 
   Future<List<Map>> getAllUserModelsFromDb() async{
@@ -16,6 +21,7 @@ class DataBase {
 
     return resultDB;
   }
+
 
 
   void signUpUser() async{

@@ -7,6 +7,7 @@ import 'package:flutter_app/screens/ProfileEditScreen.dart';
 import 'package:flutter_app/widgets/ReviewCard.dart';
 
 class ProfileScreen extends StatelessWidget {
+  //TODO remove userModel from constructor
   final UserModel userModel;
   final DataBase db;
 
@@ -21,8 +22,7 @@ class ProfileScreen extends StatelessWidget {
   var lightBlueColor = Colors.blue;
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
 
-  @override
-  Widget build(BuildContext context) {
+  void addReviewCards(UserModel userModel){
     List<ReviewModel> reviewsListFromConstr = userModel.reviewsList;
     if (reviewsListFromConstr.isEmpty) {
       reviewWidgetList.add(
@@ -33,7 +33,37 @@ class ProfileScreen extends StatelessWidget {
         reviewWidgetList.add(ReviewCard(reviewModel: item));
       }
     }
-    return MaterialApp(
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Future<UserModel> futureUser = db.getCurrentUserModel();
+    UserModel initialUser = UserModel(
+      id: 0,
+      name:'waiting...',
+      gender: Gender.nonBinary,
+      phone: 'waiting...',
+      email: 'waiting...',
+      rating: 0.0,
+      carInfo: 'waiting...',
+      reviewsList: [],
+      ridesList: [],
+    );
+    UserModel errorUser = UserModel(
+      id: 0,
+      name:'ERROR',
+      gender: Gender.nonBinary,
+      phone: 'ERROR',
+      email: 'ERROR',
+      rating: 0.0,
+      carInfo: 'ERROR',
+      reviewsList: [],
+      ridesList: [],
+    );
+
+    Widget userScreen(UserModel userModel){
+      addReviewCards(userModel);
+      return MaterialApp(
       title: 'ShareMyRide',
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
@@ -60,7 +90,7 @@ class ProfileScreen extends StatelessWidget {
               children: <Widget>[
                 Container(
                   margin:
-                      EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
@@ -85,7 +115,7 @@ class ProfileScreen extends StatelessWidget {
                 Text(
                   userModel.name,
                   style:
-                      GoogleFonts.oswald(textStyle: TextStyle(fontSize: 30.0)),
+                  GoogleFonts.oswald(textStyle: TextStyle(fontSize: 30.0)),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -96,8 +126,8 @@ class ProfileScreen extends StatelessWidget {
                         'My Rating:',
                         style: GoogleFonts.oswald(
                             textStyle: TextStyle(
-                          fontSize: 15.0,
-                        )),
+                              fontSize: 15.0,
+                            )),
                       ),
                     ),
                     Container(
@@ -109,8 +139,8 @@ class ProfileScreen extends StatelessWidget {
                             userModel.getRatingAverage().toString(),
                             style: GoogleFonts.oswald(
                                 textStyle: TextStyle(
-                              fontSize: 15.0,
-                            )),
+                                  fontSize: 15.0,
+                                )),
                           ),
                           Icon(
                             Icons.star,
@@ -129,8 +159,8 @@ class ProfileScreen extends StatelessWidget {
                         'Personal Info',
                         style: GoogleFonts.oswald(
                             textStyle: TextStyle(
-                          fontSize: 20.0,
-                        )),
+                              fontSize: 20.0,
+                            )),
                       ),
                     ),
                   ],
@@ -157,8 +187,8 @@ class ProfileScreen extends StatelessWidget {
                         'Car Info',
                         style: GoogleFonts.oswald(
                             textStyle: TextStyle(
-                          fontSize: 20.0,
-                        )),
+                              fontSize: 20.0,
+                            )),
                       ),
                     ),
                   ],
@@ -178,8 +208,8 @@ class ProfileScreen extends StatelessWidget {
                         'Reviews',
                         style: GoogleFonts.oswald(
                             textStyle: TextStyle(
-                          fontSize: 20.0,
-                        )),
+                              fontSize: 20.0,
+                            )),
                       ),
                     ),
                   ],
@@ -193,5 +223,30 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
     );
+    }
+
+    return FutureBuilder<UserModel>(
+      future: futureUser,
+      initialData: initialUser,
+      builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot){
+        if(snapshot.hasData){
+          print('WE HAVE DATA!!!');
+          return userScreen(snapshot.data);
+        }else if(snapshot.hasError){
+          print('error');
+          return userScreen(errorUser);
+        }else{
+          //waiting...
+          print('waiting');
+          return SizedBox(
+            child: CircularProgressIndicator(),
+            width: 60,
+            height: 60,
+          );
+        }
+
+        }
+    );
+
   }
 }

@@ -96,7 +96,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MyApp(selectedIndex: 0),
+                builder: (context) => MyApp(db: widget.db,selectedIndex: 0),
               ),
             );
           }
@@ -107,7 +107,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MyApp(selectedIndex: 2),
+            builder: (context) => MyApp(db: widget.db,selectedIndex: 2),
           ),
         );
       }

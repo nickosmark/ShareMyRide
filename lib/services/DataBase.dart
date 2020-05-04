@@ -31,6 +31,19 @@ class DataBase {
       results.add(i.data);
     }
     generatedUserModel = UserModel.fromMap(results[0]);
+    if(currentUser == 'NoUserYet'){
+      generatedUserModel = UserModel(
+        id: 0,
+        name: 'No User Yet :(',
+        gender: Gender.nonBinary,
+        phone: '0000000',
+        email: 'error no email',
+        carInfo: 'no car mate :/',
+        rating: 0.0,
+        reviewsList: [],
+        ridesList: [],
+      );
+    }
     return generatedUserModel;
   }
 

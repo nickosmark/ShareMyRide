@@ -49,7 +49,7 @@ class Authenticator {
     var currentUser = await _auth.currentUser();
     String currentUserId = currentUser.uid;
     if(currentUserId == null){
-      return 'No user yet!';
+      return 'NoUserYet';
     }else{
       return currentUser.uid;
     }

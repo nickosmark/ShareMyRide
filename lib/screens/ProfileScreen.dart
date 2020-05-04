@@ -8,12 +8,11 @@ import 'package:flutter_app/widgets/ReviewCard.dart';
 
 class ProfileScreen extends StatelessWidget {
   //TODO remove userModel from constructor
-  final UserModel userModel;
+
   final DataBase db;
 
   ProfileScreen({
     @required this.db,
-    @required this.userModel,
   });
 
   List<Widget> reviewWidgetList = [];

@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> {
         _selectedScreen = RidesScreen(userModel: currentUser,);
         break;
       case 2:
-        _selectedScreen = ProfileScreen(db: db, userModel: currentUser);
+        _selectedScreen = ProfileScreen(db: db,);
         break;
     }
 
@@ -123,7 +123,7 @@ class _MyAppState extends State<MyApp> {
                   _selectedScreen = RidesScreen(userModel: currentUser);
                   break;
                 case 2:
-                  _selectedScreen = ProfileScreen(db: db,userModel: currentUser);
+                  _selectedScreen = ProfileScreen(db: db,);
                   break;
               }
             });

@@ -64,7 +64,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   void iconsClickEventHandler(BuildContext context, String iconName) async {
     if (iconName == 'check') {
-      //TODO edit UserModel object. EDIT ! NOT CREATE!
       //If the user is new navigate to Home Screen.If she
       //just edits her profile navigate to profile screen
       if (widget.isNewUser) {
@@ -104,6 +103,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         }
 
       } else {
+        //existing user. Update data
+        //TODO update user
+        //check if a specific field is updated in order to
+        // correctly update the database
+
         Navigator.push(
           context,
           MaterialPageRoute(

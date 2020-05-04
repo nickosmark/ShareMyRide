@@ -104,7 +104,7 @@ class LoginScreen extends StatelessWidget {
                               if(result == null){
                                 print('problem with registationn :(((((((((((');
                               }else{
-                                //TODO not MyApp but ProfileEditScreen
+                                //If no problems with sing in go to profileScreen to enter data
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

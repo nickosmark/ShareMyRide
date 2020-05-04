@@ -61,25 +61,48 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
 
-  void iconsClickEventHandler(BuildContext context, String iconName) {
+
+  void iconsClickEventHandler(BuildContext context, String iconName) async {
     if (iconName == 'check') {
       //TODO edit UserModel object. EDIT ! NOT CREATE!
-      //TODO check if phone, name,etc are null-> show a toast
-      //updateFakeUser();
-      if(this.phone.isEmpty){
-          //show dialog
-      }else{
-        //update UserModel
-      }
       //If the user is new navigate to Home Screen.If she
       //just edits her profile navigate to profile screen
       if (widget.isNewUser) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyApp(selectedIndex: 0),
-          ),
-        );
+        //TODO check if phone, name,etc are null-> show a toast
+        //TODO for now i check name, we should check number when PhoneAuth
+        if(this.name.isEmpty){
+          //show dialog
+          print('phone is empty');
+        }else{
+          //This is where a new UserModel get created
+          //Identifier should be phone so i pass UUID to phone number
+          //UserMode id == 0 . I think it should be removed eventually
+          UserModel user = UserModel(
+            id: 0,
+            name: this.name,
+            gender: this.gender,
+            phone: await widget.db.auth.getCurrentFireBaseUserID(),
+            email: this.email,
+            carInfo: this.carInfo,
+            rating: 0.0,
+            reviewsList: [],
+            ridesList: [],
+          );
+          var result = widget.db.createUserModel(user);
+          if(result == null){
+            print('Problem with creation.');
+          }else{
+            //if no problem proceed to MyApp->HomeScreen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyApp(selectedIndex: 0),
+              ),
+            );
+          }
+
+        }
+
       } else {
         Navigator.push(
           context,

@@ -40,15 +40,19 @@ class _MyAppState extends State<MyApp> {
   static var passengerr = FakeDB.randomPassenger12;
 
   //Create a random User. Can be driver or passenger
-  UserModel randomUser12 = passengerr;
+  UserModel currentUser = passengerr;
 
-  DataBase db;
-  void enimeroseTonBob(){
-    //TODO isDriver is
-    ridaki.driver.addToUserRideList(incomingRide: ridaki, fellow: passengerr, isDriver: true);
+
+  void printCurrentUserFromFireStore() async {
+    UserModel currentUser = await db.getCurrentUserModel();
+    print(currentUser.toString());
   }
 
-
+  DataBase db;
+//  void enimeroseTonBob(){
+//    //TODO isDriver is wrong??
+//    ridaki.driver.addToUserRideList(incomingRide: ridaki, fellow: passengerr, isDriver: true);
+//  }
 
 
   //Selected Icon in the bottomNavBar
@@ -60,19 +64,19 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    //_selectedScreen = widget.selectedScreen;
-    //enimeroseTonBob();
     db = widget.db;
+    printCurrentUserFromFireStore();
+    //_selectedScreen = widget.selectedScreen;
     _selectedIndex = widget.selectedIndex;
     switch (_selectedIndex) {
       case 0:
         _selectedScreen = ChrisHomeScreen();
         break;
       case 1:
-        _selectedScreen = RidesScreen(userModel: randomUser12,);
+        _selectedScreen = RidesScreen(userModel: currentUser,);
         break;
       case 2:
-        _selectedScreen = ProfileScreen(db: db, userModel: randomUser12);
+        _selectedScreen = ProfileScreen(db: db, userModel: currentUser);
         break;
     }
 
@@ -114,13 +118,12 @@ class _MyAppState extends State<MyApp> {
               switch (_selectedIndex) {
                 case 0:
                   _selectedScreen = ChrisHomeScreen();
-
                   break;
                 case 1:
-                  _selectedScreen = RidesScreen(userModel: randomUser12);
+                  _selectedScreen = RidesScreen(userModel: currentUser);
                   break;
                 case 2:
-                  _selectedScreen = ProfileScreen(db: db,userModel: randomUser12);
+                  _selectedScreen = ProfileScreen(db: db,userModel: currentUser);
                   break;
               }
             });

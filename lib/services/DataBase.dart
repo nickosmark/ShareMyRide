@@ -6,11 +6,52 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
+class Paths{
+  static String UserModel = 'UserModel';
+  static String ReviewModel = 'ReviewModel';
+  static String UserRide = 'UserRide';
+}
+
 class DataBase {
   final Authenticator auth;
   final db = Firestore.instance;
   final Geoflutterfire geo = Geoflutterfire();
   DataBase({this.auth});
+
+
+  Future<UserModel> getCurrentUserModel() async{
+    UserModel generatedUserModel;
+    var userCollection = db.collection(Paths.UserModel);
+    String currentUser = await auth.getCurrentFireBaseUserID();
+    var query = userCollection.where('phone',isEqualTo: currentUser);
+    var remoteDoc = await query.getDocuments();
+    List results = [];
+    for(var i in remoteDoc.documents){
+      //Map result = i.data;
+      results.add(i.data);
+    }
+    generatedUserModel = UserModel.fromMap(results[0]);
+    return generatedUserModel;
+  }
+
+
+  //should return DocRef??
+  Future<DocumentReference> createUserModel(UserModel user) async{
+    DocumentReference docRef;
+    var userCollection = db.collection(Paths.UserModel);
+    try {
+      docRef = await userCollection.add(user.toMap());
+    }catch (e) {
+      docRef = null;
+    }
+    return docRef;
+  }
+
+  void updateUserModel(UserModel user){
+    var collection = db.collection(Paths.UserModel);
+    //collection.a
+  }
+
 
   Future<List<Map>> getAllUserModelsFromDb() async{
     var remoteDocuments = await db.collection('UserModel').getDocuments();

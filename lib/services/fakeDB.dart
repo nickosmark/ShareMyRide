@@ -43,11 +43,29 @@ class FakeDB {
     ridesList: [],
   );
 
-  static final RidesModel ride55 = RidesModel(
+  static final UserModel randomDriver55 = UserModel(
+    id: 39,
+    name: 'Suppa Hot Fia',
+    gender: Gender.nonBinary,
+    phone: '+30 699999999',
+    email: 'info@covid19.who',
+    carInfo: 'Patty Car',
+    reviewsList: [review1, review2, review3],
+    ridesList: [],
+  );
+
+  static final RidesModel ride39 = RidesModel(
     randPoints: [new LatLng(38.236785, 23.94523), new LatLng(38.324466, 23.844654), new LatLng(38.787454, 23.563211), new LatLng(37.67887, 23.454545), new LatLng(37.67887, 22.45)],
     toLatLng: new LatLng(38.67887, 23.45),
-    dateTime: new DateTime(2020),
+    dateTime: new DateTime(2020, 9, 13, 12, 45),
     driver: randomDriver39,
+  );
+
+  static final RidesModel ride55 = RidesModel(
+    randPoints: [new LatLng(28.236785, 23.94523), new LatLng(28.324466, 23.844654), new LatLng(28.787454, 23.563211), new LatLng(27.67887, 23.454545), new LatLng(27.67887, 22.45)],
+    toLatLng: new LatLng(38.67887, 23.45),
+    dateTime: new DateTime(2020, 8, 26, 23, 0),
+    driver: randomDriver55,
   );
 
   static final UserModel randomPassenger12 = UserModel(
@@ -86,7 +104,7 @@ class FakeDB {
       UserRide(
         status: Status.pending,
         isDriver: false,
-        ride: ride55,
+        ride: ride39,
         fellowTraveler: randomDriver39,
       ),
     ],

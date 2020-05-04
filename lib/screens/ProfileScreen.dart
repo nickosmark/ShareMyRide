@@ -225,9 +225,11 @@ class ProfileScreen extends StatelessWidget {
     );
     }
 
+
+    //TODO show spinner or initData. InitData shows
     return FutureBuilder<UserModel>(
       future: futureUser,
-      initialData: initialUser,
+      //initialData: initialUser,
       builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot){
         if(snapshot.hasData){
           print('WE HAVE DATA!!!');
@@ -238,10 +240,12 @@ class ProfileScreen extends StatelessWidget {
         }else{
           //waiting...
           print('waiting');
-          return SizedBox(
-            child: CircularProgressIndicator(),
-            width: 60,
-            height: 60,
+          return Center(
+            child: SizedBox(
+              child: CircularProgressIndicator(),
+              width: 100,
+              height: 100,
+            ),
           );
         }
 

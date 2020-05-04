@@ -312,15 +312,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       );
                     },
                     child: Text(
-                      "DELETE USER!!!",
+                      "DELETE USER",
                       style: TextStyle(
-                        color: Colors.red,
+                        color: Colors.white,
                         fontSize: 15.0,
                       ),
                     ),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0)),
-                    color: Colors.blue,
+                    color: Colors.red[700],
                   ),
                 ),
               ],

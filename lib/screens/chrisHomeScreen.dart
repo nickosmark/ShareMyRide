@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/RidesModel.dart';
+import 'package:flutter_app/models/UserModel.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_app/widgets/RideResultCard.dart';
 import 'package:flutter_app/widgets/ReviewCard.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/services/fakeDB.dart';
+import 'package:flutter_app/services/SearchEngine.dart';
 
 class ChrisHomeScreen extends StatefulWidget {
   @override
@@ -21,7 +24,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   GoogleMapController mapController;
   double _originLatitude, _originLongitude;
-  LatLng startCoords;
+  LatLng startCords, endCords;
   double _destLatitude, _destLongitude;
   Map<MarkerId, Marker> markers = {};
   Map<PolylineId, Polyline> polylines = {};
@@ -33,15 +36,15 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   Completer<GoogleMapController> _controller = Completer();
 
   final dateController = TextEditingController();
-  final format = DateFormat("dd-MM-yy HH:mm");
+  final format = DateFormat("yyyy-MM-dd HH:mm:ss");
   String from = "";
   String to = "";
   String date;
-  List<Widget> results;
-  RideResultCard resultCard = new RideResultCard();
+  List<RidesModel> results = [FakeDB.ride55];
+  UserModel fakeUser = FakeDB.randomDriver39;
   static ReviewModel reviewModel = FakeDB.review1;
   static ReviewCard reviewCard = new ReviewCard(reviewModel: reviewModel);
-  List <ReviewCard> reviewList = [reviewCard, reviewCard, reviewCard, reviewCard, reviewCard, reviewCard];
+  List <ReviewCard> reviewList = [reviewCard];
   bool showStartingScreen = true;
   bool showResults = false;
   bool showDetails = false;
@@ -201,21 +204,21 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
               radius: 30000,
               onSelected: (Place place) async {
                 final geolocation = await place.geolocation;
-                startCoords = geolocation.coordinates;
-                mapController.animateCamera(CameraUpdate.newLatLngZoom(startCoords, 15));
+                startCords = geolocation.coordinates;
+                mapController.animateCamera(CameraUpdate.newLatLngZoom(startCords, 15));
 
                 if(str=="From: "){
                   from = place.description;
-                  _originLatitude = startCoords.latitude;
-                  _originLongitude = startCoords.longitude;
+                  _originLatitude = startCords.latitude;
+                  _originLongitude = startCords.longitude;
                 }
 
                 _addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
                 if(str=="To: "){
                   to = place.description;
                   _removePolylines();
-                  _destLatitude = startCoords.latitude;
-                  _destLongitude = startCoords.longitude;
+                  _destLatitude = startCords.latitude;
+                  _destLongitude = startCords.longitude;
                   _getPolyline();
                 }
               },
@@ -314,10 +317,11 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   _onSearchPressed() {
     _removePolylines();
     date = dateController.text;
+    SearchEngine searchEngine = new SearchEngine(from, to, startCords, endCords, DateTime.parse(date));
+    results = searchEngine.getResults();
     setState(() {
       showStartingScreen = false;
       showResults = true;
-      results = [_listResultItem(), _listResultItem(), _listResultItem()];
     });
   }//onSearchPressed
 
@@ -374,20 +378,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                   Expanded(
                     child: ListView(
                       scrollDirection: Axis.horizontal,
-                      children: <Widget>[
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        _listResultItem(),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        _listResultItem(),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        _listResultItem(),
-                      ],
+                      children: _listResultItem(),
                     ),
                   ),
                 ],
@@ -397,8 +388,29 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         ));
   } //buildContainer
 
-  Widget _listResultItem() {
-    resultCard = new RideResultCard(from: from, to: to);
+  List<Widget> _listResultItem() {
+    List<Widget> items = new List<Widget>();
+    RideResultCard resultCard = new RideResultCard();
+    SizedBox box = new SizedBox(width: 10);
+    String from, to;
+    UserModel userModel = new UserModel();
+    Widget card;
+
+    for(final ride in results){
+      items.add(box);
+      from = ride.fromText;
+      to = ride.toText;
+      userModel = ride.driver;
+      resultCard = new RideResultCard(from: from, to: to, userModel: userModel);
+      card = createCard(resultCard);
+      items.add(card);
+    }
+
+    return items;
+
+  } //list items
+
+  Widget createCard(RideResultCard rideResultCard){
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -406,11 +418,12 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
           showDetails = true;
         });
       },
-      child: Container(width: 300, child: resultCard),
+      child: Container(width: 300, child: rideResultCard),
     );
-  } //list items
+  }
 
-  Widget _detailsScreen() {
+  Widget _detailsScreen(RidesModel ride) {
+    UserModel driver = ride.driver;
     return Align(
       alignment: Alignment.bottomLeft,
       child: Visibility(
@@ -432,12 +445,11 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                   ),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: new NetworkImage(
-                          'https://img.documentonews.gr/unsafe/1000x600/smart/http://img.dash.documentonews.gr/documento/imagegrid/2018/10/31/5bd98303cd3a18740d2cf935.jpg'),
+                      backgroundImage: new NetworkImage(driver.getUrlFromNameHash()),
                       radius: 30.0,
                     ),
                     title: Text(
-                      'Jason Antigoniiiiiiiiiiii',
+                      driver.name,
                       style: TextStyle(fontSize: 20.0),
                     ),
                     subtitle: Row(
@@ -450,7 +462,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                           width: 10.0,
                         ),
                         Text(
-                          'Batmobile',
+                          driver.carInfo,
                           style: TextStyle(fontSize: 20.0),
                         ),
                       ],
@@ -458,7 +470,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text('1.0'),
+                        Text('$driver.rating'),
                         Icon(
                           Icons.star,
                           size: 15.0,
@@ -489,7 +501,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                           child: Column(
                             children: <Widget>[
                               Text(
-                                from,
+                                ride.fromText,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 20.0, color: Colors.white),
@@ -500,7 +512,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                                 color: Colors.white,
                               ),
                               Text(
-                                to,
+                                ride.toText,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 20.0, color: Colors.white),
@@ -556,7 +568,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                       ),
                       Expanded(
                         child: ListView(
-                          children: reviewList,
+                          children: _getReviews(driver.reviewsList),
                         ),
                       ),
                     ],
@@ -569,6 +581,16 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       ),
     );
   } //showDetails
+
+  List<Widget> _getReviews(List<ReviewModel> list){
+    List<ReviewCard> reviews = new List<ReviewCard>();
+
+    for(final review in list){
+
+    }
+
+    return reviews;
+  }
 
 } //build_end
 

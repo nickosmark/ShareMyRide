@@ -22,7 +22,7 @@ class SearchEngine{
   }
 
   List<RidesModel> getResults() {
-    List<RidesModel> results;
+    List<RidesModel> results = new List<RidesModel>();
 
     /*
     In here the function will perform a search query

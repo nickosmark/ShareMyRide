@@ -55,6 +55,8 @@ class FakeDB {
   );
 
   static final RidesModel ride39 = RidesModel(
+    fromText: "fromText1",
+    toText: "toText1",
     randPoints: [new LatLng(38.236785, 23.94523), new LatLng(38.324466, 23.844654), new LatLng(38.787454, 23.563211), new LatLng(37.67887, 23.454545), new LatLng(37.67887, 22.45)],
     toLatLng: new LatLng(38.67887, 23.45),
     dateTime: new DateTime(2020, 9, 13, 12, 45),
@@ -62,6 +64,8 @@ class FakeDB {
   );
 
   static final RidesModel ride55 = RidesModel(
+    fromText: "fromText2",
+    toText: "toText2",
     randPoints: [new LatLng(28.236785, 23.94523), new LatLng(28.324466, 23.844654), new LatLng(28.787454, 23.563211), new LatLng(27.67887, 23.454545), new LatLng(27.67887, 22.45)],
     toLatLng: new LatLng(38.67887, 23.45),
     dateTime: new DateTime(2020, 8, 26, 23, 0),

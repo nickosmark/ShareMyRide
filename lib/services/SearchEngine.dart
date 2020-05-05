@@ -1,7 +1,5 @@
-import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/models/RidesModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
-import 'package:flutter_app/widgets/RideResultCard.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_app/services/fakeDB.dart';
 

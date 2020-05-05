@@ -591,5 +591,3 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   }
 
 } //build_end
-
-

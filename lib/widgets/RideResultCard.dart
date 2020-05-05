@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/models/RidesModel.dart';
-import 'package:flutter_app/services/fakeDB.dart';
 
 class RideResultCard extends StatelessWidget {
 

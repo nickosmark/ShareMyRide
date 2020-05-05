@@ -25,6 +25,7 @@ class SearchEngine{
     List<RidesModel> results = new List<RidesModel>();
 
     /*
+    TODO to be implemented in database
     In here the function will perform a search query
     in the real database for rides with the same starting
     point and finishing point (fromCords , toCords) or any

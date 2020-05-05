@@ -14,6 +14,7 @@ class FakeDB {
     gender: Gender.female,
     phone: '+30 699999999',
     email: 'info@covid19.who',
+    rating: 3.9,
     carInfo: 'Mercedez Benz ;) ',
     reviewsList: [
       //user 52
@@ -49,6 +50,7 @@ class FakeDB {
     gender: Gender.nonBinary,
     phone: '+30 699999999',
     email: 'info@covid19.who',
+    rating: 2.1,
     carInfo: 'Patty Car',
     reviewsList: [review1, review2, review3],
     ridesList: [],

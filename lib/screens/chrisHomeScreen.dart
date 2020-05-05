@@ -41,6 +41,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   String to = "";
   String date;
   List<RidesModel> results = [FakeDB.ride55];
+  RidesModel currentRide = FakeDB.ride55;
   UserModel fakeUser = FakeDB.randomDriver39;
   static ReviewModel reviewModel = FakeDB.review1;
   static ReviewCard reviewCard = new ReviewCard(reviewModel: reviewModel);
@@ -111,7 +112,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             _googleMap(context),
             _startingScreen(),
             _resultsScreen(),
-            _detailsScreen()
+            _detailsScreen(currentRide)
           ],
       ),
     );
@@ -445,7 +446,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                   ),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: new NetworkImage(driver.getUrlFromNameHash()),
+                      backgroundImage: new NetworkImage(driver.getUrlFromNameHash(genderInput: driver.gender)),
                       radius: 30.0,
                     ),
                     title: Text(
@@ -470,7 +471,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text('$driver.rating'),
+                        Text(driver.rating.toString()),
                         Icon(
                           Icons.star,
                           size: 15.0,
@@ -586,7 +587,8 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     List<ReviewCard> reviews = new List<ReviewCard>();
 
     for(final review in list){
-
+      ReviewCard card = new ReviewCard(reviewModel: review);
+      reviews.add(card);
     }
 
     return reviews;

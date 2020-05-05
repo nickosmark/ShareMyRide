@@ -21,7 +21,7 @@ class RideResultCard extends StatelessWidget {
       color: Colors.yellow[50],
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: new NetworkImage(userModel.getUrlFromNameHash()),
+          backgroundImage: new NetworkImage(userModel.getUrlFromNameHash(genderInput: userModel.gender)),
           radius: 30.0,
         ),
         title: Padding(
@@ -54,7 +54,7 @@ class RideResultCard extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text('1.0'),
+            Text(userModel.rating.toString()),
             Icon(
               Icons.star,
               size: 15.0,

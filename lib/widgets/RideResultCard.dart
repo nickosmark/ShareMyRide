@@ -5,18 +5,15 @@ import 'package:flutter_app/services/fakeDB.dart';
 
 class RideResultCard extends StatelessWidget {
 
-  final String from;
-  final String to;
-  final UserModel userModel;
+  final RidesModel ridesModel;
 
   RideResultCard({
-    this.from,
-    this.to,
-    this.userModel
+    this.ridesModel
   });
 
   @override
   Widget build(BuildContext context) {
+    UserModel userModel = ridesModel.driver;
     return Card(
       color: Colors.yellow[50],
       child: ListTile(
@@ -33,11 +30,11 @@ class RideResultCard extends StatelessWidget {
             SizedBox(
               height: 7.0,
             ),
-            Text(from),
+            Text(ridesModel.fromText),
             Icon(
                 Icons.arrow_downward
             ),
-            Text(to),
+            Text(ridesModel.toText),
             SizedBox(
               height: 3.0,
             ),

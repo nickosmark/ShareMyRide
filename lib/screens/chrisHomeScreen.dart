@@ -393,16 +393,11 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     List<Widget> items = new List<Widget>();
     RideResultCard resultCard = new RideResultCard();
     SizedBox box = new SizedBox(width: 10);
-    String from, to;
-    UserModel userModel = new UserModel();
     Widget card;
 
     for(final ride in results){
       items.add(box);
-      from = ride.fromText;
-      to = ride.toText;
-      userModel = ride.driver;
-      resultCard = new RideResultCard(from: from, to: to, userModel: userModel);
+      resultCard = new RideResultCard(ridesModel: ride);
       card = createCard(resultCard);
       items.add(card);
     }
@@ -417,6 +412,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         setState(() {
           showResults = false;
           showDetails = true;
+          currentRide = rideResultCard.ridesModel;
         });
       },
       child: Container(width: 300, child: rideResultCard),

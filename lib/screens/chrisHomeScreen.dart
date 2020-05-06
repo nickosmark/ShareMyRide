@@ -33,6 +33,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   final dateController = TextEditingController();
   final format = DateFormat("dd-MM-yy HH:mm");
+  bool isTouchable = false;
   int mode = 0;
   String from = "";
   String to = "";
@@ -93,6 +94,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         onMapCreated: _onMapCreated,
         markers: Set<Marker>.of(markers.values),
         polylines: Set<Polyline>.of(polylines.values),
+        onTap: _handleTap,
       ),
     );
   }
@@ -100,6 +102,21 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
     mapController = controller;
     mapController.setMapStyle(_mapStyle);
+  }
+
+  _handleTap(LatLng point){
+
+  if (isTouchable){
+    setState(() {
+      Marker radevouPoint =
+      Marker(markerId: MarkerId(point.toString()),
+        position: point,
+        icon:
+        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
+      );
+      markers[MarkerId(point.toString())] = radevouPoint;
+    });
+  }
   }
 
 
@@ -134,6 +151,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             padding: const EdgeInsets.all(4.0),
             child: FloatingActionButton.extended(
               onPressed: () {
+                isTouchable = true;
                 String text1 = from+  "\n";
                 String text2 = to+  "\n";
                 String text3 = dateController.text;
@@ -141,7 +159,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      content: Text(text1 + text2 + text3),
+                      content: Text("Please tap on the path to add radevou points"),
                     );
                   },
                 );
@@ -192,15 +210,23 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                 final geolocation = await place.geolocation;
                 startCoords = geolocation.coordinates;
                 mapController.animateCamera(CameraUpdate.newLatLngZoom(startCoords, 15));
+
+
+                _addMarker(geolocation.coordinates, str, bitmapDescriptor, place.description);
                 if(str=="From: "){
+                  _removePolylines();
+
                   from = place.description;
                   _originLatitude = startCoords.latitude;
                   _originLongitude = startCoords.longitude;
+                  if(_destLatitude!=null){
+                    _getPolyline();
+                  }
                 }
 
 
-                _addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
                 if(str=="To: "){
+                  _removePolylines();
                   to = place.description;
                   _destLatitude = startCoords.latitude;
                   _destLongitude = startCoords.longitude;
@@ -248,8 +274,13 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     }
     _addPolyLine();
   }
+  // method that removes polylines
   _removePolylines(){
     polylineCoordinates.clear();
+  }
+  // method that removes all the markers from the screen but does not re render the map
+  _removeMarkers(){
+    markers.clear();
   }
 
 

@@ -77,14 +77,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           //Identifier should be phone so i pass UUID to phone number
           //UserMode id == 0 . I think it should be removed eventually
           UserModel user = UserModel(
-            id: 0,
             name: this.name,
             gender: this.gender,
             phone: await widget.db.auth.getCurrentFireBaseUserID(),
             email: this.email,
             carInfo: this.carInfo,
             rating: 0.0,
-            reviewsList: [],
             ridesList: [],
           );
           var result = widget.db.createUserModel(user);

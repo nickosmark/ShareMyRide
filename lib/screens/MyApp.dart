@@ -35,12 +35,12 @@ class _MyAppState extends State<MyApp> {
   //her Pending tab should have the drivers Bob name and the ride's from/to
   //aliceUserObject.addToUserRideList(ride1object, bobUserObject, true)
 
-  static var ridaki = FakeDB.ride55; //gets created at home screen
-  static var driverr = FakeDB.randomDriver39;
-  static var passengerr = FakeDB.randomPassenger12;
+//  static var ridaki = FakeDB.ride55; //gets created at home screen
+//  static var driverr = FakeDB.randomDriver39;
+//  static var passengerr = FakeDB.randomPassenger12;
 
   //Create a random User. Can be driver or passenger
-  UserModel currentUser = passengerr;
+  //UserModel currentUser = passengerr;
 
 
   void printCurrentUserFromFireStore() async {

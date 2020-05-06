@@ -16,26 +16,22 @@ enum Gender {
 
 class UserModel {
 
-  int id;
   String name;
   Gender gender;
   String phone;
   String email;
   String carInfo;
   double rating;
-  List<ReviewModel> reviewsList;
   List<UserRide> ridesList;
   //
   //Constructor
   UserModel({
-    this.id,
     this.name,
     this.gender,
     this.phone,
     this.email,
     this.carInfo,
     this.rating,
-    this.reviewsList,
     this.ridesList,
   });
   
@@ -57,28 +53,14 @@ class UserModel {
     
   }
 
-  void addReviewToUser({ReviewModel review}){
-    reviewsList.add(review);
-  }
+
 
   @override
   String toString() {
-    return 'UserModel(id: $id, name: $name, gender: $gender, phone: $phone, email: $email, carInfo: $carInfo, rating: $rating, reviewsList: $reviewsList, ridesList: $ridesList)';
+    return 'UserModel(name: $name, gender: $gender, phone: $phone, email: $email, carInfo: $carInfo, rating: $rating, ridesList: $ridesList)';
   }
 
-  double getRatingAverage(){
 
-    if(reviewsList.isEmpty){
-      return 0.0;
-    }else{
-      double sum = 0;
-      for (var item in reviewsList) {
-        var currentRating = item.rating;
-        sum = sum + currentRating;
-      }
-    return sum/reviewsList.length;
-    }
-  }
 
   //
 
@@ -98,7 +80,6 @@ class UserModel {
 
 
   UserModel copyWith({
-    int id,
     String name,
     Gender gender,
     String phone,
@@ -109,28 +90,24 @@ class UserModel {
     List<UserRide> ridesList,
   }) {
     return UserModel(
-      id: id ?? this.id,
       name: name ?? this.name,
       gender: gender ?? this.gender,
       phone: phone ?? this.phone,
       email: email ?? this.email,
       carInfo: carInfo ?? this.carInfo,
       rating: rating ?? this.rating,
-      reviewsList: reviewsList ?? this.reviewsList,
       ridesList: ridesList ?? this.ridesList,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'gender': gender?.toString(),
       'phone': phone,
       'email': email,
       'carInfo': carInfo,
       'rating': rating,
-      'reviewsList': reviewsList?.map((x) => x?.toMap())?.toList(),
       'ridesList': ridesList?.map((x) => x?.toMap())?.toList(),
     };
   }
@@ -151,14 +128,12 @@ class UserModel {
 
   
     return UserModel(
-      id: map['id'],
       name: map['name'],
       gender: gender,
       phone: map['phone'],
       email: map['email'],
       carInfo: map['carInfo'],
       rating: map['rating'],
-      reviewsList: List<ReviewModel>.from(map['reviewsList']?.map((x) => ReviewModel.fromMap(x))),
       ridesList: List<UserRide>.from(map['ridesList']?.map((x) => UserRide.fromMap(x))),
     );
   }
@@ -172,27 +147,24 @@ class UserModel {
     if (identical(this, o)) return true;
   
     return o is UserModel &&
-      o.id == id &&
       o.name == name &&
       o.gender == gender &&
       o.phone == phone &&
       o.email == email &&
       o.carInfo == carInfo &&
       o.rating == rating &&
-      listEquals(o.reviewsList, reviewsList) &&
       listEquals(o.ridesList, ridesList);
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^
+    return
       name.hashCode ^
       gender.hashCode ^
       phone.hashCode ^
       email.hashCode ^
       carInfo.hashCode ^
       rating.hashCode ^
-      reviewsList.hashCode ^
       ridesList.hashCode;
   }
 }

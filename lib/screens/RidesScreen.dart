@@ -9,8 +9,8 @@ import 'package:flutter_app/models/ReviewModel.dart';
 
 
 class RidesScreen extends StatelessWidget {
-  final UserModel userModel;
-
+  final Database db ;
+//TODO input should be List<UserRides>
   RidesScreen({this.userModel});
 
   List<Widget> pendingList = [];
@@ -23,6 +23,7 @@ class RidesScreen extends StatelessWidget {
 
 
   void getDataFromUserRides(){
+    //TODO userRides from constructor
     List<UserRide> userRides = userModel.ridesList;
 
     //TODO needs work. doesnt check if i have pending but not completed
@@ -31,10 +32,10 @@ class RidesScreen extends StatelessWidget {
         Text('Go find/create a ride...'),
       );
       confirmedList.add(
-        Text('nothing yet'),
+        Text('seriously go..'),
       );
       completedList.add(
-        Text('r u kidding me? Just use the app'),
+        Text('r u kidding me? Just use the app '),
       );
     } else {
       for (var item in userRides) {

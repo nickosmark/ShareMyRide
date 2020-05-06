@@ -14,6 +14,7 @@ import 'package:flutter_app/widgets/ReviewCard.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/services/fakeDB.dart';
 import 'package:flutter_app/services/SearchEngine.dart';
+import 'package:flutter_app/services/GoogleMapService.dart';
 
 class ChrisHomeScreen extends StatefulWidget {
   @override
@@ -21,19 +22,6 @@ class ChrisHomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<ChrisHomeScreen> {
-
-  GoogleMapController mapController;
-  double _originLatitude, _originLongitude;
-  LatLng startCords, endCords;
-  double _destLatitude, _destLongitude;
-  Map<MarkerId, Marker> markers = {};
-  Map<PolylineId, Polyline> polylines = {};
-  List<LatLng> polylineCoordinates = [];
-  PolylinePoints polylinePoints = PolylinePoints();
-  String googleAPiKey = "AIzaSyBWVICFOmSbt_Z7cnt3swbt9LvZgQg-1uw";
-  String _mapStyle;
-
-  Completer<GoogleMapController> _controller = Completer();
 
   final dateController = TextEditingController();
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
@@ -49,6 +37,8 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   bool showStartingScreen = true;
   bool showResults = false;
   bool showDetails = false;
+  GoogleMapService googleMapService = new GoogleMapService();
+  LatLng startCords, endCords;
 
   @override
   void dispose() {
@@ -58,9 +48,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   @override
   void initState() {
-    rootBundle.loadString('assets/map_style.txt').then((string) {
-      _mapStyle = string;
-    });
+    googleMapService.loadMapStyle();
     super.initState();
   }
 
@@ -70,46 +58,13 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     return homeScaffold();
   }
 
-  Widget _googleMap(BuildContext context){
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      child: GoogleMap(
-        initialCameraPosition: CameraPosition(
-            target: LatLng(37.9838, 23.7275),
-            zoom: 15
-        ),
-        zoomControlsEnabled: false,
-        myLocationEnabled: true,
-        tiltGesturesEnabled: true,
-        compassEnabled: true,
-        scrollGesturesEnabled: true,
-        zoomGesturesEnabled: true,
-        onMapCreated: _onMapCreated,
-        markers: Set<Marker>.of(markers.values),
-        polylines: Set<Polyline>.of(polylines.values),
-      ),
-    );
-  }
-  void _onMapCreated(GoogleMapController controller) async{
-    mapController = controller;
-    mapController.setMapStyle(_mapStyle);
-  }
-
-
-  Future<void> _gotoLocation(double lat, double long) async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(lat, long), zoom: 15, tilt: 50.0, bearing: 45.0)));
-  }
-
   Widget homeScaffold() {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       resizeToAvoidBottomPadding: false,
       body: Stack(
           children: <Widget>[
-            _googleMap(context),
+            googleMapService.googleMap(context),
             _startingScreen(),
             _resultsScreen(),
             _detailsScreen(currentRide)
@@ -144,49 +99,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     );
   }
 
-  // method thad adds the polyline to the list of polylines
-  // that will display on map
-  _addPolyLine() {
-    PolylineId id = PolylineId("poly");
-    Polyline polyline = Polyline(
-        polylineId: id, color: Colors.blue, points: polylineCoordinates);
-    polylines[id] = polyline;
-    setState(() {});
-  }
-
-  // method that creates the polyline given the from and to geolocation
-  _getPolyline() async {
-    List<PointLatLng> result = await polylinePoints.getRouteBetweenCoordinates(
-      "AIzaSyBWVICFOmSbt_Z7cnt3swbt9LvZgQg-1uw",
-      _originLatitude,
-      _originLongitude,
-      _destLatitude,
-      _destLongitude,);
-    if (result.isNotEmpty) {
-      result.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-    }
-    _addPolyLine();
-  }
-  _removePolylines(){
-    polylineCoordinates.clear();
-  }
-
-  // method that adds the marker to the map
-  _addMarker(LatLng position, String id, BitmapDescriptor descriptor, String info){
-    setState(() {
-      MarkerId markerId = MarkerId(id);
-      Marker marker =
-      Marker(markerId: markerId,
-          icon: descriptor,
-          position: position,
-          infoWindow: InfoWindow(title: info
-          ));
-      markers[markerId] = marker;
-    });
-  }
-
   Align fillField(String str, Color clr, double top, BitmapDescriptor bitmapDescriptor) {
     return Align(
         alignment: Alignment.topCenter,
@@ -194,34 +106,41 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             padding: EdgeInsets.only(left: 10.0, right: 10.0, top: top),
             child:
             SearchMapPlaceWidget(
-              apiKey: googleAPiKey,
+              apiKey: googleMapService.googleAPiKey,
               // The language of the autocompletion
               language: 'el',
               placeholder: str,
               icon: IconData(0xe55f, fontFamily: 'MaterialIcons'),
               iconColor: clr,
-              // The position used to give better recomendations. In this case we are using the user position
+              // The position used to give better recommendations. In this case we are using the user position
               location: LatLng(37.9931036, 23.7301123),
               radius: 30000,
               onSelected: (Place place) async {
                 final geolocation = await place.geolocation;
                 startCords = geolocation.coordinates;
-                mapController.animateCamera(CameraUpdate.newLatLngZoom(startCords, 15));
+                googleMapService.mapController.animateCamera(CameraUpdate.newLatLngZoom(startCords, 15));
 
                 if(str=="From: "){
                   from = place.description;
-                  _originLatitude = startCords.latitude;
-                  _originLongitude = startCords.longitude;
+                  googleMapService.removePolylines();
+                  googleMapService.originLatitude = startCords.latitude;
+                  googleMapService.originLongitude = startCords.longitude;
+                  setState(() {
+                    googleMapService.getPolyline();
+                  });
                 }
 
-                _addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
+                googleMapService.addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
                 if(str=="To: "){
                   to = place.description;
-                  _removePolylines();
-                  _destLatitude = startCords.latitude;
-                  _destLongitude = startCords.longitude;
-                  _getPolyline();
+                  googleMapService.removePolylines();
+                  googleMapService.destLatitude = startCords.latitude;
+                  googleMapService.destLongitude = startCords.longitude;
+                  setState(() {
+                    googleMapService.getPolyline();
+                  });
                 }
+
               },
 
             )
@@ -316,7 +235,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   //the method called when the user presses the search button
   _onSearchPressed() {
-    _removePolylines();
+    googleMapService.removePolylines();
     date = dateController.text;
     SearchEngine searchEngine = new SearchEngine(from, to, startCords, endCords, DateTime.parse(date));
     results = searchEngine.getResults();
@@ -328,13 +247,13 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   //the method called when the user presses the create button
   _onCreatePressed() {
-    _removePolylines();
+    googleMapService.removePolylines();
     date = dateController.text;
     setState(() {
       showDialog(context: context, child:
       new AlertDialog(
-        title: new Text('$_originLatitude + $_originLongitude'),
-        content: new Text('$_destLatitude + $_destLongitude'),
+        title: new Text(''),
+        content: new Text(''),
       )
       );
     });

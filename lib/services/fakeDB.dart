@@ -7,8 +7,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FakeDB {
 
-  //driver should call a method to create a Ride
-
 //  static final UserModel randomDriver39 = UserModel(
 //    name: 'Odhgouliss',
 //    gender: Gender.female,

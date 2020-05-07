@@ -1,42 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/models/RidesModel.dart';
 
 class RideResultCard extends StatelessWidget {
 
-  String from;
-  String to;
-  String name = 'Json Antigoniiiiiiiiiii';
+  final RidesModel ridesModel;
 
   RideResultCard({
-    this.from,
-    this.to
+    this.ridesModel
   });
 
   @override
   Widget build(BuildContext context) {
-    double height = name.length < 23 ? 29.0 : 10.0;
+    UserModel userModel = ridesModel.driver;
     return Card(
       color: Colors.yellow[50],
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: new NetworkImage('https://img.documentonews.gr/unsafe/1000x600/smart/http://img.dash.documentonews.gr/documento/imagegrid/2018/10/31/5bd98303cd3a18740d2cf935.jpg'),
+          backgroundImage: new NetworkImage(userModel.getUrlFromNameHash(genderInput: userModel.gender)),
           radius: 30.0,
         ),
         title: Padding(
           padding: const EdgeInsets.only(top: 10.0),
-          child: Text(name),
+          child: Text(userModel.name),
         ),
         subtitle: Column(
           children: <Widget>[
             SizedBox(
-              height: height,
+              height: 7.0,
             ),
-            Text(from),
+            Text(ridesModel.fromText),
             Icon(
                 Icons.arrow_downward
             ),
-            Text(to),
+            Text(ridesModel.toText),
             SizedBox(
-              height: 10,
+              height: 3.0,
             ),
             FlatButton(
               color: Colors.black,
@@ -51,7 +50,7 @@ class RideResultCard extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text('1.0'),
+            Text(userModel.rating.toString()),
             Icon(
               Icons.star,
               size: 15.0,

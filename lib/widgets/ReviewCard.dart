@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 
-// Card reviewCard(String imageUrl, String name, String review, double rating) {
-//   return ReviewCard();
-// }
-
 class ReviewCard extends StatelessWidget {
-  // final String imageUrl;
-  // final String name;
-  // final String reviewText;
-  // final double rating;
+
   final ReviewModel reviewModel; 
 
   const ReviewCard({

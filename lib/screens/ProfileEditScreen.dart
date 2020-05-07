@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/screens/AuthScreen.dart';
 import 'package:flutter_app/screens/MyApp.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
+import 'package:flutter_app/services/DataBase.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/services/fakeDB.dart';
 
@@ -12,8 +14,9 @@ import 'package:flutter_app/services/fakeDB.dart';
 class ProfileEditScreen extends StatefulWidget {
   //Checks if the User is a new User so that close and check buttons have different behaviour
   final bool isNewUser;
+  final DataBase db;
   //TODO oti ekana paei strafi xreiazetai kainourgio ProfileCreateScreen h passaro userModel
-  ProfileEditScreen({this.isNewUser});
+  ProfileEditScreen({this.db, this.isNewUser});
 
   @override
   _ProfileEditScreenState createState() => _ProfileEditScreenState();
@@ -45,24 +48,68 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 //    FakeDB.randomUser12.gender = this.gender;
 //  }
 
-  void iconsClickEventHandler(BuildContext context, String iconName) {
+  void deleteAccount() async {
+    var user = await widget.db.auth.getCurrentFireBaseUser();
+    print("deleting user...");
+    await user.delete();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AuthScreen(),
+      ),
+    );
+  }
+
+
+
+  void iconsClickEventHandler(BuildContext context, String iconName) async {
     if (iconName == 'check') {
-      //TODO edit UserModel object. EDIT ! NOT CREATE!
-      //updateFakeUser();
       //If the user is new navigate to Home Screen.If she
       //just edits her profile navigate to profile screen
       if (widget.isNewUser) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyApp(selectedIndex: 0),
-          ),
-        );
+        //TODO check if phone, name,etc are null-> show a toast
+        //TODO for now i check name, we should check number when PhoneAuth
+        if(this.name.isEmpty){
+          //show dialog
+          print('phone is empty');
+        }else{
+          //This is where a new UserModel get created
+          //Identifier should be phone so i pass UUID to phone number
+          //UserMode id == 0 . I think it should be removed eventually
+          UserModel user = UserModel(
+            name: this.name,
+            gender: this.gender,
+            phone: await widget.db.auth.getCurrentFireBaseUserID(),
+            email: this.email,
+            carInfo: this.carInfo,
+            rating: 0.0,
+            ridesList: [],
+          );
+          var result = widget.db.createUserModel(user);
+          if(result == null){
+            print('Problem with creation.');
+          }else{
+            //if no problem proceed to MyApp->HomeScreen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyApp(db: widget.db,selectedIndex: 0),
+              ),
+            );
+          }
+
+        }
+
       } else {
+        //existing user. Update data
+        //TODO update user
+        //check if a specific field is updated in order to
+        // correctly update the database
+
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MyApp(selectedIndex: 2),
+            builder: (context) => MyApp(db: widget.db,selectedIndex: 2),
           ),
         );
       }
@@ -71,12 +118,19 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     //
     if (iconName == 'close') {
       if (widget.isNewUser) {
-        //TODO DELETE ACCOUNT
+        //DELETE user if he hasn't entered anything and
+        deleteAccount();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AuthScreen(),
+          ),
+        );
       } else {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MyApp(selectedIndex: 2),
+            builder: (context) => MyApp(db: widget.db,selectedIndex: 2),
           ),
         );
       }
@@ -244,6 +298,31 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         border: OutlineInputBorder(),
                         icon: Icon(Icons.directions_car),
                         labelText: "Enter car information"),
+                  ),
+                ),
+                Container(
+                  child: RaisedButton(
+                    onPressed: () async{
+                      //delete user
+                      print("deleting user...");
+                      await deleteAccount();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AuthScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "DELETE USER",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.0,
+                      ),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    color: Colors.red[700],
                   ),
                 ),
               ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/services/DataBase.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
@@ -6,31 +7,87 @@ import 'package:flutter_app/screens/ProfileEditScreen.dart';
 import 'package:flutter_app/widgets/ReviewCard.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final UserModel userModel;
+
+
+  final DataBase db;
 
   ProfileScreen({
-    @required this.userModel,
+    @required this.db,
   });
 
-  List<Widget> reviewWidgetList = [];
+  Future<UserModel> futureUser ;
+  Future<List<ReviewModel>> futureReviews ;
+  //List<Widget> reviewWidgetList = [];
 
   var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   var lightBlueColor = Colors.blue;
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
 
-  @override
-  Widget build(BuildContext context) {
-    List<ReviewModel> reviewsListFromConstr = userModel.reviewsList;
-    if (reviewsListFromConstr.isEmpty) {
+  List<Widget> reviewCardsWidgetsFromList(List<ReviewModel> reviews){
+    List<Widget> reviewWidgetList = [];
+    if (reviews.isEmpty || reviews == null) {
       reviewWidgetList.add(
         Text('You have no reviews yet'),
       );
     } else {
-      for (var item in reviewsListFromConstr) {
+      for (var item in reviews) {
         reviewWidgetList.add(ReviewCard(reviewModel: item));
       }
     }
-    return MaterialApp(
+    return reviewWidgetList;
+  }
+
+
+
+  double getRatingAverage(List<ReviewModel> reviewsList){
+
+    if(reviewsList.isEmpty){
+      return 0.0;
+    }else{
+      double sum = 0;
+      for (var item in reviewsList) {
+        var currentRating = item.rating;
+        sum = sum + currentRating;
+      }
+      return sum/reviewsList.length;
+    }
+  }
+
+  void getDataFromDb(){
+    futureUser = db.getCurrentUserModel();
+    futureReviews = db.getCurrentUserReviews();
+  }
+
+  void printReviewList() async{
+    List reviews = await db.getCurrentUserReviews();
+    print('!!!!REVIEWS IN DB:   $reviews');
+  }
+  @override
+  Widget build(BuildContext context) {
+    printReviewList();
+    getDataFromDb();
+    UserModel initialUser = UserModel(
+      name:'waiting...',
+      gender: Gender.nonBinary,
+      phone: 'waiting...',
+      email: 'waiting...',
+      rating: 0.0,
+      carInfo: 'waiting...',
+      ridesList: [],
+    );
+    UserModel errorUser = UserModel(
+      name:'ERROR',
+      gender: Gender.nonBinary,
+      phone: 'ERROR',
+      email: 'ERROR',
+      rating: 0.0,
+      carInfo: 'ERROR',
+      ridesList: [],
+    );
+
+    Widget userScreen(UserModel userModel, Future<List<ReviewModel>> futureReviews){
+      //addReviewCards(reviews);
+      return MaterialApp(
       title: 'ShareMyRide',
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
@@ -57,7 +114,7 @@ class ProfileScreen extends StatelessWidget {
               children: <Widget>[
                 Container(
                   margin:
-                      EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
@@ -67,7 +124,7 @@ class ProfileScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfileEditScreen(isNewUser: false,)),
+                                  builder: (context) => ProfileEditScreen(db: this.db, isNewUser: false,)),
                             );
                           }),
                     ],
@@ -82,7 +139,7 @@ class ProfileScreen extends StatelessWidget {
                 Text(
                   userModel.name,
                   style:
-                      GoogleFonts.oswald(textStyle: TextStyle(fontSize: 30.0)),
+                  GoogleFonts.oswald(textStyle: TextStyle(fontSize: 30.0)),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -93,8 +150,8 @@ class ProfileScreen extends StatelessWidget {
                         'My Rating:',
                         style: GoogleFonts.oswald(
                             textStyle: TextStyle(
-                          fontSize: 15.0,
-                        )),
+                              fontSize: 15.0,
+                            )),
                       ),
                     ),
                     Container(
@@ -102,12 +159,45 @@ class ProfileScreen extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Text(
-                            userModel.getRatingAverage().toString(),
-                            style: GoogleFonts.oswald(
-                                textStyle: TextStyle(
-                              fontSize: 15.0,
-                            )),
+                          FutureBuilder<List<ReviewModel>>(
+                            future: futureReviews,
+                            initialData: [],
+                            builder:(BuildContext context, AsyncSnapshot<List<ReviewModel>> snapshot) {
+                              if(snapshot.hasData){
+                                print('We have rating!!!');
+                                return Text(
+                                  getRatingAverage(snapshot.data).toString().substring(0,3),
+                                  style: GoogleFonts.oswald(
+                                      textStyle: TextStyle(
+                                        fontSize: 15.0,
+                                      )),
+                                );
+                              }else if(snapshot.hasError){
+                                print('error');
+                                return Text(
+                                  'error',
+                                  style: GoogleFonts.oswald(
+                                      textStyle: TextStyle(
+                                        fontSize: 15.0,
+                                      )),
+                                );
+                              }else{
+                                //waiting...
+                                print('waiting for rating');
+                                return Column(
+                                  children: <Widget>[
+                                    Center(
+                                      child: SizedBox(
+                                        child: CircularProgressIndicator(),
+                                        width: 50,
+                                        height: 50,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+
+                            }
                           ),
                           Icon(
                             Icons.star,
@@ -126,8 +216,8 @@ class ProfileScreen extends StatelessWidget {
                         'Personal Info',
                         style: GoogleFonts.oswald(
                             textStyle: TextStyle(
-                          fontSize: 20.0,
-                        )),
+                              fontSize: 20.0,
+                            )),
                       ),
                     ),
                   ],
@@ -154,8 +244,8 @@ class ProfileScreen extends StatelessWidget {
                         'Car Info',
                         style: GoogleFonts.oswald(
                             textStyle: TextStyle(
-                          fontSize: 20.0,
-                        )),
+                              fontSize: 20.0,
+                            )),
                       ),
                     ),
                   ],
@@ -175,14 +265,42 @@ class ProfileScreen extends StatelessWidget {
                         'Reviews',
                         style: GoogleFonts.oswald(
                             textStyle: TextStyle(
-                          fontSize: 20.0,
-                        )),
+                              fontSize: 20.0,
+                            )),
                       ),
                     ),
                   ],
                 ),
-                Column(
-                  children: reviewWidgetList,
+                FutureBuilder<List<ReviewModel>>(
+                  future: futureReviews,
+                  builder: (BuildContext context, AsyncSnapshot<List<ReviewModel>> snapshot){
+                    if(snapshot.hasData){
+                      print('We have reviews!!!');
+                      return Column(
+                        children: reviewCardsWidgetsFromList(snapshot.data),
+                      );
+                    }else if(snapshot.hasError){
+                      print('error in review list');
+                      print('error data: ${snapshot.data}');
+                      return Column(
+                        children: reviewCardsWidgetsFromList([]),
+                      );
+                    }else{
+                      //waiting...
+                      print('waiting reviews');
+                      return Column(
+                        children: <Widget>[
+                          Center(
+                            child: SizedBox(
+                              child: CircularProgressIndicator(),
+                              width: 50,
+                              height: 50,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  },
                 ),
               ],
             ),
@@ -190,5 +308,37 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
     );
+    }
+
+
+    //TODO show spinner or initData. InitData shows
+    return FutureBuilder<UserModel>(
+      //TODO add second future with wait
+      //futureReviews
+      future: futureUser,
+      //initialData: initialUser,
+      builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot){
+        if(snapshot.hasData){
+          print('we have profile data!!!');
+          //todo second argument future list
+          return userScreen(snapshot.data, this.futureReviews);
+        }else if(snapshot.hasError){
+          print('error');
+          return userScreen(errorUser,this.futureReviews);
+        }else{
+          //waiting...
+          print('waiting');
+          return Center(
+            child: SizedBox(
+              child: CircularProgressIndicator(),
+              width: 100,
+              height: 100,
+            ),
+          );
+        }
+
+        }
+    );
+
   }
 }

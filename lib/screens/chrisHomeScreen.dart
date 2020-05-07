@@ -90,6 +90,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                 )),
                 dateField(),
               ],
+
             ),
           ),
           bottomLeftButton(80.0, Icons.search, "Search", _onSearchPressed),

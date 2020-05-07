@@ -228,7 +228,7 @@ class ProfileScreen extends StatelessWidget {
                   margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                   child: ListTile(
                     leading: Icon(Icons.phone),
-                    title: Text(userModel.phone),
+                    title: Text(userModel.phone.substring(0,10)),
                   ),
                 ),
                 Card(

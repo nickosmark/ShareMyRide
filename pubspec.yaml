@@ -62,3 +62,11 @@ flutter:
     - family: pacifico
       fonts:
         - asset: assets/Pacifico-Regular.ttf
+
+    - family: fira
+      fonts:
+        - asset: assets/FiraSansExtraCondensed-Regular.ttf
+        - asset: assets/FiraSansExtraCondensed-Light.ttf
+          weight: 200
+        - asset: assets/FiraSansExtraCondensed-SemiBold.ttf
+          weight: 600

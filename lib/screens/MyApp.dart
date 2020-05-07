@@ -87,10 +87,10 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        fontFamily: 'oswald',
+        fontFamily: 'fira',
         textTheme: TextTheme(
           body1: TextStyle(
-            fontFamily: 'oswald',
+            fontFamily: 'fira',
           ),
         ),
       ),

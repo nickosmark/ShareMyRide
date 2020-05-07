@@ -97,12 +97,12 @@ class ProfileScreen extends StatelessWidget {
         textTheme: TextTheme(
           body1: TextStyle(
             color: darkBlueColor,
-            fontFamily: 'oswald',
-            fontSize: 12.0,
+            fontFamily: 'fira',
+            fontSize: 14.0,
           ),
           subhead: TextStyle(
             color: darkBlueColor,
-            fontFamily: 'oswald',
+            fontFamily: 'fira',
             fontSize: 16.0,
           ),
         ),
@@ -138,8 +138,10 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 Text(
                   userModel.name,
-                  style:
-                  GoogleFonts.oswald(textStyle: TextStyle(fontSize: 30.0)),
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

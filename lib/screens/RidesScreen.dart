@@ -89,12 +89,12 @@ class RidesScreen extends StatelessWidget {
         textTheme: TextTheme(
           body1: TextStyle(
             color: darkBlueColor,
-            fontFamily: 'oswald',
+            fontFamily: 'fira',
             fontSize: 12.0,
           ),
           subhead: TextStyle(
               color: darkBlueColor,
-              fontFamily: 'oswald',
+              fontFamily: 'fira',
               fontSize: 16.0,
           ),
         ),

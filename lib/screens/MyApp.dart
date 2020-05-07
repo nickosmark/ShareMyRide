@@ -3,19 +3,21 @@ import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/screens/HomeScreen.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
 import 'package:flutter_app/screens/RidesScreen.dart';
+import 'package:flutter_app/services/DataBase.dart';
 import 'package:flutter_app/services/fakeDB.dart';
 
 import 'package:flutter_app/screens/chrisHomeScreen.dart';
 
 
 class MyApp extends StatefulWidget {
+  final DataBase db;
   final int selectedIndex;
 
   // MyApp contsructor takes a selectedIndex;
   // 0 for HomeScreen
   // 1 for Rides
   // 2 for Profile
-  MyApp({this.selectedIndex});
+  MyApp({this.db,this.selectedIndex});
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -33,19 +35,24 @@ class _MyAppState extends State<MyApp> {
   //her Pending tab should have the drivers Bob name and the ride's from/to
   //aliceUserObject.addToUserRideList(ride1object, bobUserObject, true)
 
-  static var ridaki = FakeDB.ride55; //gets created at home screen
-  static var driverr = FakeDB.randomDriver39;
-  static var passengerr = FakeDB.randomPassenger12;
+//  static var ridaki = FakeDB.ride55; //gets created at home screen
+//  static var driverr = FakeDB.randomDriver39;
+//  static var passengerr = FakeDB.randomPassenger12;
 
   //Create a random User. Can be driver or passenger
-  UserModel randomUser12 = passengerr;
+  //UserModel currentUser = passengerr;
 
-  void enimeroseTonBob(){
-    //TODO isDriver is
-    ridaki.driver.addToUserRideList(incomingRide: ridaki, fellow: passengerr, isDriver: true);
+
+  void printCurrentUserFromFireStore() async {
+    UserModel currentUser = await db.getCurrentUserModel();
+    print(currentUser.toString());
   }
 
-
+  DataBase db;
+//  void enimeroseTonBob(){
+//    //TODO isDriver is wrong??
+//    ridaki.driver.addToUserRideList(incomingRide: ridaki, fellow: passengerr, isDriver: true);
+//  }
 
 
   //Selected Icon in the bottomNavBar
@@ -57,18 +64,19 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    db = widget.db;
+    printCurrentUserFromFireStore();
     //_selectedScreen = widget.selectedScreen;
-    enimeroseTonBob();
     _selectedIndex = widget.selectedIndex;
     switch (_selectedIndex) {
       case 0:
         _selectedScreen = ChrisHomeScreen();
         break;
       case 1:
-        _selectedScreen = RidesScreen(userModel: randomUser12,);
+        _selectedScreen = RidesScreen(db: db,);
         break;
       case 2:
-        _selectedScreen = ProfileScreen(userModel: randomUser12);
+        _selectedScreen = ProfileScreen(db: db,);
         break;
     }
 
@@ -110,13 +118,12 @@ class _MyAppState extends State<MyApp> {
               switch (_selectedIndex) {
                 case 0:
                   _selectedScreen = ChrisHomeScreen();
-
                   break;
                 case 1:
-                  _selectedScreen = RidesScreen(userModel: randomUser12);
+                  _selectedScreen = RidesScreen(db: db);
                   break;
                 case 2:
-                  _selectedScreen = ProfileScreen(userModel: randomUser12);
+                  _selectedScreen = ProfileScreen(db: db,);
                   break;
               }
             });

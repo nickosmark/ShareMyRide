@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+//This Model get created when a new review is created
 class ReviewModel {
+  String phone;
   String imageUrl;
   String name;
   String reviewText;
@@ -8,6 +10,7 @@ class ReviewModel {
 
 
   ReviewModel({
+    this.phone,
     this.imageUrl,
     this.name,
     this.reviewText,
@@ -16,13 +19,15 @@ class ReviewModel {
 
 
   ReviewModel copyWith({
-    String imageurl,
+    String phone,
+    String imageUrl,
     String name,
     String reviewText,
     double rating,
   }) {
     return ReviewModel(
-      imageUrl: imageurl ?? this.imageUrl,
+      phone: phone ?? this.phone,
+      imageUrl: imageUrl ?? this.imageUrl,
       name: name ?? this.name,
       reviewText: reviewText ?? this.reviewText,
       rating: rating ?? this.rating,
@@ -31,7 +36,8 @@ class ReviewModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'imageurl': imageUrl,
+      'phone' : phone,
+      'imageUrl': imageUrl,
       'name': name,
       'reviewText': reviewText,
       'rating': rating,
@@ -40,12 +46,15 @@ class ReviewModel {
 
   static ReviewModel fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
-  
+
+    double rating = map['rating'].toDouble();
+
     return ReviewModel(
-      imageUrl: map['imageurl'],
+      phone: map['phone'],
+      imageUrl: map['imageUrl'],
       name: map['name'],
       reviewText: map['reviewText'],
-      rating: map['rating'],
+      rating: rating,
     );
   }
 
@@ -55,7 +64,7 @@ class ReviewModel {
 
   @override
   String toString() {
-    return 'ReviewModel(imageurl: $imageUrl, name: $name, reviewText: $reviewText, rating: $rating)';
+    return 'ReviewModel(phone: $phone, imageurl: $imageUrl, name: $name, reviewText: $reviewText, rating: $rating)';
   }
 
   @override
@@ -63,6 +72,7 @@ class ReviewModel {
     if (identical(this, o)) return true;
   
     return o is ReviewModel &&
+        o.phone == phone &&
       o.imageUrl == imageUrl &&
       o.name == name &&
       o.reviewText == reviewText &&

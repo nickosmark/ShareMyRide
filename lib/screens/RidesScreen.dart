@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/models/UserRide.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
+import 'package:flutter_app/services/DataBase.dart';
 import 'package:flutter_app/widgets/ReviewCard.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
@@ -8,9 +10,9 @@ import 'package:flutter_app/models/ReviewModel.dart';
 
 
 class RidesScreen extends StatelessWidget {
-  final UserModel userModel;
-
-  RidesScreen({this.userModel});
+  final DataBase db ;
+//TODO input should be List<UserRides>
+  RidesScreen({this.db});
 
   List<Widget> pendingList = [];
   List<Widget> confirmedList = [];
@@ -20,9 +22,10 @@ class RidesScreen extends StatelessWidget {
   var lightBlueColor = Colors.blue;
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
 
-
-  void getDataFromUserRides(){
-    List<UserRide> userRides = userModel.ridesList;
+  List<UserRide> fakeUserRides = [];
+  void getDataFromUserRides(List<UserRide> userRides){
+    //TODO userRides from constructor
+    //List<UserRide> userRides = userModel.ridesList;
 
     //TODO needs work. doesnt check if i have pending but not completed
     if (userRides.isEmpty) {
@@ -30,10 +33,10 @@ class RidesScreen extends StatelessWidget {
         Text('Go find/create a ride...'),
       );
       confirmedList.add(
-        Text('nothing yet'),
+        Text('seriously go..'),
       );
       completedList.add(
-        Text('r u kidding me? Just use the app'),
+        Text('r u kidding me? Just use the app '),
       );
     } else {
       for (var item in userRides) {
@@ -45,8 +48,8 @@ class RidesScreen extends StatelessWidget {
           if(item.isDriver){
             String url = item.fellowTraveler.getUrlFromNameHash(genderInput: item.fellowTraveler.gender);
             String name = item.fellowTraveler.name;
-            double fromWhere = item.ride.fromWhere;
-            double toWhere = item.ride.toWhere;
+            String fromWhere = item.ride.fromText;
+            String toWhere = item.ride.toText;
             pendingList.add(pendingCardDriver(url, name, fromWhere, toWhere));
           }else{
             //SHOW PASSENGER DATA
@@ -54,8 +57,8 @@ class RidesScreen extends StatelessWidget {
             // check if this is the same, should be the same??:
             // String url = item.ride.driver.getUrlFromNameHash() ;
             String name = item.fellowTraveler.name;
-            double fromWhere = item.ride.fromWhere;
-            double toWhere = item.ride.toWhere;
+            String fromWhere = item.ride.fromText;
+            String toWhere = item.ride.toText;
             pendingList.add(pendingCardPassenger(url, name, fromWhere, toWhere));
           }
 
@@ -74,7 +77,7 @@ class RidesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    getDataFromUserRides();
+    getDataFromUserRides(fakeUserRides);
     return MaterialApp(
       title: 'ShareMyRide',
       theme: ThemeData(
@@ -181,7 +184,7 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget pendingCardDriver(String url, String name, double fromWhere, double toWhere){
+  Widget pendingCardDriver(String url, String name, String fromWhere, String toWhere){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
@@ -218,7 +221,7 @@ class RidesScreen extends StatelessWidget {
   }
 
   //Should show the name of the driver
-  Widget pendingCardPassenger(String url, String name, double fromWhere, double toWhere){
+  Widget pendingCardPassenger(String url, String name, String fromWhere, String toWhere){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(

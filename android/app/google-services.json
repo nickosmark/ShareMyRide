@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "89872132049",
+    "firebase_url": "https://sharemyride-1f480.firebaseio.com",
+    "project_id": "sharemyride-1f480",
+    "storage_bucket": "sharemyride-1f480.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:89872132049:android:4f63b2d0e598d8e8fa22f0",
+        "android_client_info": {
+          "package_name": "gr.sharemyride.flutter_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "89872132049-1igj3goqs58euvlv9hsvmo2o8i0sml4f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBr82Dlp0YDhiFSYhX7jG8MhtJj80XAMiw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "89872132049-1igj3goqs58euvlv9hsvmo2o8i0sml4f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

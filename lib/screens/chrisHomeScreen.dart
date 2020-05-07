@@ -117,6 +117,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
           Padding(
             padding: const EdgeInsets.all(4.0),
             child: FloatingActionButton.extended(
+              heroTag: 'searchBtn',
               onPressed: () {
                 _removePolylines();
                 date = dateController.text;
@@ -133,6 +134,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
           Padding(
             padding: const EdgeInsets.all(4.0),
             child: FloatingActionButton.extended(
+              heroTag: 'createBtn',
               onPressed: () {
                 String text1 = from+  "\n";
                 String text2 = to+  "\n";

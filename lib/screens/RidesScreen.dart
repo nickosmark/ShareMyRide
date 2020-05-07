@@ -111,8 +111,10 @@ class RidesScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
                       child: Text(
                         'Pending',
-                        style: GoogleFonts.oswald(
-                            textStyle: TextStyle(fontSize: 30.0)),
+                          style:TextStyle(
+                            fontSize: 32.0,
+                            fontWeight: FontWeight.w600,
+                          ),
                       ),
                     ),
                     IconButton(
@@ -135,8 +137,10 @@ class RidesScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
                       child: Text(
                         'Confirmed',
-                        style: GoogleFonts.oswald(
-                            textStyle: TextStyle(fontSize: 30.0)),
+                          style:TextStyle(
+                            fontSize: 32.0,
+                            fontWeight: FontWeight.w600,
+                          ),
                       ),
                     ),
                     IconButton(
@@ -159,8 +163,10 @@ class RidesScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
                       child: Text(
                         'Completed',
-                        style: GoogleFonts.oswald(
-                            textStyle: TextStyle(fontSize: 30.0)),
+                          style:TextStyle(
+                            fontSize: 32.0,
+                            fontWeight: FontWeight.w600,
+                          ),
                       ),
                     ),
                     IconButton(

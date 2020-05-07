@@ -216,10 +216,10 @@ class ProfileScreen extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(15.0, 15.0, 0.0, 0.0),
                       child: Text(
                         'Personal Info',
-                        style: GoogleFonts.oswald(
-                            textStyle: TextStyle(
+                        style:TextStyle(
                               fontSize: 20.0,
-                            )),
+                          fontWeight: FontWeight.w600,
+                            ),
                       ),
                     ),
                   ],
@@ -244,10 +244,10 @@ class ProfileScreen extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(15.0, 25.0, 0.0, 0.0),
                       child: Text(
                         'Car Info',
-                        style: GoogleFonts.oswald(
-                            textStyle: TextStyle(
-                              fontSize: 20.0,
-                            )),
+                          style:TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w600,
+                          ),
                       ),
                     ),
                   ],
@@ -265,10 +265,10 @@ class ProfileScreen extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(15.0, 25.0, 0.0, 0.0),
                       child: Text(
                         'Reviews',
-                        style: GoogleFonts.oswald(
-                            textStyle: TextStyle(
-                              fontSize: 20.0,
-                            )),
+                          style:TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w600,
+                          ),
                       ),
                     ),
                   ],

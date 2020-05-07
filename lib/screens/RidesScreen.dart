@@ -122,7 +122,7 @@ class RidesScreen extends StatelessWidget {
                           icon: Icon(
                             Icons.expand_more,
                             size: 25.0,
-                            color: Colors.red,
+                            color: Colors.black,
                           ),
                         ),
                   ],
@@ -148,7 +148,7 @@ class RidesScreen extends StatelessWidget {
                           icon: Icon(
                             Icons.expand_more,
                             size: 25.0,
-                            color: Colors.red,
+                            color: Colors.black,
                           ),
                         ),
                   ],
@@ -174,7 +174,7 @@ class RidesScreen extends StatelessWidget {
                           icon: Icon(
                             Icons.expand_more,
                             size: 25.0,
-                            color: Colors.red,
+                            color: Colors.black,
                           ),
                         ),
                   ],

@@ -136,11 +136,14 @@ class ProfileScreen extends StatelessWidget {
                     userModel.getUrlFromNameHash(genderInput: userModel.gender),
                   ),
                 ),
-                Text(
-                  userModel.name,
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.w600,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 0.0),
+                  child: Text(
+                    userModel.name,
+                    style: TextStyle(
+                      fontSize: 32.0,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 Row(
@@ -217,7 +220,7 @@ class ProfileScreen extends StatelessWidget {
                       child: Text(
                         'Personal Info',
                         style:TextStyle(
-                              fontSize: 20.0,
+                              fontSize: 22.0,
                           fontWeight: FontWeight.w600,
                             ),
                       ),
@@ -245,7 +248,7 @@ class ProfileScreen extends StatelessWidget {
                       child: Text(
                         'Car Info',
                           style:TextStyle(
-                            fontSize: 20.0,
+                            fontSize: 22.0,
                             fontWeight: FontWeight.w600,
                           ),
                       ),
@@ -266,7 +269,7 @@ class ProfileScreen extends StatelessWidget {
                       child: Text(
                         'Reviews',
                           style:TextStyle(
-                            fontSize: 20.0,
+                            fontSize: 22.0,
                             fontWeight: FontWeight.w600,
                           ),
                       ),

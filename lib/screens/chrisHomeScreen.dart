@@ -152,7 +152,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     return Align(
         alignment: Alignment.topCenter,
         child: Padding(
-            padding: EdgeInsets.only(left: 21.0, right: 21.0, top: 10.0),
+            padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
             child: DateTimeField(
               format: format,
               controller: dateController,

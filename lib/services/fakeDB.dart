@@ -7,6 +7,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FakeDB {
 
+  static RidesModel fakeRide = new RidesModel(fromText: 'from', toText: 'to', randPoints: [new LatLng(38.236785, 23.94523)], toLatLng: new LatLng(37.236785, 23.44523), dateTime: new DateTime(2020), driver: fakeUser);
+  static UserModel fakeUser = new UserModel(name: 'name', gender: Gender.male, phone: '699999999', email: 'covid19@gmail.com', carInfo: 'mercedes bench', rating: 1.1);
+  static ReviewModel reviewModel = new ReviewModel(imageUrl: 'https://randomuser.me/api/portraits/men/52.jpg',
+    name: 'John Ioannides',
+    phone: '6999999999',
+    reviewText: 'God bless Trump!! America is the best country in the world but this driver is shit.',
+    rating: 5.0,);
 //  static final UserModel randomDriver39 = UserModel(
 //    name: 'Odhgouliss',
 //    gender: Gender.female,

@@ -32,10 +32,10 @@ class SearchEngine{
     therefore is returned.
      */
 
-    results.add(FakeDB.ride39);
-    results.add(FakeDB.ride55);
-    results.add(FakeDB.ride39);
-    results.add(FakeDB.ride55);
+    results.add(FakeDB.fakeRide);
+    results.add(FakeDB.fakeRide);
+    results.add(FakeDB.fakeRide);
+    results.add(FakeDB.fakeRide);
 
     return results;
   }

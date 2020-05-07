@@ -28,12 +28,12 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   String from = "";
   String to = "";
   String date;
-  List<RidesModel> results = [FakeDB.ride55];
-  RidesModel currentRide = FakeDB.ride55;
-  UserModel fakeUser = FakeDB.randomDriver39;
-  static ReviewModel reviewModel = FakeDB.review1;
-  static ReviewCard reviewCard = new ReviewCard(reviewModel: reviewModel);
-  List <ReviewCard> reviewList = [reviewCard];
+  static RidesModel fakeRide = FakeDB.fakeRide;
+  List<RidesModel> results = [fakeRide];
+  RidesModel currentRide = new RidesModel(fromText: 'from', toText: 'to', randPoints: [new LatLng(38.236785, 23.94523)], toLatLng: new LatLng(37.236785, 23.44523), dateTime: new DateTime(2020), driver: fakeUser);
+  static UserModel fakeUser = FakeDB.fakeUser;
+  static ReviewModel reviewModel = FakeDB.reviewModel;
+  List <ReviewModel> reviewList = [reviewModel,reviewModel,reviewModel,reviewModel];
   bool showStartingScreen = true;
   bool showResults = false;
   bool showDetails = false;
@@ -485,7 +485,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                       ),
                       Expanded(
                         child: ListView(
-                          children: _getReviews(driver.reviewsList),
+                          children: _getReviews(reviewList),
                         ),
                       ),
                     ],

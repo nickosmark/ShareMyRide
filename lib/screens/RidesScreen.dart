@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/models/UserRide.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
+import 'package:flutter_app/services/DataBase.dart';
 import 'package:flutter_app/widgets/ReviewCard.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
@@ -9,9 +10,9 @@ import 'package:flutter_app/models/ReviewModel.dart';
 
 
 class RidesScreen extends StatelessWidget {
-  final Database db ;
+  final DataBase db ;
 //TODO input should be List<UserRides>
-  RidesScreen({this.userModel});
+  RidesScreen({this.db});
 
   List<Widget> pendingList = [];
   List<Widget> confirmedList = [];
@@ -21,10 +22,10 @@ class RidesScreen extends StatelessWidget {
   var lightBlueColor = Colors.blue;
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
 
-
-  void getDataFromUserRides(){
+  List<UserRide> fakeUserRides = [];
+  void getDataFromUserRides(List<UserRide> userRides){
     //TODO userRides from constructor
-    List<UserRide> userRides = userModel.ridesList;
+    //List<UserRide> userRides = userModel.ridesList;
 
     //TODO needs work. doesnt check if i have pending but not completed
     if (userRides.isEmpty) {
@@ -76,7 +77,7 @@ class RidesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    getDataFromUserRides();
+    getDataFromUserRides(fakeUserRides);
     return MaterialApp(
       title: 'ShareMyRide',
       theme: ThemeData(

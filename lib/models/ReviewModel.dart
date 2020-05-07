@@ -37,7 +37,7 @@ class ReviewModel {
   Map<String, dynamic> toMap() {
     return {
       'phone' : phone,
-      'imageurl': imageUrl,
+      'imageUrl': imageUrl,
       'name': name,
       'reviewText': reviewText,
       'rating': rating,
@@ -46,13 +46,15 @@ class ReviewModel {
 
   static ReviewModel fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
-  
+
+    double rating = map['rating'].toDouble();
+
     return ReviewModel(
       phone: map['phone'],
-      imageUrl: map['imageurl'],
+      imageUrl: map['imageUrl'],
       name: map['name'],
       reviewText: map['reviewText'],
-      rating: map['rating'],
+      rating: rating,
     );
   }
 

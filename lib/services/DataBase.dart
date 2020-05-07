@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/models/RidesModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/services/Authenticator.dart';
@@ -18,6 +19,11 @@ class DataBase {
   final Geoflutterfire geo = Geoflutterfire();
   DataBase({this.auth});
 
+
+  Future<String> getCurrAnonUserPhone() async {
+    String currentUserId = await auth.getCurrentFireBaseUserID();
+
+  }
 
   Future<UserModel> getCurrentUserModel() async{
     UserModel generatedUserModel;
@@ -45,6 +51,21 @@ class DataBase {
     return generatedUserModel;
   }
 
+  Future<List<ReviewModel>>getCurrentUserReviews() async{
+    List<ReviewModel> generetedList = [];
+    String currentUser = await auth.getCurrentFireBaseUserID();
+    var reviewCollection = db.collection(Paths.ReviewModel);
+    var query = reviewCollection.where('phone',isEqualTo: currentUser);
+    var remoteDoc = await query.getDocuments();
+    List results = [];
+    for(var i in remoteDoc.documents){
+      //Map result = i.data;
+      ReviewModel review = ReviewModel.fromMap(i.data);
+      generetedList.add(review);
+    }
+      return generetedList;
+  }
+
 
   //should return DocRef??
   Future<DocumentReference> createUserModel(UserModel user) async{
@@ -64,6 +85,8 @@ class DataBase {
   }
 
 
+
+
   Future<List<Map>> getAllUserModelsFromDb() async{
     var remoteDocuments = await db.collection('UserModel').getDocuments();
     List<Map> resultDB =[];
@@ -75,7 +98,7 @@ class DataBase {
   }
 
 
-
+  //FIXME delete this shit
   void signUpUser() async{
     db.collection('UserModel').add({
       'name': await auth.getCurrentFireBaseUserID(),

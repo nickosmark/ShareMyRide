@@ -16,7 +16,6 @@ class ProfileScreen extends StatelessWidget {
   });
 
   Future<UserModel> futureUser ;
-  //TODO get current users reviews
   Future<List<ReviewModel>> futureReviews ;
   //List<Widget> reviewWidgetList = [];
 
@@ -56,10 +55,16 @@ class ProfileScreen extends StatelessWidget {
 
   void getDataFromDb(){
     futureUser = db.getCurrentUserModel();
-    //futureReviews = db.getCurrentUserReviews();
+    futureReviews = db.getCurrentUserReviews();
+  }
+
+  void printReviewList() async{
+    List reviews = await db.getCurrentUserReviews();
+    print('!!!!REVIEWS IN DB:   $reviews');
   }
   @override
   Widget build(BuildContext context) {
+    printReviewList();
     getDataFromDb();
     UserModel initialUser = UserModel(
       name:'waiting...',
@@ -161,7 +166,7 @@ class ProfileScreen extends StatelessWidget {
                               if(snapshot.hasData){
                                 print('We have rating!!!');
                                 return Text(
-                                  getRatingAverage(snapshot.data).toString(),
+                                  getRatingAverage(snapshot.data).toString().substring(0,3),
                                   style: GoogleFonts.oswald(
                                       textStyle: TextStyle(
                                         fontSize: 15.0,
@@ -178,7 +183,7 @@ class ProfileScreen extends StatelessWidget {
                                 );
                               }else{
                                 //waiting...
-                                print('waiting');
+                                print('waiting for rating');
                                 return Column(
                                   children: <Widget>[
                                     Center(
@@ -275,13 +280,14 @@ class ProfileScreen extends StatelessWidget {
                         children: reviewCardsWidgetsFromList(snapshot.data),
                       );
                     }else if(snapshot.hasError){
-                      print('error');
+                      print('error in review list');
+                      print('error data: ${snapshot.data}');
                       return Column(
                         children: reviewCardsWidgetsFromList([]),
                       );
                     }else{
                       //waiting...
-                      print('waiting');
+                      print('waiting reviews');
                       return Column(
                         children: <Widget>[
                           Center(
@@ -313,7 +319,7 @@ class ProfileScreen extends StatelessWidget {
       //initialData: initialUser,
       builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot){
         if(snapshot.hasData){
-          print('WE HAVE DATA!!!');
+          print('we have profile data!!!');
           //todo second argument future list
           return userScreen(snapshot.data, this.futureReviews);
         }else if(snapshot.hasError){

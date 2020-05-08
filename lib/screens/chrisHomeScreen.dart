@@ -14,7 +14,6 @@ import 'package:flutter_app/widgets/ReviewCard.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/services/fakeDB.dart';
 import 'package:flutter_app/services/SearchEngine.dart';
-import 'package:flutter_app/services/GoogleMapService.dart';
 
 class ChrisHomeScreen extends StatefulWidget {
   @override
@@ -23,22 +22,36 @@ class ChrisHomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<ChrisHomeScreen> {
 
+  //Google map variables
+  GoogleMapController _mapController;
+  double _originLatitude, _originLongitude;
+  LatLng startCords, endCords;
+  double _destLatitude, _destLongitude;
+  Map<MarkerId, Marker> markers = {};
+  Map<PolylineId, Polyline> polylines = {};
+  List<LatLng> polylineCoordinates = [];
+  PolylinePoints polylinePoints = PolylinePoints();
+  String _googleAPiKey = "AIzaSyBWVICFOmSbt_Z7cnt3swbt9LvZgQg-1uw";
+  String mapStyle;
+  Completer<GoogleMapController> _controller = Completer();
+
+  //In app necessary variables
   final dateController = TextEditingController();
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
   String from = "";
   String to = "";
   String date;
+  bool showStartingScreen = true;
+  bool showResults = false;
+  bool showDetails = false;
+
+  //fake data
   static RidesModel fakeRide = FakeDB.fakeRide;
   List<RidesModel> results = [fakeRide];
   RidesModel currentRide = new RidesModel(fromText: 'from', toText: 'to', randPoints: [new LatLng(38.236785, 23.94523)], toLatLng: new LatLng(37.236785, 23.44523), dateTime: new DateTime(2020), driver: fakeUser);
   static UserModel fakeUser = FakeDB.fakeUser;
   static ReviewModel reviewModel = FakeDB.reviewModel;
   List <ReviewModel> reviewList = [reviewModel,reviewModel,reviewModel,reviewModel];
-  bool showStartingScreen = true;
-  bool showResults = false;
-  bool showDetails = false;
-  GoogleMapService googleMapService = new GoogleMapService();
-  LatLng startCords, endCords;
 
   @override
   void dispose() {
@@ -48,7 +61,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   @override
   void initState() {
-    googleMapService.loadMapStyle();
+    _loadMapStyle();
     super.initState();
   }
 
@@ -64,10 +77,10 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       resizeToAvoidBottomPadding: false,
       body: Stack(
           children: <Widget>[
-            googleMapService.googleMap(context),
+            _googleMap(context),
             _startingScreen(),
-            _resultsScreen(),
-            _detailsScreen(currentRide)
+            _resultsScreen(showResults, fakeUser.name, results),
+            _detailsScreen(showDetails, currentRide)
           ],
       ),
     );
@@ -107,7 +120,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             padding: EdgeInsets.only(left: 10.0, right: 10.0, top: top),
             child:
             SearchMapPlaceWidget(
-              apiKey: googleMapService.googleAPiKey,
+              apiKey: _googleAPiKey,
               // The language of the autocompletion
               language: 'el',
               placeholder: str,
@@ -119,28 +132,23 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
               onSelected: (Place place) async {
                 final geolocation = await place.geolocation;
                 startCords = geolocation.coordinates;
-                googleMapService.mapController.animateCamera(CameraUpdate.newLatLngZoom(startCords, 15));
+                _mapController.animateCamera(CameraUpdate.newLatLngZoom(startCords, 15));
+                _removePolylines();
 
                 if(str=="From: "){
                   from = place.description;
-                  googleMapService.removePolylines();
-                  googleMapService.originLatitude = startCords.latitude;
-                  googleMapService.originLongitude = startCords.longitude;
-                  setState(() {
-                    googleMapService.getPolyline();
-                  });
+                  _addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
+                  _originLatitude = startCords.latitude;
+                  _originLongitude = startCords.longitude;
                 }
 
-                googleMapService.addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
                 if(str=="To: "){
                   to = place.description;
-                  googleMapService.removePolylines();
-                  googleMapService.destLatitude = startCords.latitude;
-                  googleMapService.destLongitude = startCords.longitude;
-                  setState(() {
-                    googleMapService.getPolyline();
-                  });
+                  _addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
+                  _destLatitude = startCords.latitude;
+                  _destLongitude = startCords.longitude;
                 }
+                _getPolyline();
 
               },
 
@@ -236,7 +244,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   //the method called when the user presses the search button
   _onSearchPressed() {
-    googleMapService.removePolylines();
+    _removePolylines();
     date = dateController.text;
     SearchEngine searchEngine = new SearchEngine(from, to, startCords, endCords, DateTime.parse(date));
     results = searchEngine.getResults();
@@ -248,7 +256,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   //the method called when the user presses the create button
   _onCreatePressed() {
-    googleMapService.removePolylines();
+    _removePolylines();
     date = dateController.text;
     setState(() {
       showDialog(context: context, child:
@@ -260,11 +268,11 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     });
   }//onCreatePressed
 
-  Widget _resultsScreen() {
+  Widget _resultsScreen(bool isVisible, String name, List<RidesModel> results) {
     return Align(
         alignment: Alignment.bottomLeft,
         child: Visibility(
-          visible: showResults,
+          visible: isVisible,
           child: SizedBox(
             height: 230.0,
             child: DecoratedBox(
@@ -281,7 +289,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        'Hey Xzhibit!',
+                        'Hey $name!',
                         style: TextStyle(fontSize: 22.0),
                       ),
                     ),
@@ -299,7 +307,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                   Expanded(
                     child: ListView(
                       scrollDirection: Axis.horizontal,
-                      children: _listResultItem(),
+                      children: _listResultItem(results),
                     ),
                   ),
                 ],
@@ -309,7 +317,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         ));
   } //buildContainer
 
-  List<Widget> _listResultItem() {
+  List<Widget> _listResultItem(List<RidesModel> results) {
     List<Widget> items = new List<Widget>();
     RideResultCard resultCard = new RideResultCard();
     SizedBox box = new SizedBox(width: 10);
@@ -339,12 +347,12 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     );
   }
 
-  Widget _detailsScreen(RidesModel ride) {
+  Widget _detailsScreen(bool isVisible, RidesModel ride) {
     UserModel driver = ride.driver;
     return Align(
       alignment: Alignment.bottomLeft,
       child: Visibility(
-        visible: showDetails,
+        visible: isVisible,
         child: GestureDetector(
           child: Stack(
             alignment: AlignmentDirectional.bottomCenter,
@@ -508,6 +516,85 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     }
 
     return reviews;
+  }
+
+  //Google map related methods
+
+  Widget _googleMap(BuildContext context){
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      child: GoogleMap(
+        initialCameraPosition: CameraPosition(
+            target: LatLng(37.9838, 23.7275),
+            zoom: 15
+        ),
+        zoomControlsEnabled: false,
+        myLocationEnabled: true,
+        tiltGesturesEnabled: true,
+        compassEnabled: true,
+        scrollGesturesEnabled: true,
+        zoomGesturesEnabled: true,
+        onMapCreated: onMapCreated,
+        markers: Set<Marker>.of(markers.values),
+        polylines: Set<Polyline>.of(polylines.values),
+      ),
+    );
+  }
+
+  void onMapCreated(GoogleMapController controller) async{
+    _mapController = controller;
+    _mapController.setMapStyle(mapStyle);
+  }
+
+  void _loadMapStyle() {
+    rootBundle.loadString('assets/map_style.txt').then((string) {
+      mapStyle = string;
+    });
+  }
+
+  Future<void> gotoLocation(double lat, double long) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: LatLng(lat, long), zoom: 15, tilt: 50.0, bearing: 45.0)));
+  }
+
+  // method that creates the polyline given the from and to geolocation
+  _getPolyline() async {
+    List<PointLatLng> result = await polylinePoints.getRouteBetweenCoordinates(
+      _googleAPiKey,
+      _originLatitude,
+      _originLongitude,
+      _destLatitude,
+      _destLongitude,);
+    if (result.isNotEmpty) {
+      result.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    }
+    PolylineId id = PolylineId("poly");
+    Polyline polyline = Polyline(
+        polylineId: id, color: Colors.blue, points: polylineCoordinates);
+    polylines[id] = polyline;
+    setState(() {
+
+    });
+  }
+
+  _removePolylines(){
+    polylineCoordinates.clear();
+  }
+
+  // method that adds the marker to the map
+  _addMarker(LatLng position, String id, BitmapDescriptor descriptor, String info){
+    MarkerId markerId = MarkerId(id);
+    Marker marker =
+    Marker(markerId: markerId,
+        icon: descriptor,
+        position: position,
+        infoWindow: InfoWindow(title: info
+        ));
+    markers[markerId] = marker;
   }
 
 } //build_end

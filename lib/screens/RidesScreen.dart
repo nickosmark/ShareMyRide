@@ -27,15 +27,25 @@ class RidesScreen extends StatelessWidget {
 
 
 
-  void acceptRide(){}
-  void declineRide(){}
-  void completeRide(){}
-  void cancelRide(){}
-  void leaveReview(){}
+  void acceptRide(String fellowTravellerPhone){
+    //db.updateRideToConfirmed(fellowTravellerPhone)
+  }
+  void declineRide(String fellowTravellerPhone){
+    //db.deleteRide(fellowTravellerPhone)
+  }
+  void completeRide(String fellowTravellerPhone){
+    //db.updateRideToCompleted(fellowTravellerPhone)
+  }
+  void cancelRide(String fellowTravellerPhone){
+
+  }
+  void leaveReview(){
+    //TODO navigate to ReviewScreen
+
+  }
 
   void organizeUserRidesInCategories(List<UserRide> userRides){
-    //TODO userRides from constructor
-    //List<UserRide> userRides = userModel.ridesList;
+
 
     //TODO needs work. doesnt check if i have pending but not completed
     if (userRides.isEmpty) {
@@ -52,32 +62,25 @@ class RidesScreen extends StatelessWidget {
       for (var item in userRides) {
         //Data needed for cards!!
 
+        String url = item.fellowTraveler.getUrlFromNameHash(genderInput: item.fellowTraveler.gender);
+        String name = item.fellowTraveler.name;
+        String fromWhere = item.ride.fromText;
+        String toWhere = item.ride.toText;
         if(item.status == Status.pending){
-          //TODO check if Driver or passenger and show different pending Card
 
           if(item.isDriver){
-            String url = item.fellowTraveler.getUrlFromNameHash(genderInput: item.fellowTraveler.gender);
-            String name = item.fellowTraveler.name;
-            String fromWhere = item.ride.fromText;
-            String toWhere = item.ride.toText;
+
             pendingList.add(pendingCardDriver(url, name, fromWhere, toWhere));
           }else{
-            //SHOW PASSENGER DATA
-            String url = item.fellowTraveler.getUrlFromNameHash(genderInput: item.fellowTraveler.gender);
-            // check if this is the same, should be the same??:
-            // String url = item.ride.driver.getUrlFromNameHash() ;
-            String name = item.fellowTraveler.name;
-            String fromWhere = item.ride.fromText;
-            String toWhere = item.ride.toText;
             pendingList.add(pendingCardPassenger(url, name, fromWhere, toWhere));
           }
 
         }
         if(item.status == Status.confirmed){
-          //confirmedList.add(confirmedCard(url, name, fromWhere, toWhere));
+          confirmedList.add(confirmedCard(url, name, fromWhere, toWhere));
         }
         if(item.status == Status.completed){
-          //completedList.add(completedCard(url, name, fromWhere, toWhere));
+          completedList.add(completedCard(url, name, fromWhere, toWhere));
         }
       }
     }
@@ -292,7 +295,7 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget confirmedCard(String url, String name, double fromWhere, double toWhere){
+  Widget confirmedCard(String url, String name, String fromWhere, String toWhere){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
@@ -316,7 +319,7 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget completedCard(String url, String name, double fromWhere, double toWhere){
+  Widget completedCard(String url, String name, String fromWhere, String toWhere){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(

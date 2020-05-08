@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/UserModel.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class ReviewsScreen extends StatelessWidget {
+  final UserModel myUser;
+  final UserModel reviewee;
+
+  ReviewsScreen({this.reviewee, this.myUser});
+
   final Color darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   final Color lightBlueColor = Colors.blue;
   final Color lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
   final String name = "Ketoyla Perry";
+  //
+  //
   double revRating;
+  String reviewText;
+
+
+  // i need url,name, AND PHONE from card(reviewee)
+  //and
+  //myUserModel to create ReviewModel
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +76,7 @@ class ReviewsScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
                   child: TextField(
+                    onChanged: (value) => reviewText = value,
                     obscureText: false,
                     //expands: true,
                     maxLines: 5,
@@ -75,7 +91,34 @@ class ReviewsScreen extends StatelessWidget {
                   padding: EdgeInsets.only(top: 50.0, bottom: 100.0),
                   child: RaisedButton(
                     onPressed: () {
-                      /*
+                      //TODO create a review
+                      //create ReviewModel with phone == revieweePhone
+                      //name == myUser.name
+                      //imageUrl == myUser.getNameHash....
+                      //rating == rating
+                      //reviewtext = reviewtext.....
+                      // db.createReview(ReviewModel review)
+                    }, //onPressed
+                    child: Text(
+                      "SUBMIT",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    color: darkBlueColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+/*
                       showDialog(
                         context: context,
                         barrierDismissible: false, // user must tap button!
@@ -107,21 +150,3 @@ class ReviewsScreen extends StatelessWidget {
                         },
                       );
                       */
-                    }, //onPressed
-                    child: Text(
-                      "SUBMIT",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0)),
-                    color: darkBlueColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

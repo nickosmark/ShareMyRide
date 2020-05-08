@@ -1,3 +1,5 @@
+//import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/models/RidesModel.dart';
@@ -12,6 +14,7 @@ class Paths{
   static String UserModel = 'UserModel';
   static String ReviewModel = 'ReviewModel';
   static String UserRide = 'UserRide';
+  static String RidesModes = 'RidesModel';
 }
 
 class DataBase {
@@ -91,6 +94,19 @@ class DataBase {
     }
     return docRef;
   }
+
+
+  Future<DocumentReference> createUserRide(UserRide userRide) async {
+    DocumentReference docRef;
+    var userRideCollection = db.collection(Paths.UserRide);
+    try{
+      docRef = await userRideCollection.add(userRide.toMap());
+    }catch (e){
+      docRef = null;
+    }
+    return docRef;
+  }
+
 
   void updateUserModel(UserModel user){
     var collection = db.collection(Paths.UserModel);

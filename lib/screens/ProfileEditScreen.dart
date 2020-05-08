@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/RidesModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/models/UserRide.dart';
 import 'package:flutter_app/screens/AuthScreen.dart';
 import 'package:flutter_app/screens/MyApp.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
 import 'package:flutter_app/services/DataBase.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/services/fakeDB.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 //random bourditses
 //final user = UserModel(id: 1, name: nameControler.text, gender: Gender.male, phone: phoneControler.text, email: emailControler.text, carInfo: carInfoControler.text,
@@ -322,6 +325,54 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0)),
                     color: Colors.red[700],
+                  ),
+                ),
+                Container(
+                  child: RaisedButton(
+                    onPressed: () async{
+                      //create fake driver
+                      //create fake RideModel
+                      //pass it to UserRide of the currentUser
+                      var fakeDriver = UserModel(
+                        name: 'nikolakis',
+                        gender: Gender.male,
+                        phone: 'z6uLHwL8BmbycqphNo0LXWVO5Am1',
+                        email: 'info@kolos.gr',
+                        carInfo: 'subaru',
+                        rating: 4.5,
+                      );
+                      var fakeRide = RidesModel(
+                        fromText: 'athens',
+                        toText:  'glifada',
+                        randPoints: [LatLng(37.983810,23.727539),LatLng(37.865044, 23.755045)],
+                        toLatLng:LatLng(37.865044, 23.755045),
+                        dateTime: DateTime(2020),
+                        driver: fakeDriver,
+                      );
+                      String anonUserPhone = await widget.db.auth.getCurrentFireBaseUserID();
+                      var fakeUserRide = UserRide(
+                        phone: anonUserPhone,
+                        status: Status.completed,
+                        ride: fakeRide,
+                        fellowTraveler: fakeDriver,
+                      );
+                      var result = widget.db.createUserRide(fakeUserRide);
+                      if(result == null){
+                        print('couldnt create a new user Ride');
+                      }else{
+                        print('UserRide creation Successfull!!');
+                      }
+                    },
+                    child: Text(
+                      "create fake UserRide",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.0,
+                      ),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    color: Colors.brown,
                   ),
                 ),
               ],

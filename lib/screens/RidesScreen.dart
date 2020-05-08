@@ -1,8 +1,11 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/RidesModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/models/UserRide.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
+import 'package:flutter_app/screens/ReviewsScreen.dart';
 import 'package:flutter_app/services/DataBase.dart';
 import 'package:flutter_app/widgets/ReviewCard.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -40,8 +43,9 @@ class RidesScreen extends StatelessWidget {
   void cancelRide(String fellowTravellerPhone){
 
   }
-  void leaveReview(){
+  void leaveReview(UserModel fellowTraveller, UserModel currentUser){
     //TODO navigate to ReviewScreen
+
 
   }
 
@@ -63,24 +67,24 @@ class RidesScreen extends StatelessWidget {
       for (var item in userRides) {
         //Data needed for cards!!
 
-        UserModel felllowTraveller = item.fellowTraveler;
+        UserModel fellowTraveller = item.fellowTraveler;
         RidesModel ride = item.ride;
 
         if(item.status == Status.pending){
 
           if(item.isDriver){
 
-            pendingList.add(pendingCardDriver(felllowTraveller,ride));
+            pendingList.add(pendingCardDriver(fellowTraveller,ride));
           }else{
-            pendingList.add(pendingCardPassenger(felllowTraveller,ride));
+            pendingList.add(pendingCardPassenger(fellowTraveller,ride));
           }
 
         }
         if(item.status == Status.confirmed){
-          confirmedList.add(confirmedCard(felllowTraveller,ride));
+          confirmedList.add(confirmedCard(fellowTraveller,ride));
         }
         if(item.status == Status.completed){
-          completedList.add(completedCard(felllowTraveller,ride));
+          completedList.add(completedCard(fellowTraveller,ride));
         }
       }
     }
@@ -330,7 +334,10 @@ class RidesScreen extends StatelessWidget {
         trailing: Padding(
           padding: const EdgeInsets.only(right: 0.0),
           child: IconButton(
-            onPressed: () {},
+            onPressed: () async{
+              UserModel currentUser = await db.getCurrentUserModel();
+              //leaveReview(fellowTraveller, currentUser, context);
+            },
             icon: Icon(
               Icons.chat,
               size: 25.0,
@@ -344,6 +351,48 @@ class RidesScreen extends StatelessWidget {
 
 
 
-
 }
+
+//TODO change everything to stateless widget
+class completedCard extends StatelessWidget {
+  final DataBase db;
+  final UserModel fellowTraveller;
+  final RidesModel ride;
+
+  completedCard({this.db,this.fellowTraveller, this.ride});
+
+  final darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
+      child: ListTile(
+        leading: CircleAvatar(
+            backgroundImage: new NetworkImage(fellowTraveller.getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        title: Text(fellowTraveller.name),
+        subtitle: Text(' ${ride.fromText} -> ${ride.toText}'),
+        trailing: Padding(
+          padding: const EdgeInsets.only(right: 0.0),
+          child: IconButton(
+            onPressed: () async{
+              UserModel currentUser = await db.getCurrentUserModel();
+              //leaveReview(fellowTraveller, currentUser, context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ReviewsScreen(reviewee: fellowTraveller, myUser: currentUser,)),
+              );
+            },
+            icon: Icon(
+              Icons.chat,
+              size: 25.0,
+              color: darkBlueColor,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 

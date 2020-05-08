@@ -12,7 +12,6 @@ class ReviewsScreen extends StatelessWidget {
   final Color darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   final Color lightBlueColor = Colors.blue;
   final Color lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
-  final String name = "Ketoyla Perry";
   //
   //
   double revRating;
@@ -32,8 +31,18 @@ class ReviewsScreen extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         primaryColor: darkBlueColor,
         accentColor: lightBlueColor,
+        //cardColor: lightGreyBackground,
         textTheme: TextTheme(
-          body1: TextStyle(color: Color.fromRGBO(26, 26, 48, 1.0)),
+          body1: TextStyle(
+            color: darkBlueColor,
+            fontFamily: 'fira',
+            fontSize: 12.0,
+          ),
+          subhead: TextStyle(
+            color: darkBlueColor,
+            fontFamily: 'fira',
+            fontSize: 16.0,
+          ),
         ),
       ),
       home: Scaffold(
@@ -46,14 +55,16 @@ class ReviewsScreen extends StatelessWidget {
                   child: CircleAvatar(
                       radius: 60.0,
                       backgroundImage:
-                          new NetworkImage('https://via.placeholder.com/150')),
+                          new NetworkImage(reviewee.getUrlFromNameHash(genderInput: reviewee.gender))),
                 ),
                 Container(
                   padding: EdgeInsets.only(top: 10.0),
                   child: Text(
-                    name,
-                    style: GoogleFonts.oswald(
-                        textStyle: TextStyle(fontSize: 30.0)),
+                    reviewee.name,
+                    style: TextStyle(
+                      fontSize: 32.0,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 RatingBar(
@@ -98,6 +109,8 @@ class ReviewsScreen extends StatelessWidget {
                       //rating == rating
                       //reviewtext = reviewtext.....
                       // db.createReview(ReviewModel review)
+                      //navigate to ridescreen
+                      Navigator.pop(context);
                     }, //onPressed
                     child: Text(
                       "SUBMIT",

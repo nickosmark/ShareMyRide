@@ -83,7 +83,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             email: this.email,
             carInfo: this.carInfo,
             rating: 0.0,
-            ridesList: [],
           );
           var result = widget.db.createUserModel(user);
           if(result == null){

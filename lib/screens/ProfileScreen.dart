@@ -73,7 +73,6 @@ class ProfileScreen extends StatelessWidget {
       email: 'waiting...',
       rating: 0.0,
       carInfo: 'waiting...',
-      ridesList: [],
     );
     UserModel errorUser = UserModel(
       name:'ERROR',
@@ -82,7 +81,6 @@ class ProfileScreen extends StatelessWidget {
       email: 'ERROR',
       rating: 0.0,
       carInfo: 'ERROR',
-      ridesList: [],
     );
 
     Widget userScreen(UserModel userModel, Future<List<ReviewModel>> futureReviews){

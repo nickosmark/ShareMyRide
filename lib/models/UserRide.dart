@@ -10,14 +10,14 @@ enum Status{
 }
 
 class UserRide {
-  String userPhone;
+  String phone;
   Status status;
   bool isDriver;
   RidesModel ride;
   UserModel fellowTraveler;
 
   UserRide({
-    this.userPhone,
+    this.phone,
     this.status,
     this.isDriver,
     this.ride,
@@ -25,14 +25,14 @@ class UserRide {
   });
 
   UserRide copyWith({
-    String userPhone,
+    String phone,
     Status status,
     bool isDriver,
     RidesModel ride,
     UserModel fellowTraveler,
   }) {
     return UserRide(
-      userPhone: userPhone ?? this.userPhone,
+      phone: phone ?? this.phone,
       status: status ?? this.status,
       isDriver: isDriver ?? this.isDriver,
       ride: ride ?? this.ride,
@@ -42,7 +42,7 @@ class UserRide {
 
   Map<String, dynamic> toMap() {
     return {
-      'userPhone' : userPhone,
+      'phone' : phone,
       'status': status?.toString(),
       'isDriver': isDriver,
       'ride': ride?.toMap(),
@@ -65,7 +65,7 @@ class UserRide {
     }
 
     return UserRide(
-      userPhone: map['userPhone'],
+      phone: map['phone'],
       status: status,
       isDriver: map['isDriver'],
       ride: RidesModel.fromMap(map['ride']),
@@ -79,7 +79,7 @@ class UserRide {
 
   @override
   String toString() {
-    return 'UserRide(userPhone: $userPhone, status: $status, isDriver: $isDriver, ride: $ride, fellowTraveler: $fellowTraveler)';
+    return 'UserRide(userPhone: $phone, status: $status, isDriver: $isDriver, ride: $ride, fellowTraveler: $fellowTraveler)';
   }
 
   @override
@@ -87,7 +87,7 @@ class UserRide {
     if (identical(this, o)) return true;
   
     return o is UserRide &&
-      o.userPhone == userPhone &&
+      o.phone == phone &&
       o.status == status &&
       o.isDriver == isDriver &&
       o.ride == ride &&

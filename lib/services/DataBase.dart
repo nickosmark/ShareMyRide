@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/models/RidesModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/models/UserRide.dart';
 import 'package:flutter_app/services/Authenticator.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -45,7 +46,6 @@ class DataBase {
         email: 'error no email',
         carInfo: 'no car mate :/',
         rating: 0.0,
-        ridesList: [],
       );
     }
     return generatedUserModel;
@@ -64,6 +64,19 @@ class DataBase {
       generetedList.add(review);
     }
       return generetedList;
+  }
+  
+  Future<List<UserRide>> getCurrentUserRides() async {
+    List<UserRide> generatedList = [];
+    String currentUser = await auth.getCurrentFireBaseUserID();
+    var userRideCollection = db.collection(Paths.UserRide);
+    var query = userRideCollection.where('phone', isEqualTo: currentUser);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      UserRide userRide = UserRide.fromMap(i.data);
+      generatedList.add(userRide);
+    }
+    return generatedList;
   }
 
 

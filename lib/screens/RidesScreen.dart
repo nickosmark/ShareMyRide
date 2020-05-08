@@ -12,8 +12,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RidesScreen extends StatelessWidget {
   final DataBase db ;
-//TODO input should be List<UserRides>
   RidesScreen({this.db});
+
+  var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
+  var lightBlueColor = Colors.blue;
+  var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
 
   Future<List<UserRide>> futureUserRides;
 
@@ -21,11 +24,8 @@ class RidesScreen extends StatelessWidget {
   List<Widget> confirmedList = [];
   List<Widget> completedList = [];
 
-  var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
-  var lightBlueColor = Colors.blue;
-  var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
 
-  List<UserRide> fakeUserRides = [];
+
 
   void acceptRide(){}
   void declineRide(){}
@@ -84,7 +84,7 @@ class RidesScreen extends StatelessWidget {
   }
 
   void getDataFromDb(){
-    //Future<List<UserRide>> userRides = db.getCurrentUserRides();
+    futureUserRides = db.getCurrentUserRides();
   }
 
 
@@ -105,16 +105,12 @@ class RidesScreen extends StatelessWidget {
        }else{
          //waiting...
          print('waiting for userRides');
-         return Column(
-           children: <Widget>[
-             Center(
-               child: SizedBox(
-                 child: CircularProgressIndicator(),
-                 width: 100,
-                 height: 100,
-               ),
-             ),
-           ],
+         return Center(
+           child: SizedBox(
+             child: CircularProgressIndicator(),
+             width: 100,
+             height: 100,
+           ),
          );
        }
      },

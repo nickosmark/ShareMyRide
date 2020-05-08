@@ -15,6 +15,8 @@ class RidesScreen extends StatelessWidget {
 //TODO input should be List<UserRides>
   RidesScreen({this.db});
 
+  Future<List<UserRide>> futureUserRides;
+
   List<Widget> pendingList = [];
   List<Widget> confirmedList = [];
   List<Widget> completedList = [];
@@ -24,7 +26,14 @@ class RidesScreen extends StatelessWidget {
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
 
   List<UserRide> fakeUserRides = [];
-  void getDataFromUserRides(List<UserRide> userRides){
+
+  void acceptRide(){}
+  void declineRide(){}
+  void completeRide(){}
+  void cancelRide(){}
+  void leaveReview(){}
+
+  void organizeUserRidesInCategories(List<UserRide> userRides){
     //TODO userRides from constructor
     //List<UserRide> userRides = userModel.ridesList;
 
@@ -74,120 +83,155 @@ class RidesScreen extends StatelessWidget {
     }
   }
 
+  void getDataFromDb(){
+    //Future<List<UserRide>> userRides = db.getCurrentUserRides();
+  }
 
 
   @override
   Widget build(BuildContext context) {
-    getDataFromUserRides(fakeUserRides);
+    //get a Future list from database
+    getDataFromDb();
+
+    return FutureBuilder<List<UserRide>>(
+     future: futureUserRides,
+     builder: (BuildContext context, AsyncSnapshot<List<UserRide>> snapshot){
+       if(snapshot.hasData){
+         print('We have userRating!!!');
+         return buildRideScreen(snapshot.data);
+       }else if(snapshot.hasError){
+         print('error in user rides');
+         return buildRideScreen([]);
+       }else{
+         //waiting...
+         print('waiting for userRides');
+         return Column(
+           children: <Widget>[
+             Center(
+               child: SizedBox(
+                 child: CircularProgressIndicator(),
+                 width: 100,
+                 height: 100,
+               ),
+             ),
+           ],
+         );
+       }
+     },
+    );
+  }
+
+  MaterialApp buildRideScreen(List<UserRide> userRides) {
+    organizeUserRidesInCategories(userRides);
     return MaterialApp(
-      title: 'ShareMyRide',
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        primaryColor: darkBlueColor,
-        accentColor: lightBlueColor,
-        //cardColor: lightGreyBackground,
-        textTheme: TextTheme(
-          body1: TextStyle(
+    title: 'ShareMyRide',
+    theme: ThemeData(
+      scaffoldBackgroundColor: Colors.white,
+      primaryColor: darkBlueColor,
+      accentColor: lightBlueColor,
+      //cardColor: lightGreyBackground,
+      textTheme: TextTheme(
+        body1: TextStyle(
+          color: darkBlueColor,
+          fontFamily: 'fira',
+          fontSize: 12.0,
+        ),
+        subhead: TextStyle(
             color: darkBlueColor,
             fontFamily: 'fira',
-            fontSize: 12.0,
-          ),
-          subhead: TextStyle(
-              color: darkBlueColor,
-              fontFamily: 'fira',
-              fontSize: 16.0,
+            fontSize: 16.0,
+        ),
+      ),
+    ),
+    home: Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
+                    child: Text(
+                      'Pending',
+                        style:TextStyle(
+                          fontSize: 32.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                    ),
+                  ),
+                  IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.expand_more,
+                          size: 25.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                ],
+              ),
+              Column(
+                children: pendingList,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
+                    child: Text(
+                      'Confirmed',
+                        style:TextStyle(
+                          fontSize: 32.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                    ),
+                  ),
+                  IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.expand_more,
+                          size: 25.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                ],
+              ),
+              Column(
+                children: confirmedList,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
+                    child: Text(
+                      'Completed',
+                        style:TextStyle(
+                          fontSize: 32.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                    ),
+                  ),
+                  IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.expand_more,
+                          size: 25.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                ],
+              ),
+              Column(
+                children: completedList,
+              ),
+            ],
           ),
         ),
       ),
-      home: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
-                      child: Text(
-                        'Pending',
-                          style:TextStyle(
-                            fontSize: 32.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                      ),
-                    ),
-                    IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.expand_more,
-                            size: 25.0,
-                            color: Colors.black,
-                          ),
-                        ),
-                  ],
-                ),
-                Column(
-                  children: pendingList,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
-                      child: Text(
-                        'Confirmed',
-                          style:TextStyle(
-                            fontSize: 32.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                      ),
-                    ),
-                    IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.expand_more,
-                            size: 25.0,
-                            color: Colors.black,
-                          ),
-                        ),
-                  ],
-                ),
-                Column(
-                  children: confirmedList,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
-                      child: Text(
-                        'Completed',
-                          style:TextStyle(
-                            fontSize: 32.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                      ),
-                    ),
-                    IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.expand_more,
-                            size: 25.0,
-                            color: Colors.black,
-                          ),
-                        ),
-                  ],
-                ),
-                Column(
-                  children: completedList,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    ),
+  );
   }
 
 

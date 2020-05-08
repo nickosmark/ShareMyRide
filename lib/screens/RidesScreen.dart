@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/RidesModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/models/UserRide.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
@@ -62,25 +63,24 @@ class RidesScreen extends StatelessWidget {
       for (var item in userRides) {
         //Data needed for cards!!
 
-        String url = item.fellowTraveler.getUrlFromNameHash(genderInput: item.fellowTraveler.gender);
-        String name = item.fellowTraveler.name;
-        String fromWhere = item.ride.fromText;
-        String toWhere = item.ride.toText;
+        UserModel felllowTraveller = item.fellowTraveler;
+        RidesModel ride = item.ride;
+
         if(item.status == Status.pending){
 
           if(item.isDriver){
 
-            pendingList.add(pendingCardDriver(url, name, fromWhere, toWhere));
+            pendingList.add(pendingCardDriver(felllowTraveller,ride));
           }else{
-            pendingList.add(pendingCardPassenger(url, name, fromWhere, toWhere));
+            pendingList.add(pendingCardPassenger(felllowTraveller,ride));
           }
 
         }
         if(item.status == Status.confirmed){
-          confirmedList.add(confirmedCard(url, name, fromWhere, toWhere));
+          confirmedList.add(confirmedCard(felllowTraveller,ride));
         }
         if(item.status == Status.completed){
-          completedList.add(completedCard(url, name, fromWhere, toWhere));
+          completedList.add(completedCard(felllowTraveller,ride));
         }
       }
     }
@@ -234,14 +234,14 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget pendingCardDriver(String url, String name, String fromWhere, String toWhere){
+  Widget pendingCardDriver(UserModel fellowTraveller, RidesModel ride){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
         leading: CircleAvatar(
-            backgroundImage: new NetworkImage(url)),
-        title: Text(name),
-        subtitle: Text('$fromWhere -> $toWhere'),
+            backgroundImage: new NetworkImage(fellowTraveller.getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        title: Text(fellowTraveller.name),
+        subtitle: Text('${ride.fromText} -> ${ride.toText}'),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -271,14 +271,14 @@ class RidesScreen extends StatelessWidget {
   }
 
   //Should show the name of the driver
-  Widget pendingCardPassenger(String url, String name, String fromWhere, String toWhere){
+  Widget pendingCardPassenger(UserModel fellowTraveller, RidesModel ride){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
         leading: CircleAvatar(
-            backgroundImage: new NetworkImage(url)),
-        title: Text(' $name'),
-        subtitle: Text('THIS IS PASSENGER CARD !! $fromWhere -> $toWhere'),
+            backgroundImage: new NetworkImage(fellowTraveller.getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        title: Text(fellowTraveller.name),
+        subtitle: Text(' ${ride.fromText} -> ${ride.toText}'),
         trailing: Padding(
           padding: const EdgeInsets.only(right: 0.0),
           child: IconButton(
@@ -295,14 +295,14 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget confirmedCard(String url, String name, String fromWhere, String toWhere){
+  Widget confirmedCard(UserModel fellowTraveller, RidesModel ride){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
         leading: CircleAvatar(
-            backgroundImage: new NetworkImage(url)),
-        title: Text(name),
-        subtitle: Text('$fromWhere -> $toWhere'),
+            backgroundImage: new NetworkImage(fellowTraveller.getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        title: Text(fellowTraveller.name),
+        subtitle: Text(' ${ride.fromText} -> ${ride.toText}'),
         trailing: Padding(
           padding: const EdgeInsets.only(right: 0.0),
           child: IconButton(
@@ -319,14 +319,14 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget completedCard(String url, String name, String fromWhere, String toWhere){
+  Widget completedCard(UserModel fellowTraveller, RidesModel ride){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
         leading: CircleAvatar(
-            backgroundImage: new NetworkImage(url)),
-        title: Text(name),
-        subtitle: Text('$fromWhere -> $toWhere'),
+            backgroundImage: new NetworkImage(fellowTraveller.getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        title: Text(fellowTraveller.name),
+        subtitle: Text(' ${ride.fromText} -> ${ride.toText}'),
         trailing: Padding(
           padding: const EdgeInsets.only(right: 0.0),
           child: IconButton(

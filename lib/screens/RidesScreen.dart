@@ -49,7 +49,7 @@ class RidesScreen extends StatelessWidget {
 
   }
 
-  void organizeUserRidesInCategories(List<UserRide> userRides){
+  void organizeUserRidesInCategories(List<UserRide> userRides, BuildContext context){
 
 
     //TODO needs work. doesnt check if i have pending but not completed
@@ -74,17 +74,17 @@ class RidesScreen extends StatelessWidget {
 
           if(item.isDriver){
 
-            pendingList.add(pendingCardDriver(fellowTraveller,ride));
+            pendingList.add(pendingCardDriver(fellowTraveller,ride, context));
           }else{
-            pendingList.add(pendingCardPassenger(fellowTraveller,ride));
+            pendingList.add(pendingCardPassenger(fellowTraveller,ride, context));
           }
 
         }
         if(item.status == Status.confirmed){
-          confirmedList.add(confirmedCard(fellowTraveller,ride));
+          confirmedList.add(confirmedCard(fellowTraveller,ride, context));
         }
         if(item.status == Status.completed){
-          completedList.add(completedCard(fellowTraveller,ride));
+          completedList.add(completedCard(fellowTraveller,ride, context));
         }
       }
     }
@@ -105,10 +105,10 @@ class RidesScreen extends StatelessWidget {
      builder: (BuildContext context, AsyncSnapshot<List<UserRide>> snapshot){
        if(snapshot.hasData){
          print('We have userRating!!!');
-         return buildRideScreen(snapshot.data);
+         return buildRideScreen(snapshot.data, context);
        }else if(snapshot.hasError){
          print('error in user rides');
-         return buildRideScreen([]);
+         return buildRideScreen([], context);
        }else{
          //waiting...
          print('waiting for userRides');
@@ -124,8 +124,8 @@ class RidesScreen extends StatelessWidget {
     );
   }
 
-  MaterialApp buildRideScreen(List<UserRide> userRides) {
-    organizeUserRidesInCategories(userRides);
+  MaterialApp buildRideScreen(List<UserRide> userRides, BuildContext context,) {
+    organizeUserRidesInCategories(userRides, context);
     return MaterialApp(
     title: 'ShareMyRide',
     theme: ThemeData(
@@ -238,7 +238,7 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget pendingCardDriver(UserModel fellowTraveller, RidesModel ride){
+  Widget pendingCardDriver(UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
@@ -275,7 +275,7 @@ class RidesScreen extends StatelessWidget {
   }
 
   //Should show the name of the driver
-  Widget pendingCardPassenger(UserModel fellowTraveller, RidesModel ride){
+  Widget pendingCardPassenger(UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
@@ -299,7 +299,7 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget confirmedCard(UserModel fellowTraveller, RidesModel ride){
+  Widget confirmedCard(UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
@@ -323,47 +323,7 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget completedCard(UserModel fellowTraveller, RidesModel ride){
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
-      child: ListTile(
-        leading: CircleAvatar(
-            backgroundImage: new NetworkImage(fellowTraveller.getUrlFromNameHash(genderInput: fellowTraveller.gender))),
-        title: Text(fellowTraveller.name),
-        subtitle: Text(' ${ride.fromText} -> ${ride.toText}'),
-        trailing: Padding(
-          padding: const EdgeInsets.only(right: 0.0),
-          child: IconButton(
-            onPressed: () async{
-              UserModel currentUser = await db.getCurrentUserModel();
-              //leaveReview(fellowTraveller, currentUser, context);
-            },
-            icon: Icon(
-              Icons.chat,
-              size: 25.0,
-              color: darkBlueColor,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-
-
-}
-
-//TODO change everything to stateless widget
-class completedCard extends StatelessWidget {
-  final DataBase db;
-  final UserModel fellowTraveller;
-  final RidesModel ride;
-
-  completedCard({this.db,this.fellowTraveller, this.ride});
-
-  final darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
-  @override
-  Widget build(BuildContext context) {
+  Widget completedCard(UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
@@ -393,6 +353,50 @@ class completedCard extends StatelessWidget {
       ),
     );
   }
+
+
+
 }
+
+//class completedCard extends StatelessWidget {
+//  final DataBase db;
+//  final UserModel fellowTraveller;
+//  final RidesModel ride;
+//
+//  completedCard({this.db,this.fellowTraveller, this.ride});
+//
+//  final darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
+//  @override
+//  Widget build(BuildContext context) {
+//    return Card(
+//      margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
+//      child: ListTile(
+//        leading: CircleAvatar(
+//            backgroundImage: new NetworkImage(fellowTraveller.getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+//        title: Text(fellowTraveller.name),
+//        subtitle: Text(' ${ride.fromText} -> ${ride.toText}'),
+//        trailing: Padding(
+//          padding: const EdgeInsets.only(right: 0.0),
+//          child: IconButton(
+//            onPressed: () async{
+//              UserModel currentUser = await db.getCurrentUserModel();
+//              //leaveReview(fellowTraveller, currentUser, context);
+//              Navigator.push(
+//                context,
+//                MaterialPageRoute(
+//                    builder: (context) => ReviewsScreen(reviewee: fellowTraveller, myUser: currentUser,)),
+//              );
+//            },
+//            icon: Icon(
+//              Icons.chat,
+//              size: 25.0,
+//              color: darkBlueColor,
+//            ),
+//          ),
+//        ),
+//      ),
+//    );
+//  }
+//}
 
 

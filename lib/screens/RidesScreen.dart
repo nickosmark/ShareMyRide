@@ -30,8 +30,9 @@ class RidesScreen extends StatelessWidget {
 
 
 
-  void acceptRide(String fellowTravellerPhone){
-    //db.updateRideToConfirmed(fellowTravellerPhone)
+  void acceptRide(UserRide ride){
+    db.updateRideToConfirmed(ride);
+    //update for me as well...
   }
   void declineRide(String fellowTravellerPhone){
     //db.deleteRide(fellowTravellerPhone)
@@ -73,17 +74,17 @@ class RidesScreen extends StatelessWidget {
 
           if(item.isDriver){
 
-            pendingList.add(pendingCardDriver(fellowTraveller,ride, context));
+            pendingList.add(pendingCardDriver(item,fellowTraveller,ride, context));
           }else{
-            pendingList.add(pendingCardPassenger(fellowTraveller,ride, context));
+            pendingList.add(pendingCardPassenger(item,fellowTraveller,ride, context));
           }
 
         }
         if(item.status == Status.confirmed){
-          confirmedList.add(confirmedCard(fellowTraveller,ride, context));
+          confirmedList.add(confirmedCard(item,fellowTraveller,ride, context));
         }
         if(item.status == Status.completed){
-          completedList.add(completedCard(fellowTraveller,ride, context));
+          completedList.add(completedCard(item,fellowTraveller,ride, context));
         }
       }
     }
@@ -237,7 +238,7 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget pendingCardDriver(UserModel fellowTraveller, RidesModel ride, BuildContext context){
+  Widget pendingCardDriver(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
@@ -251,7 +252,9 @@ class RidesScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 30.0),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  acceptRide(userRide);
+                },
                 icon: Icon(
                   Icons.check,
                   size: 25.0,
@@ -274,7 +277,7 @@ class RidesScreen extends StatelessWidget {
   }
 
   //Should show the name of the driver
-  Widget pendingCardPassenger(UserModel fellowTraveller, RidesModel ride, BuildContext context){
+  Widget pendingCardPassenger(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
@@ -298,7 +301,7 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget confirmedCard(UserModel fellowTraveller, RidesModel ride, BuildContext context){
+  Widget confirmedCard(UserRide userRide,UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
@@ -322,7 +325,7 @@ class RidesScreen extends StatelessWidget {
   }
 
 
-  Widget completedCard(UserModel fellowTraveller, RidesModel ride, BuildContext context){
+  Widget completedCard(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(

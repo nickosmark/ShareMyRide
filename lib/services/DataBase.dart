@@ -120,6 +120,41 @@ class DataBase {
   }
 
 
+  void updateRideToConfirmed(UserRide ride) async{
+    String phone = ride.phone;
+    String fellowTravellerPhone = ride.fellowTraveler.phone;
+
+    //search for this user
+    //update status of this user
+    var userRideCollection = db.collection(Paths.UserRide);
+    var query = userRideCollection.where('phone', isEqualTo: phone);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      if(i.data['status'] == "Status.pending"){
+        try {
+          i.reference.updateData({'status' : 'Status.confirmed'});
+        } on Exception catch (e) {
+          print('couldnt change from pending to confirmed');
+        }
+      }
+    }
+
+    //search for fellowTraveller
+    //update status of fellowTraveller
+    var query2 = userRideCollection.where('phone', isEqualTo: fellowTravellerPhone);
+    var remoteDoc2 = await query2.getDocuments();
+    for(var i in remoteDoc2.documents){
+      if(i.data['status'] == 'Status.pending'){
+        try {
+          i.reference.updateData({'status' : 'Status.confirmed'});
+        } on Exception catch (e) {
+          print('couldnt change from pending to confirmed');
+        }
+      }
+    }
+  }
+
+
   void updateUserModel(UserModel user){
     var collection = db.collection(Paths.UserModel);
     //collection.a
@@ -139,6 +174,10 @@ class DataBase {
   }
 
 
+
+  //
+  //
+  //
   //FIXME delete this shit
   void signUpUser() async{
     db.collection('UserModel').add({

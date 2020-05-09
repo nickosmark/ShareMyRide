@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/models/RidesModel.dart';
+import 'package:flutter_app/models/SearchModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/models/UserRide.dart';
 import 'package:flutter_app/services/Authenticator.dart';
@@ -14,7 +15,7 @@ class Paths{
   static String UserModel = 'UserModel';
   static String ReviewModel = 'ReviewModel';
   static String UserRide = 'UserRide';
-  static String RidesModes = 'RidesModel';
+  static String RidesModel = 'RidesModel';
 }
 
 class DataBase {
@@ -82,6 +83,10 @@ class DataBase {
     return generatedList;
   }
 
+  Future<List<RidesModel>> getRidesModelsFromSearchModel(SearchModel searchModel){
+
+  }
+
 
   //should return DocRef??
   Future<DocumentReference> createUserModel(UserModel user) async{
@@ -113,6 +118,17 @@ class DataBase {
     var reviewModelCollection = db.collection(Paths.ReviewModel);
     try{
       docRef = await reviewModelCollection.add(review.toMap());
+    }catch (e){
+      docRef = null;
+    }
+    return docRef;
+  }
+
+  Future<DocumentReference> createRidesModel(RidesModel ride) async{
+    DocumentReference docRef;
+    var reviewModelCollection = db.collection(Paths.RidesModel);
+    try{
+      docRef = await reviewModelCollection.add(ride.toMap());
     }catch (e){
       docRef = null;
     }

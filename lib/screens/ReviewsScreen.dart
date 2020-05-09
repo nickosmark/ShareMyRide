@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/screens/MyApp.dart';
+import 'package:flutter_app/services/DataBase.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class ReviewsScreen extends StatelessWidget {
+  final DataBase db;
   final UserModel myUser;
   final UserModel reviewee;
 
-  ReviewsScreen({this.reviewee, this.myUser});
+  ReviewsScreen({this.db, this.reviewee, this.myUser});
 
   final Color darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   final Color lightBlueColor = Colors.blue;
@@ -108,9 +112,21 @@ class ReviewsScreen extends StatelessWidget {
                       //imageUrl == myUser.getNameHash....
                       //rating == rating
                       //reviewtext = reviewtext.....
-                      // db.createReview(ReviewModel review)
+                      var review = ReviewModel(
+                        phone: reviewee.phone,
+                        name: myUser.name,
+                        imageUrl: myUser.getUrlFromNameHash(genderInput: myUser.gender),
+                        reviewText: this.reviewText,
+                        rating: this.revRating,
+                      );
+                      db.createReviewModel(review);
                       //navigate to ridescreen
-                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyApp(db: db,selectedIndex: 1),
+                        ),
+                      );
                     }, //onPressed
                     child: Text(
                       "SUBMIT",

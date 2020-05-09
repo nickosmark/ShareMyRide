@@ -108,6 +108,18 @@ class DataBase {
   }
 
 
+  Future<DocumentReference> createReviewModel(ReviewModel review) async{
+    DocumentReference docRef;
+    var reviewModelCollection = db.collection(Paths.ReviewModel);
+    try{
+      docRef = await reviewModelCollection.add(review.toMap());
+    }catch (e){
+      docRef = null;
+    }
+    return docRef;
+  }
+
+
   void updateUserModel(UserModel user){
     var collection = db.collection(Paths.UserModel);
     //collection.a

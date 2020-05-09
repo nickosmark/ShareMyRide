@@ -339,7 +339,7 @@ class RidesScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ReviewsScreen(reviewee: fellowTraveller, myUser: currentUser,)),
+                    builder: (context) => ReviewsScreen(db: db, reviewee: fellowTraveller, myUser: currentUser,)),
               );
             },
             icon: Icon(

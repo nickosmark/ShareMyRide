@@ -102,6 +102,7 @@ class RidesScreen extends StatelessWidget {
 
     return FutureBuilder<List<UserRide>>(
      future: futureUserRides,
+     //initialData: [],
      builder: (BuildContext context, AsyncSnapshot<List<UserRide>> snapshot){
        if(snapshot.hasData){
          print('We have userRating!!!');

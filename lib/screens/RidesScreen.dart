@@ -37,8 +37,8 @@ class RidesScreen extends StatelessWidget {
   void declineRide(String fellowTravellerPhone){
     //db.deleteRide(fellowTravellerPhone)
   }
-  void completeRide(String fellowTravellerPhone){
-    //db.updateRideToCompleted(fellowTravellerPhone)
+  void completeRide(UserRide ride){
+    db.updateRideToCompleted(ride);
   }
   void cancelRide(String fellowTravellerPhone){
 
@@ -309,16 +309,31 @@ class RidesScreen extends StatelessWidget {
             backgroundImage: new NetworkImage(fellowTraveller.getUrlFromNameHash(genderInput: fellowTraveller.gender))),
         title: Text(fellowTraveller.name),
         subtitle: Text(' ${ride.fromText} -> ${ride.toText}'),
-        trailing: Padding(
-          padding: const EdgeInsets.only(right: 0.0),
-          child: IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.cancel,
-              size: 25.0,
-              color: Colors.redAccent,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 30.0),
+              child: IconButton(
+                onPressed: () {
+                  completeRide(userRide);
+                },
+                icon: Icon(
+                  Icons.check_circle,
+                  size: 25.0,
+                  color: Colors.green,
+                ),
+              ),
             ),
-          ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.cancel,
+                size: 25.0,
+                color: Colors.red,
+              ),
+            ),
+          ],
         ),
       ),
     );

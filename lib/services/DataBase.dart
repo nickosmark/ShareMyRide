@@ -154,6 +154,40 @@ class DataBase {
     }
   }
 
+  void updateRideToCompleted(UserRide ride) async{
+    String phone = ride.phone;
+    String fellowTravellerPhone = ride.fellowTraveler.phone;
+
+    //search for this user
+    //update status of this user
+    var userRideCollection = db.collection(Paths.UserRide);
+    var query = userRideCollection.where('phone', isEqualTo: phone);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      if(i.data['status'] == "Status.confirmed"){
+        try {
+          i.reference.updateData({'status' : 'Status.completed'});
+        } on Exception catch (e) {
+          print('couldnt change from confirmed to completed');
+        }
+      }
+    }
+
+    //search for fellowTraveller
+    //update status of fellowTraveller
+    var query2 = userRideCollection.where('phone', isEqualTo: fellowTravellerPhone);
+    var remoteDoc2 = await query2.getDocuments();
+    for(var i in remoteDoc2.documents){
+      if(i.data['status'] == 'Status.confirmed'){
+        try {
+          i.reference.updateData({'status' : 'Status.completed'});
+        } on Exception catch (e) {
+          print('couldnt change from confirmed to completed');
+        }
+      }
+    }
+  }
+
 
   void updateUserModel(UserModel user){
     var collection = db.collection(Paths.UserModel);

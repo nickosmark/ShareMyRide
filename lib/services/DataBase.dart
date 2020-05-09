@@ -189,6 +189,24 @@ class DataBase {
   }
 
 
+  void updateRideToFinished(UserRide ride) async{
+    //search for this user
+    //update status of this user
+    var userRideCollection = db.collection(Paths.UserRide);
+    var query = userRideCollection.where('phone', isEqualTo: ride.phone);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      if(i.data['status'] == "Status.completed"){
+        try {
+          i.reference.updateData({'isFinished' : true});
+        } on Exception catch (e) {
+          print('couldnt change from completed to finished ');
+        }
+      }
+    }
+  }
+
+
   void updateUserModel(UserModel user){
     var collection = db.collection(Paths.UserModel);
     //collection.a

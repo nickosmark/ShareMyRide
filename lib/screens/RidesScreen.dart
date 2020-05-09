@@ -34,18 +34,13 @@ class RidesScreen extends StatelessWidget {
     db.updateRideToConfirmed(ride);
     //update for me as well...
   }
-  void declineRide(String fellowTravellerPhone){
+  void declineRide(UserRide ride){
     //db.deleteRide(fellowTravellerPhone)
   }
   void completeRide(UserRide ride){
     db.updateRideToCompleted(ride);
   }
-  void cancelRide(String fellowTravellerPhone){
-
-  }
-  void leaveReview(UserModel fellowTraveller, UserModel currentUser){
-    //TODO navigate to ReviewScreen
-
+  void cancelRide(UserRide ride){
 
   }
 
@@ -85,6 +80,11 @@ class RidesScreen extends StatelessWidget {
         }
         if(item.status == Status.completed){
           completedList.add(completedCard(item,fellowTraveller,ride, context));
+        }
+        if(item.isFinished != null){
+          if (item.isFinished) {
+            completedList.add(finishedCard(item,fellowTraveller,ride,context));
+          }
         }
       }
     }
@@ -357,13 +357,36 @@ class RidesScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ReviewsScreen(db: db, reviewee: fellowTraveller, myUser: currentUser,)),
+                    builder: (context) => ReviewsScreen(db: db, ride: userRide, reviewee: fellowTraveller, myUser: currentUser,)),
               );
             },
             icon: Icon(
               Icons.chat,
               size: 25.0,
               color: darkBlueColor,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget finishedCard(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context){
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
+      child: ListTile(
+        leading: CircleAvatar(
+            backgroundImage: new NetworkImage(fellowTraveller.getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        title: Text(fellowTraveller.name),
+        subtitle: Text(' ${ride.fromText} -> ${ride.toText}'),
+        trailing: Padding(
+          padding: const EdgeInsets.only(right: 0.0),
+          child: IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.chat,
+              size: 25.0,
+              color: Colors.black12,
             ),
           ),
         ),

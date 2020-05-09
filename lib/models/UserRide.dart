@@ -13,6 +13,7 @@ class UserRide {
   String phone;
   Status status;
   bool isDriver;
+  bool isFinished;
   RidesModel ride;
   UserModel fellowTraveler;
 
@@ -20,6 +21,7 @@ class UserRide {
     this.phone,
     this.status,
     this.isDriver,
+    this.isFinished,
     this.ride,
     this.fellowTraveler,
   });
@@ -28,6 +30,7 @@ class UserRide {
     String phone,
     Status status,
     bool isDriver,
+    bool isFinished,
     RidesModel ride,
     UserModel fellowTraveler,
   }) {
@@ -35,6 +38,7 @@ class UserRide {
       phone: phone ?? this.phone,
       status: status ?? this.status,
       isDriver: isDriver ?? this.isDriver,
+      isFinished: isFinished ?? this.isFinished,
       ride: ride ?? this.ride,
       fellowTraveler: fellowTraveler ?? this.fellowTraveler,
     );
@@ -45,6 +49,7 @@ class UserRide {
       'phone' : phone,
       'status': status?.toString(),
       'isDriver': isDriver,
+      'isFinished' : isFinished,
       'ride': ride?.toMap(),
       'fellowTraveler': fellowTraveler?.toMap(),
     };
@@ -68,6 +73,7 @@ class UserRide {
       phone: map['phone'],
       status: status,
       isDriver: map['isDriver'],
+      isFinished: map['isFinished'],
       ride: RidesModel.fromMap(map['ride']),
       fellowTraveler: UserModel.fromMap(map['fellowTraveler']),
     );

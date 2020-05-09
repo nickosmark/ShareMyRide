@@ -83,8 +83,17 @@ class DataBase {
     return generatedList;
   }
 
-  Future<List<RidesModel>> getRidesModelsFromSearchModel(SearchModel searchModel){
-
+  //returns only if destination is the same;
+  Future<List<RidesModel>> getRidesModelsFromSearch(SearchModel searchModel) async{
+    List<RidesModel> generatedList = [];
+    var ridesModelCollection = db.collection(Paths.RidesModel);
+    var query = ridesModelCollection.where('toLatLng', isEqualTo: searchModel.toCords);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      RidesModel ride = RidesModel.fromMap(i.data);
+      generatedList.add(ride);
+    }
+    return generatedList;
   }
 
 

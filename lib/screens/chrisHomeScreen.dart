@@ -470,14 +470,18 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
     for(final ride in results){
       items.add(box);
-      resultCard = new RideResultCard(ridesModel: ride);
+      resultCard = new RideResultCard(ridesModel: ride, onPressed: _requestRide);
       card = createCard(resultCard);
       items.add(card);
     }
 
     return items;
 
-  } //list items
+  }//list items
+
+  void _requestRide(){
+
+  }
 
   Widget createCard(RideResultCard rideResultCard){
     return GestureDetector(

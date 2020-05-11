@@ -14,6 +14,8 @@ import 'package:flutter_app/widgets/ReviewCard.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/services/fakeDB.dart';
 import 'package:flutter_app/services/SearchEngine.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ChrisHomeScreen extends StatefulWidget {
   @override
@@ -25,7 +27,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   //Google map variables
   GoogleMapController _mapController;
   double _originLatitude, _originLongitude;
-  LatLng startCords, endCords;
+  LatLng placeCords, startCords, endCords;
   double _destLatitude, _destLongitude;
   Map<MarkerId, Marker> markers = {};
   Map<PolylineId, Polyline> polylines = {};
@@ -36,14 +38,19 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   Completer<GoogleMapController> _controller = Completer();
 
   //In app necessary variables
-  final dateController = TextEditingController();
-  final format = DateFormat("yyyy-MM-dd HH:mm:ss");
+  final format = DateFormat("dd-MM-yyyy HH:mm");
+  //Search/Create variables
   String from = "";
   String to = "";
-  String date;
+  DateTime dateTime;
+  List<LatLng> randPoints = new List<LatLng>();
+  List<String> selectedPoints = new List<String>();
+  //booleans for widgets' visibility
   bool showStartingScreen = true;
   bool showResults = false;
   bool showDetails = false;
+  bool showCreate = false;
+  bool isTouchable = false;
 
   //fake data
   static RidesModel fakeRide = FakeDB.fakeRide;
@@ -55,7 +62,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   @override
   void dispose() {
-    dateController.dispose();
     super.dispose();
   }
 
@@ -78,17 +84,18 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       body: Stack(
           children: <Widget>[
             _googleMap(context),
-            _startingScreen(),
+            _startingScreen(showStartingScreen),
             _resultsScreen(showResults, fakeUser.name, results),
-            _detailsScreen(showDetails, currentRide)
+            _detailsScreen(showDetails, currentRide),
+            _createScreen(showCreate),
           ],
       ),
     );
   }
 
-  Widget _startingScreen(){
+  Widget _startingScreen(bool isVisible){
     return Visibility(
-      visible: showStartingScreen,
+      visible: isVisible,
       child: Stack(
         children: <Widget>[
           SizedBox(
@@ -106,8 +113,8 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
             ),
           ),
-          bottomLeftButton(80.0, Icons.search, "Search", _onSearchPressed),
-          bottomLeftButton(15.0, Icons.add, "Create", _onCreatePressed),
+          _bottomButton(Alignment.bottomRight, 80.0, Icons.search, "Search", _onSearchPressed),
+          _bottomButton(Alignment.bottomRight, 15.0, Icons.add, "Create", _onCreatePressed),
         ],
       ),
     );
@@ -131,22 +138,24 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
               radius: 30000,
               onSelected: (Place place) async {
                 final geolocation = await place.geolocation;
-                startCords = geolocation.coordinates;
-                _mapController.animateCamera(CameraUpdate.newLatLngZoom(startCords, 15));
-                _removePolylines();
+                placeCords = geolocation.coordinates;
+                _mapController.animateCamera(CameraUpdate.newLatLngZoom(placeCords, 15));
+                _clearPolylines();
 
                 if(str=="From: "){
                   from = place.description;
                   _addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
-                  _originLatitude = startCords.latitude;
-                  _originLongitude = startCords.longitude;
+                  _originLatitude = placeCords.latitude;
+                  _originLongitude = placeCords.longitude;
+                  startCords = placeCords;
                 }
 
                 if(str=="To: "){
                   to = place.description;
                   _addMarker(geolocation.coordinates, place.placeId, bitmapDescriptor, place.description);
-                  _destLatitude = startCords.latitude;
-                  _destLongitude = startCords.longitude;
+                  _destLatitude = placeCords.latitude;
+                  _destLongitude = placeCords.longitude;
+                  endCords = placeCords;
                 }
                 _getPolyline();
 
@@ -163,17 +172,17 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
             child: DateTimeField(
               format: format,
-              controller: dateController,
+              onChanged: (DateTime dt){
+                dateTime = dt;
+              },
+              resetIcon: Icon(Icons.clear, color: Colors.black,),
               decoration: InputDecoration(
                   filled: true,
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(5.0)
                   ),
-                  suffixIcon: Icon(
-                    Icons.calendar_today,
-                    color: Colors.black,
-                  ),
+                  //suffixIcon: Icon(Icons.calendar_today, color: Colors.black,),
                   fillColor: Colors.white,
                   labelText: "Date: ",
                   labelStyle: TextStyle(
@@ -200,13 +209,13 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             )));
   }//dateField
 
-  Widget bottomLeftButton(double bottom, IconData icon, String label, Function onPressed) {
+  Widget _bottomButton(Alignment alignment, double bottom, IconData icon, String label, Function onPressed) {
     return Align(
-      alignment: Alignment.bottomRight,
+      alignment: alignment,
       child: Visibility(
         visible: true,
         child: Padding(
-          padding: EdgeInsets.only(right: 10.0, bottom: bottom),
+          padding: EdgeInsets.only(right: 10.0, bottom: bottom, left: 10.0),
           child: SizedBox(
             height: 50.0,
             width: 120.0,
@@ -244,29 +253,165 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   //the method called when the user presses the search button
   _onSearchPressed() {
-    _removePolylines();
-    date = dateController.text;
-    SearchEngine searchEngine = new SearchEngine(from, to, startCords, endCords, DateTime.parse(date));
-    results = searchEngine.getResults();
-    setState(() {
-      showStartingScreen = false;
-      showResults = true;
-    });
+    _clearPolylines();
+    if(_areFieldsFilled()) {
+      SearchEngine searchEngine = new SearchEngine(from, to, startCords, endCords, dateTime);
+      results = searchEngine.getResults();
+      setState(() {
+        showStartingScreen = false;
+        showResults = true;
+      });
+    }
   }//onSearchPressed
 
   //the method called when the user presses the create button
   _onCreatePressed() {
-    _removePolylines();
-    date = dateController.text;
-    setState(() {
-      showDialog(context: context, child:
-      new AlertDialog(
-        title: new Text(''),
-        content: new Text(''),
-      )
-      );
-    });
+    if(_areFieldsFilled()) {
+      setState(() {
+        showStartingScreen = false;
+        showCreate = true;
+        isTouchable = true;
+        randPoints.add(startCords);
+        _convertPolylineToRandPoints();
+      });
+    }
   }//onCreatePressed
+
+  bool _areFieldsFilled(){
+    if(from == "") {
+      _showToast("Missing 'From' field!");
+      return false;
+    }
+    if(to == "") {
+      _showToast("Missing 'To' field!");
+      return false;
+    }
+    if(dateTime == null) {
+      _showToast("Missing 'Date' field!");
+      return false;
+    }
+    return true;
+  }
+
+  void _convertPolylineToRandPoints() async{
+    PolylineId id = PolylineId("poly");
+    for(final x in polylines[id].points){
+      LatLng temp = x;
+      randPoints.add(temp);
+      //final String address = await _getAddressFromLatLng(temp);
+      //_showRendezvousPoint(address, temp);
+    }
+  }
+
+  _showToast(String message){
+    Fluttertoast.showToast(
+        msg: message,
+        timeInSecForIosWeb: 1,
+    );
+  }
+
+  Widget _createScreen(bool isVisible){
+    return Visibility(
+      visible: isVisible,
+        child: Stack(
+          children: <Widget>[
+            _topText(),
+            _bottomButton(Alignment.bottomRight, 15.0, Icons.check_circle, "Finish", _onFinishPressed),
+            _bottomButton(Alignment.bottomLeft, 15.0, Icons.cancel, "Cancel", _onCancelPressed)
+          ],
+      )
+    );
+  }
+
+  Widget _topText(){
+    return Align(
+      alignment: Alignment.topCenter,
+      child: SizedBox(
+        height: 90.0,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.orange[200],
+          ),
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(
+              'Select rendezvous points to pick up passengers, besides the recommended route (optional). \nYour starting point is rendezous point #1.',
+              style: TextStyle(
+                fontSize: 18.0,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  _onFinishPressed(){
+    RidesModel ridesModel = new RidesModel(fromText: from, toText: to, randPoints: randPoints, toLatLng: endCords, dateTime: dateTime, driver: fakeUser);
+    showDialog(context: context, barrierDismissible: true, child:
+    new CupertinoAlertDialog(
+      title: new Text('Ride Overview'),
+      content: new SizedBox(
+        //height: 300,
+        child: Column(
+          children: <Widget>[
+            Text('From: ${ridesModel.fromText}', style: TextStyle(fontSize: 18.0),),
+            Text('To: ${ridesModel.toText}', style: TextStyle(fontSize: 18.0),),
+            Text('Date: ${ridesModel.dateTime}', style: TextStyle(fontSize: 18.0),),
+            Text('Selected rendezvous points:', style: TextStyle(fontSize: 18.0),),
+            Text(_showSelectedPoints())
+          ],
+        ),
+      ),
+      actions: [
+        FlatButton(
+          child: Text("I'm not done yet"),
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).pop('dialog');
+          },
+        ),
+        FlatButton(
+          child: Text("Confirm"),
+          onPressed: () {
+            _onConfirmPressed(ridesModel);
+            Navigator.of(context, rootNavigator: true).pop('dialog');
+          },
+        ),
+      ],
+    )
+    );
+  }
+
+  //TODO Make it work baby. This function will get your RidesModel to the firebase
+  _onConfirmPressed(RidesModel ridesModel){
+    //Do your thing Mark
+  }
+
+  String _showSelectedPoints(){
+    String result = "";
+    if(selectedPoints.isEmpty)
+      result = "None";
+    else{
+      for(final x in selectedPoints){
+        result += x + "\n";
+      }
+    }
+    return result;
+  }
+
+  _onCancelPressed(){
+    setState(() {
+      showStartingScreen = true;
+      showCreate = false;
+      isTouchable = false;
+      _clearPolylines();
+      _clearMarkers();
+      from = to = "";
+      dateTime = null;
+      selectedPoints.clear();
+    });
+  }
 
   Widget _resultsScreen(bool isVisible, String name, List<RidesModel> results) {
     return Align(
@@ -538,8 +683,64 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         onMapCreated: onMapCreated,
         markers: Set<Marker>.of(markers.values),
         polylines: Set<Polyline>.of(polylines.values),
+        onTap: _onMapTap,
       ),
     );
+  }
+
+  void _onMapTap(LatLng point){
+    if (isTouchable){
+      _showPointDialog(point);
+    }
+  }
+
+  void _showPointDialog (LatLng point) async{
+    final String name = await _getAddressFromLatLng(point);
+    showDialog(context: context, barrierDismissible: false, child:
+      new CupertinoAlertDialog(
+        title: new Text('Add this rendezvous point?'),
+        content: new Text(name),
+        actions: [
+          FlatButton(
+            child: Text('No'),
+            onPressed: () {
+              Navigator.of(context, rootNavigator: true).pop('dialog');
+            },
+          ),
+          FlatButton(
+            child: Text('Yes'),
+            onPressed: () {
+              _showRendezvousPoint(name, point);
+              randPoints.add(point);
+              selectedPoints.add(name);
+              Navigator.of(context, rootNavigator: true).pop('dialog');
+            },
+          ),
+        ],
+      )
+    );
+  }
+
+  Future<String> _getAddressFromLatLng(LatLng point) async{
+    final coordinates = new Coordinates(point.latitude, point.longitude);
+    var address = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    var first = address.first;
+    String name = first.addressLine;
+    return name;
+  }
+
+  void _showRendezvousPoint(String title, LatLng point){
+    Marker rendezvousPoint =
+    Marker(markerId: MarkerId(title),
+      position: point,
+      infoWindow: new InfoWindow(title: title),
+      icon:
+      BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
+    );
+    markers[MarkerId(title)] = rendezvousPoint;
+    setState(() {
+
+    });
   }
 
   void onMapCreated(GoogleMapController controller) async{
@@ -581,8 +782,12 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     });
   }
 
-  _removePolylines(){
+  _clearPolylines(){
     polylineCoordinates.clear();
+  }
+
+  _clearMarkers(){
+    markers.clear();
   }
 
   // method that adds the marker to the map

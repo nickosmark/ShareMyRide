@@ -566,6 +566,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       ride: this.detailsRide,
       fellowTraveler: this.detailsRide.driver,
       randPoint: LatLng(37.000, 37.000),
+      isFinished: false,
     );
     //create waiting pending for this currentUser
     var result = widget.db.createUserRide(currentUserRide);
@@ -582,6 +583,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         ride: this.detailsRide,
         fellowTraveler: this.currentUser,
         randPoint: LatLng(37.000, 37.000),
+        isFinished: false
     );
     var result2 = widget.db.createUserRide(driverUserRide);
     if(result2 == null){

@@ -79,7 +79,12 @@ class RidesScreen extends StatelessWidget {
           confirmedList.add(confirmedCard(item,fellowTraveller,ride, context));
         }
         if(item.status == Status.completed){
-          completedList.add(completedCard(item,fellowTraveller,ride, context));
+          if(item.isFinished != null){
+            if(!item.isFinished){
+              completedList.add(completedCard(item,fellowTraveller,ride, context));
+            }
+          }
+
         }
         if(item.isFinished != null){
           if (item.isFinished) {

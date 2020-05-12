@@ -116,8 +116,9 @@ class ReviewsScreen extends StatelessWidget {
                         rating: this.revRating,
                       );
                       db.createReviewModel(review);
-                      //TODO make this UserRide as Finished so you can't create multiple reviews
                       await db.updateRideToFinished(ride);
+                      //TODO delete the Ride from the public list . It's over..
+                      //db.deleteRideModel(ride);
                       //navigate to ridescreen
                       Navigator.push(
                         context,

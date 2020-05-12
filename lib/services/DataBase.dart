@@ -161,7 +161,7 @@ class DataBase {
   }
 
 
-  void updateRideToConfirmed(UserRide ride) async{
+  Future<void> updateRideToConfirmed(UserRide ride) async{
     String phone = ride.phone;
     String fellowTravellerPhone = ride.fellowTraveler.phone;
 
@@ -195,7 +195,7 @@ class DataBase {
     }
   }
 
-  void updateRideToCompleted(UserRide ride) async{
+  Future<void> updateRideToCompleted(UserRide ride) async{
     String phone = ride.phone;
     String fellowTravellerPhone = ride.fellowTraveler.phone;
 
@@ -230,7 +230,7 @@ class DataBase {
   }
 
 
-  void updateRideToFinished(UserRide ride) async{
+  Future<void> updateRideToFinished(UserRide ride) async{
     //search for this user
     //update status of this user
     var userRideCollection = db.collection(Paths.UserRide);

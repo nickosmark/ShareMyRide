@@ -107,7 +107,7 @@ class ReviewsScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.only(top: 50.0, bottom: 100.0),
                   child: RaisedButton(
-                    onPressed: () {
+                    onPressed: () async{
                       var review = ReviewModel(
                         phone: reviewee.phone,
                         name: myUser.name,
@@ -117,8 +117,7 @@ class ReviewsScreen extends StatelessWidget {
                       );
                       db.createReviewModel(review);
                       //TODO make this UserRide as Finished so you can't create multiple reviews
-                      db.updateRideToFinished(ride);
-                      //TODO remove existing ride from
+                      await db.updateRideToFinished(ride);
                       //navigate to ridescreen
                       Navigator.push(
                         context,

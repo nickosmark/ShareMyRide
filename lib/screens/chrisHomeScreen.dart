@@ -666,6 +666,27 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                           children: _getReviews(reviewList),
                         ),
                       ),
+                      SizedBox(
+                        height: 2,
+                      ),
+                      FlatButton(
+                        onPressed: () {
+
+                        },
+                        child: DecoratedBox(
+                          child: Text(
+                            "Request Ride",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22.0
+                            ),
+                          ),
+                          decoration: new BoxDecoration(
+                            color: Colors.deepPurple[900],
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),

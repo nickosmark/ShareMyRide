@@ -289,6 +289,25 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   //the method called when the user presses the create button
   _onCreatePressed() async{
     this.currentUser = await widget.db.getCurrentUserModel();
+    var userReviews = await widget.db.getCurrentUserReviews();
+    //update rating on db ??? Do we need that?
+    widget.db.updateCurrentUserRating(userReviews);
+    //update local user rating value. This should be used on ride used by confirmed button
+    double getRatingAverage(List<ReviewModel> reviewsList){
+
+      if(reviewsList.isEmpty){
+        return 0.0;
+      }else{
+        double sum = 0;
+        for (var item in reviewsList) {
+          var currentRating = item.rating;
+          sum = sum + currentRating;
+        }
+        return sum/reviewsList.length;
+      }
+    }
+    this.currentUser.rating = getRatingAverage(userReviews);
+    //update rating on db
     if(_areFieldsFilled()) {
       setState(() {
         showStartingScreen = false;
@@ -414,6 +433,8 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     if(result == null){
       print('error creating ride in homescreen');
     }
+
+    //TODO setstate na girnaei stin arxiki katastasi or navigator push sto Rides tab (xreiazetai context)
     
   }
 
@@ -516,7 +537,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
     for(final ride in results){
       items.add(box);
-      resultCard = new RideResultCard(ridesModel: ride, onPressed: _requestRide);
+      resultCard = new RideResultCard(ridesModel: ride, onPressed: _requestRide(ride));
       card = createCard(resultCard);
       items.add(card);
     }
@@ -525,8 +546,10 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   }//list items
 
-  _requestRide(RidesModel ridesModel){
-    setState(() {
+  _requestRide(RidesModel ridesModel) async{
+    //this.detailsReviewList = await
+    detailsReviewList = await widget.db.getUserReviewsFromPhone(ridesModel.driver.phone);
+    setState(() async{
       showResults = false;
       showDetails = true;
       detailsRide = ridesModel;

@@ -78,7 +78,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         }else{
           //This is where a new UserModel get created
           //Identifier should be phone so i pass UUID to phone number
-          //UserMode id == 0 . I think it should be removed eventually
           UserModel user = UserModel(
             name: this.name,
             gender: this.gender,

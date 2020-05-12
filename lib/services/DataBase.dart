@@ -98,6 +98,21 @@ class DataBase {
   }
 
 
+  Future<List<ReviewModel>> getUserReviewsFromPhone(String phone) async{
+    List<ReviewModel> generetedList = [];
+    var reviewCollection = db.collection(Paths.ReviewModel);
+    var query = reviewCollection.where('phone',isEqualTo: phone);
+    var remoteDoc = await query.getDocuments();
+    List results = [];
+    for(var i in remoteDoc.documents){
+      //Map result = i.data;
+      ReviewModel review = ReviewModel.fromMap(i.data);
+      generetedList.add(review);
+    }
+    return generetedList;
+  }
+
+
   //should return DocRef??
   Future<DocumentReference> createUserModel(UserModel user) async{
     DocumentReference docRef;
@@ -232,10 +247,43 @@ class DataBase {
     }
   }
 
-
+  //TODO should be implemented
   void updateUserModel(UserModel user){
     var collection = db.collection(Paths.UserModel);
     //collection.a
+  }
+
+  void updateCurrentUserRating(List<ReviewModel> reviewsList) async{
+
+    double getRatingAverage(List<ReviewModel> reviewsList){
+
+      if(reviewsList.isEmpty){
+        return 0.0;
+      }else{
+        double sum = 0;
+        for (var item in reviewsList) {
+          var currentRating = item.rating;
+          sum = sum + currentRating;
+        }
+        return sum/reviewsList.length;
+      }
+    }
+    var averageRating=getRatingAverage(reviewsList);
+    var userCollection = db.collection(Paths.UserModel);
+    String currentUser = await auth.getCurrentFireBaseUserID();
+    var query = userCollection.where('phone',isEqualTo: currentUser);
+    var remoteDoc = await query.getDocuments();
+    List results = [];
+    for(var i in remoteDoc.documents){
+      //Map result = i.data;
+      //results.add(i.data);
+      try{
+        i.reference.updateData({'rating' : averageRating});
+      } on Exception catch (e) {
+        print('couldnt update rating on DB : $e');
+      }
+
+    }
   }
 
 

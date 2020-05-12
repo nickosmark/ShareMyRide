@@ -213,38 +213,35 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   Widget _customButton(Alignment alignment, double bottom, IconData icon, String label, Function onPressed) {
     return Align(
       alignment: alignment,
-      child: Visibility(
-        visible: true,
-        child: Padding(
-          padding: EdgeInsets.only(right: 10.0, bottom: bottom, left: 10.0),
-          child: SizedBox(
-            height: 50.0,
-            width: 120.0,
-            child: FlatButton(
-              onPressed: () {
-                onPressed();
-              },
-              color: Colors.blue,
-              textColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                side: BorderSide.none,
-                borderRadius: BorderRadius.circular(50.0)
-              ),
-              child: Row(
-                children: <Widget>[
-                  SizedBox(
-                    width: 5,
+      child: Padding(
+        padding: EdgeInsets.only(right: 10.0, bottom: bottom, left: 10.0, top: 10.0),
+        child: SizedBox(
+          height: 50.0,
+          width: 120.0,
+          child: FlatButton(
+            onPressed: () {
+              onPressed();
+            },
+            color: Colors.blue,
+            textColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              side: BorderSide.none,
+              borderRadius: BorderRadius.circular(50.0)
+            ),
+            child: Row(
+              children: <Widget>[
+                SizedBox(
+                  width: 5,
+                ),
+                Icon(icon),
+                Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18.0
                   ),
-                  Icon(icon),
-                  Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 18.0
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
         ),
@@ -415,11 +412,14 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   }
 
   Widget _resultsScreen(bool isVisible, String name, List<RidesModel> results) {
-    return Align(
-        alignment: Alignment.bottomLeft,
-        child: Visibility(
-          visible: isVisible,
-          child: SizedBox(
+    return Visibility(
+      visible: isVisible,
+      child: Stack(
+        children: <Widget>[
+          _customButton(Alignment.topLeft, 0.0, Icons.arrow_back_ios, "Back", _onBackPressed),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: SizedBox(
             height: 230.0,
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -459,9 +459,23 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                 ],
               ),
             ),
+        ),
           ),
-        ));
+      ]
+      ),
+    );
   } //buildContainer
+
+  void _onBackPressed(){
+    setState(() {
+      showStartingScreen = true;
+      showResults = false;
+      _clearPolylines();
+      _clearMarkers();
+      from = to = "";
+      dateTime = null;
+    });
+  }
 
   List<Widget> _listResultItem(List<RidesModel> results) {
     List<Widget> items = new List<Widget>();

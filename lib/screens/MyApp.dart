@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
     _selectedIndex = widget.selectedIndex;
     switch (_selectedIndex) {
       case 0:
-        _selectedScreen = ChrisHomeScreen();
+        _selectedScreen = ChrisHomeScreen(db: db,);
         break;
       case 1:
         _selectedScreen = RidesScreen(db: db,);
@@ -117,7 +117,7 @@ class _MyAppState extends State<MyApp> {
               _selectedIndex = index;
               switch (_selectedIndex) {
                 case 0:
-                  _selectedScreen = ChrisHomeScreen();
+                  _selectedScreen = ChrisHomeScreen(db: db,);
                   break;
                 case 1:
                   _selectedScreen = RidesScreen(db: db);

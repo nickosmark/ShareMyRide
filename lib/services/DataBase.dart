@@ -85,9 +85,10 @@ class DataBase {
 
   //returns only if destination is the same;
   Future<List<RidesModel>> getRidesModelsFromSearch(SearchModel searchModel) async{
+    GeoPoint toGeoPoint = GeoPoint(searchModel.toCords.latitude, searchModel.toCords.longitude);
     List<RidesModel> generatedList = [];
     var ridesModelCollection = db.collection(Paths.RidesModel);
-    var query = ridesModelCollection.where('toLatLng', isEqualTo: searchModel.toCords);
+    var query = ridesModelCollection.where('toLatLng.geopoint', isEqualTo: toGeoPoint);
     var remoteDoc = await query.getDocuments();
     for(var i in remoteDoc.documents){
       RidesModel ride = RidesModel.fromMap(i.data);

@@ -494,18 +494,18 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   }//list items
 
-  void _requestRide(){
-
+  _requestRide(RidesModel ridesModel){
+    setState(() {
+      showResults = false;
+      showDetails = true;
+      currentRide = ridesModel;
+    });
   }
 
   Widget createCard(RideResultCard rideResultCard){
     return GestureDetector(
       onTap: () {
-        setState(() {
-          showResults = false;
-          showDetails = true;
-          currentRide = rideResultCard.ridesModel;
-        });
+
       },
       child: Container(width: 300, child: rideResultCard),
     );

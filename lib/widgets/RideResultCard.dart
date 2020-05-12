@@ -5,7 +5,7 @@ import 'package:flutter_app/models/RidesModel.dart';
 class RideResultCard extends StatelessWidget {
 
   final RidesModel ridesModel;
-  final Function onPressed;
+  final Function(RidesModel) onPressed;
 
   RideResultCard({
     this.ridesModel,
@@ -44,7 +44,7 @@ class RideResultCard extends StatelessWidget {
               textColor: Colors.white,
               child: Text('Request Ride'),
               onPressed: () {
-                onPressed();
+                onPressed(ridesModel);
               },//onPressed
             ),
           ],

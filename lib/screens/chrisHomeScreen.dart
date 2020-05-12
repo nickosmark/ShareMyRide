@@ -16,6 +16,7 @@ import 'package:flutter_app/services/fakeDB.dart';
 import 'package:flutter_app/services/SearchEngine.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_app/services/DataBase.dart';
 
 class ChrisHomeScreen extends StatefulWidget {
   @override
@@ -113,8 +114,8 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
             ),
           ),
-          _bottomButton(Alignment.bottomRight, 80.0, Icons.search, "Search", _onSearchPressed),
-          _bottomButton(Alignment.bottomRight, 15.0, Icons.add, "Create", _onCreatePressed),
+          _customButton(Alignment.bottomRight, 80.0, Icons.search, "Search", _onSearchPressed),
+          _customButton(Alignment.bottomRight, 15.0, Icons.add, "Create", _onCreatePressed),
         ],
       ),
     );
@@ -209,7 +210,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             )));
   }//dateField
 
-  Widget _bottomButton(Alignment alignment, double bottom, IconData icon, String label, Function onPressed) {
+  Widget _customButton(Alignment alignment, double bottom, IconData icon, String label, Function onPressed) {
     return Align(
       alignment: alignment,
       child: Visibility(
@@ -316,8 +317,8 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         child: Stack(
           children: <Widget>[
             _topText(),
-            _bottomButton(Alignment.bottomRight, 15.0, Icons.check_circle, "Finish", _onFinishPressed),
-            _bottomButton(Alignment.bottomLeft, 15.0, Icons.cancel, "Cancel", _onCancelPressed)
+            _customButton(Alignment.bottomRight, 15.0, Icons.check_circle, "Finish", _onFinishPressed),
+            _customButton(Alignment.bottomLeft, 15.0, Icons.cancel, "Cancel", _onCancelPressed)
           ],
       )
     );
@@ -503,6 +504,12 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       child: Visibility(
         visible: isVisible,
         child: GestureDetector(
+          onTap: () {
+            setState(() {
+              showResults = true;
+              showDetails = false;
+            });
+          },
           child: Stack(
             alignment: AlignmentDirectional.bottomCenter,
             children: <Widget>[

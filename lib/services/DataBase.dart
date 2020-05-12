@@ -1,7 +1,11 @@
+//import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/models/RidesModel.dart';
+import 'package:flutter_app/models/SearchModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/models/UserRide.dart';
 import 'package:flutter_app/services/Authenticator.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,6 +15,7 @@ class Paths{
   static String UserModel = 'UserModel';
   static String ReviewModel = 'ReviewModel';
   static String UserRide = 'UserRide';
+  static String RidesModel = 'RidesModel';
 }
 
 class DataBase {
@@ -45,7 +50,6 @@ class DataBase {
         email: 'error no email',
         carInfo: 'no car mate :/',
         rating: 0.0,
-        ridesList: [],
       );
     }
     return generatedUserModel;
@@ -65,6 +69,32 @@ class DataBase {
     }
       return generetedList;
   }
+  
+  Future<List<UserRide>> getCurrentUserRides() async {
+    List<UserRide> generatedList = [];
+    String currentUser = await auth.getCurrentFireBaseUserID();
+    var userRideCollection = db.collection(Paths.UserRide);
+    var query = userRideCollection.where('phone', isEqualTo: currentUser);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      UserRide userRide = UserRide.fromMap(i.data);
+      generatedList.add(userRide);
+    }
+    return generatedList;
+  }
+
+  //returns only if destination is the same;
+  Future<List<RidesModel>> getRidesModelsFromSearch(SearchModel searchModel) async{
+    List<RidesModel> generatedList = [];
+    var ridesModelCollection = db.collection(Paths.RidesModel);
+    var query = ridesModelCollection.where('toLatLng', isEqualTo: searchModel.toCords);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      RidesModel ride = RidesModel.fromMap(i.data);
+      generatedList.add(ride);
+    }
+    return generatedList;
+  }
 
 
   //should return DocRef??
@@ -78,6 +108,129 @@ class DataBase {
     }
     return docRef;
   }
+
+
+  Future<DocumentReference> createUserRide(UserRide userRide) async {
+    DocumentReference docRef;
+    var userRideCollection = db.collection(Paths.UserRide);
+    try{
+      docRef = await userRideCollection.add(userRide.toMap());
+    }catch (e){
+      docRef = null;
+    }
+    return docRef;
+  }
+
+
+  Future<DocumentReference> createReviewModel(ReviewModel review) async{
+    DocumentReference docRef;
+    var reviewModelCollection = db.collection(Paths.ReviewModel);
+    try{
+      docRef = await reviewModelCollection.add(review.toMap());
+    }catch (e){
+      docRef = null;
+    }
+    return docRef;
+  }
+
+  Future<DocumentReference> createRidesModel(RidesModel ride) async{
+    DocumentReference docRef;
+    var reviewModelCollection = db.collection(Paths.RidesModel);
+    try{
+      docRef = await reviewModelCollection.add(ride.toMap());
+    }catch (e){
+      docRef = null;
+    }
+    return docRef;
+  }
+
+
+  void updateRideToConfirmed(UserRide ride) async{
+    String phone = ride.phone;
+    String fellowTravellerPhone = ride.fellowTraveler.phone;
+
+    //search for this user
+    //update status of this user
+    var userRideCollection = db.collection(Paths.UserRide);
+    var query = userRideCollection.where('phone', isEqualTo: phone);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      if(i.data['status'] == "Status.pending"){
+        try {
+          i.reference.updateData({'status' : 'Status.confirmed'});
+        } on Exception catch (e) {
+          print('couldnt change from pending to confirmed');
+        }
+      }
+    }
+
+    //search for fellowTraveller
+    //update status of fellowTraveller
+    var query2 = userRideCollection.where('phone', isEqualTo: fellowTravellerPhone);
+    var remoteDoc2 = await query2.getDocuments();
+    for(var i in remoteDoc2.documents){
+      if(i.data['status'] == 'Status.pending'){
+        try {
+          i.reference.updateData({'status' : 'Status.confirmed'});
+        } on Exception catch (e) {
+          print('couldnt change from pending to confirmed');
+        }
+      }
+    }
+  }
+
+  void updateRideToCompleted(UserRide ride) async{
+    String phone = ride.phone;
+    String fellowTravellerPhone = ride.fellowTraveler.phone;
+
+    //search for this user
+    //update status of this user
+    var userRideCollection = db.collection(Paths.UserRide);
+    var query = userRideCollection.where('phone', isEqualTo: phone);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      if(i.data['status'] == "Status.confirmed"){
+        try {
+          i.reference.updateData({'status' : 'Status.completed'});
+        } on Exception catch (e) {
+          print('couldnt change from confirmed to completed');
+        }
+      }
+    }
+
+    //search for fellowTraveller
+    //update status of fellowTraveller
+    var query2 = userRideCollection.where('phone', isEqualTo: fellowTravellerPhone);
+    var remoteDoc2 = await query2.getDocuments();
+    for(var i in remoteDoc2.documents){
+      if(i.data['status'] == 'Status.confirmed'){
+        try {
+          i.reference.updateData({'status' : 'Status.completed'});
+        } on Exception catch (e) {
+          print('couldnt change from confirmed to completed');
+        }
+      }
+    }
+  }
+
+
+  void updateRideToFinished(UserRide ride) async{
+    //search for this user
+    //update status of this user
+    var userRideCollection = db.collection(Paths.UserRide);
+    var query = userRideCollection.where('phone', isEqualTo: ride.phone);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      if(i.data['status'] == "Status.completed"){
+        try {
+          i.reference.updateData({'isFinished' : true});
+        } on Exception catch (e) {
+          print('couldnt change from completed to finished ');
+        }
+      }
+    }
+  }
+
 
   void updateUserModel(UserModel user){
     var collection = db.collection(Paths.UserModel);
@@ -98,6 +251,10 @@ class DataBase {
   }
 
 
+
+  //
+  //
+  //
   //FIXME delete this shit
   void signUpUser() async{
     db.collection('UserModel').add({

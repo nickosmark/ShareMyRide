@@ -1,13 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/ReviewModel.dart';
+import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/models/UserRide.dart';
+import 'package:flutter_app/screens/MyApp.dart';
+import 'package:flutter_app/services/DataBase.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class ReviewsScreen extends StatelessWidget {
+  final DataBase db;
+  final UserRide ride;
+  final UserModel myUser;
+  final UserModel reviewee;
+
+  ReviewsScreen({this.db, this.ride, this.reviewee, this.myUser});
+
   final Color darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   final Color lightBlueColor = Colors.blue;
   final Color lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
-  final String name = "Ketoyla Perry";
+  //
+  //
   double revRating;
+  String reviewText;
+
+
+  // i need url,name, AND PHONE from card(reviewee)
+  //and
+  //myUserModel to create ReviewModel
+
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +37,18 @@ class ReviewsScreen extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         primaryColor: darkBlueColor,
         accentColor: lightBlueColor,
+        //cardColor: lightGreyBackground,
         textTheme: TextTheme(
-          body1: TextStyle(color: Color.fromRGBO(26, 26, 48, 1.0)),
+          body1: TextStyle(
+            color: darkBlueColor,
+            fontFamily: 'fira',
+            fontSize: 12.0,
+          ),
+          subhead: TextStyle(
+            color: darkBlueColor,
+            fontFamily: 'fira',
+            fontSize: 16.0,
+          ),
         ),
       ),
       home: Scaffold(
@@ -31,14 +61,16 @@ class ReviewsScreen extends StatelessWidget {
                   child: CircleAvatar(
                       radius: 60.0,
                       backgroundImage:
-                          new NetworkImage('https://via.placeholder.com/150')),
+                          new NetworkImage(reviewee.getUrlFromNameHash(genderInput: reviewee.gender))),
                 ),
                 Container(
                   padding: EdgeInsets.only(top: 10.0),
                   child: Text(
-                    name,
-                    style: GoogleFonts.oswald(
-                        textStyle: TextStyle(fontSize: 30.0)),
+                    reviewee.name,
+                    style: TextStyle(
+                      fontSize: 32.0,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 RatingBar(
@@ -61,6 +93,7 @@ class ReviewsScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
                   child: TextField(
+                    onChanged: (value) => reviewText = value,
                     obscureText: false,
                     //expands: true,
                     maxLines: 5,
@@ -75,7 +108,44 @@ class ReviewsScreen extends StatelessWidget {
                   padding: EdgeInsets.only(top: 50.0, bottom: 100.0),
                   child: RaisedButton(
                     onPressed: () {
-                      /*
+                      var review = ReviewModel(
+                        phone: reviewee.phone,
+                        name: myUser.name,
+                        imageUrl: myUser.getUrlFromNameHash(genderInput: myUser.gender),
+                        reviewText: this.reviewText,
+                        rating: this.revRating,
+                      );
+                      db.createReviewModel(review);
+                      //TODO make this UserRide as Finished so you can't create multiple reviews
+                      db.updateRideToFinished(ride);
+                      //navigate to ridescreen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyApp(db: db,selectedIndex: 1),
+                        ),
+                      );
+                    }, //onPressed
+                    child: Text(
+                      "SUBMIT",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    color: darkBlueColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+/*
                       showDialog(
                         context: context,
                         barrierDismissible: false, // user must tap button!
@@ -107,21 +177,3 @@ class ReviewsScreen extends StatelessWidget {
                         },
                       );
                       */
-                    }, //onPressed
-                    child: Text(
-                      "SUBMIT",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0)),
-                    color: darkBlueColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

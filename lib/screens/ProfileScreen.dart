@@ -68,12 +68,11 @@ class ProfileScreen extends StatelessWidget {
     getDataFromDb();
     UserModel initialUser = UserModel(
       name:'waiting...',
-      gender: Gender.nonBinary,
+      gender: null,
       phone: 'waiting...',
       email: 'waiting...',
       rating: 0.0,
       carInfo: 'waiting...',
-      ridesList: [],
     );
     UserModel errorUser = UserModel(
       name:'ERROR',
@@ -82,7 +81,6 @@ class ProfileScreen extends StatelessWidget {
       email: 'ERROR',
       rating: 0.0,
       carInfo: 'ERROR',
-      ridesList: [],
     );
 
     Widget userScreen(UserModel userModel, Future<List<ReviewModel>> futureReviews){
@@ -321,7 +319,7 @@ class ProfileScreen extends StatelessWidget {
       //TODO add second future with wait
       //futureReviews
       future: futureUser,
-      //initialData: initialUser,
+      initialData: initialUser,
       builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot){
         if(snapshot.hasData){
           print('we have profile data!!!');

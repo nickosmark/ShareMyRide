@@ -22,7 +22,6 @@ class UserModel {
   String email;
   String carInfo;
   double rating;
-  List<UserRide> ridesList;
   //
   //Constructor
   UserModel({
@@ -32,7 +31,6 @@ class UserModel {
     this.email,
     this.carInfo,
     this.rating,
-    this.ridesList,
   });
   
   String getUrlFromNameHash({Gender genderInput}){
@@ -57,25 +55,8 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(name: $name, gender: $gender, phone: $phone, email: $email, carInfo: $carInfo, rating: $rating, ridesList: $ridesList)';
+    return 'UserModel(name: $name, gender: $gender, phone: $phone, email: $email, carInfo: $carInfo, rating: $rating,)';
   }
-
-
-
-  //
-
-  void addToUserRideList({RidesModel incomingRide,UserModel fellow,bool isDriver}){
-    var userRide = UserRide(
-        status: Status.pending,
-        isDriver: isDriver,
-        ride: incomingRide,
-        fellowTraveler: fellow,
-    );
-
-    ridesList.add(userRide);
-  }
-
-
 
 
 
@@ -86,8 +67,6 @@ class UserModel {
     String email,
     String carInfo,
     double rating,
-    List<ReviewModel> reviewsList,
-    List<UserRide> ridesList,
   }) {
     return UserModel(
       name: name ?? this.name,
@@ -96,7 +75,6 @@ class UserModel {
       email: email ?? this.email,
       carInfo: carInfo ?? this.carInfo,
       rating: rating ?? this.rating,
-      ridesList: ridesList ?? this.ridesList,
     );
   }
 
@@ -108,7 +86,6 @@ class UserModel {
       'email': email,
       'carInfo': carInfo,
       'rating': rating,
-      'ridesList': ridesList?.map((x) => x?.toMap())?.toList(),
     };
   }
 
@@ -134,7 +111,6 @@ class UserModel {
       email: map['email'],
       carInfo: map['carInfo'],
       rating: map['rating'],
-      ridesList: List<UserRide>.from(map['ridesList']?.map((x) => UserRide.fromMap(x))),
     );
   }
 
@@ -152,8 +128,8 @@ class UserModel {
       o.phone == phone &&
       o.email == email &&
       o.carInfo == carInfo &&
-      o.rating == rating &&
-      listEquals(o.ridesList, ridesList);
+      o.rating == rating;
+
   }
 
   @override
@@ -164,7 +140,6 @@ class UserModel {
       phone.hashCode ^
       email.hashCode ^
       carInfo.hashCode ^
-      rating.hashCode ^
-      ridesList.hashCode;
+      rating.hashCode;
   }
 }

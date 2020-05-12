@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/models/RidesModel.dart';
 import 'package:flutter_app/models/SearchModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/models/UserRide.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -64,10 +65,9 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   static ReviewModel reviewModel = FakeDB.reviewModel;
 
 
-  //
+  //Data displayed on result screen
   List<RidesModel> rideSearchResults = [fakeRide];
   UserModel currentUser = UserModel(name: 'waiting name', gender: null, phone: '000000', email: 'waiting mail', carInfo: 'subaru', rating: 0.0);
-  String currenhtUserName = 'waiting...';
   //Data displayed on details Screen
   //They get updated when Request Ride is tapped.
   RidesModel detailsRide = new RidesModel(fromText: 'from', toText: 'to', randPoints: [new LatLng(38.236785, 23.94523)], toLatLng: new LatLng(37.236785, 23.44523), dateTime: new DateTime(2020), driver: fakeUser);
@@ -537,7 +537,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
     for(final ride in results){
       items.add(box);
-      resultCard = new RideResultCard(ridesModel: ride, onPressed: _requestRide(ride));
+      resultCard = new RideResultCard(ridesModel: ride, onPressed: _requestRide);
       card = createCard(resultCard);
       items.add(card);
     }
@@ -549,11 +549,46 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   _requestRide(RidesModel ridesModel) async{
     //this.detailsReviewList = await
     detailsReviewList = await widget.db.getUserReviewsFromPhone(ridesModel.driver.phone);
-    setState(() async{
+    setState((){
       showResults = false;
       showDetails = true;
       detailsRide = ridesModel;
     });
+  }
+
+  _requestRideFinal(){
+    //create two userRides/
+    //pass it to UserRide of the currentUser
+    var currentUserRide = UserRide(
+      isDriver: false,
+      phone: this.currentUser.phone,
+      status: Status.pending,
+      ride: this.detailsRide,
+      fellowTraveler: this.detailsRide.driver,
+      randPoint: LatLng(37.000, 37.000),
+    );
+    //create waiting pending for this currentUser
+    var result = widget.db.createUserRide(currentUserRide);
+    if(result == null){
+      print('couldnt create a current user Ride');
+    }else{
+      print('current UserRide creation Successfull!!');
+    }
+    //create accept/decline pending for driver
+    var driverUserRide = UserRide(
+        isDriver: true,
+        phone: this.detailsRide.driver.phone,
+        status: Status.pending,
+        ride: this.detailsRide,
+        fellowTraveler: this.currentUser,
+        randPoint: LatLng(37.000, 37.000),
+    );
+    var result2 = widget.db.createUserRide(driverUserRide);
+    if(result2 == null){
+    print('couldnt create a new driver user Ride');
+    }else{
+    print('driver UserRide creation Successfull!!');
+    }
   }
 
   Widget createCard(RideResultCard rideResultCard){
@@ -725,7 +760,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                       ),
                       FlatButton(
                         onPressed: () {
-
+                          _requestRideFinal();
                         },
                         child: DecoratedBox(
                           child: Text(

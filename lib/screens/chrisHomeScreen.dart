@@ -87,7 +87,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             _googleMap(context),
             _startingScreen(showStartingScreen),
             _resultsScreen(showResults, fakeUser.name, results),
-            _detailsScreen(showDetails, currentRide),
+            _detailsScreen(showDetails, currentRide, reviewList),
             _createScreen(showCreate),
           ],
       ),
@@ -511,7 +511,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     );
   }
 
-  Widget _detailsScreen(bool isVisible, RidesModel ride) {
+  Widget _detailsScreen(bool isVisible, RidesModel ride, List<ReviewModel> list) {
     UserModel driver = ride.driver;
     return Align(
       alignment: Alignment.bottomLeft,
@@ -663,7 +663,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                       ),
                       Expanded(
                         child: ListView(
-                          children: _getReviews(reviewList),
+                          children: _getReviews(list),
                         ),
                       ),
                       SizedBox(

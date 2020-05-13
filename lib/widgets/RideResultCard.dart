@@ -15,12 +15,23 @@ class RideResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserModel userModel = ridesModel.driver;
+    String from, to;
+    if(ridesModel.fromText.length > 40)
+      from = ridesModel.fromText.substring(0, 37) + "...";
+    else
+      from = ridesModel.fromText;
+
+    if(ridesModel.toText.length > 40)
+      to = ridesModel.toText.substring(0, 37) + "...";
+    else
+      to = ridesModel.toText;
+
     return Card(
       color: Colors.yellow[50],
       child: ListTile(
         leading: CircleAvatar(
           backgroundImage: new NetworkImage(userModel.getUrlFromNameHash(genderInput: userModel.gender)),
-          radius: 30.0,
+          radius: 28.0,
         ),
         title: Padding(
           padding: const EdgeInsets.only(top: 10.0),
@@ -31,18 +42,18 @@ class RideResultCard extends StatelessWidget {
             SizedBox(
               height: 7.0,
             ),
-            Text(ridesModel.fromText),
+            Text(from),
             Icon(
                 Icons.arrow_downward
             ),
-            Text(ridesModel.toText),
+            Text(to),
             SizedBox(
               height: 3.0,
             ),
             FlatButton(
               color: Colors.black,
               textColor: Colors.white,
-              child: Text('Request Ride'),
+              child: Text('Show Details'),
               onPressed: () {
                 onPressed(ridesModel);
               },//onPressed

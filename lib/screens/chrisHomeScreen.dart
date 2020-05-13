@@ -472,7 +472,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
           Align(
             alignment: Alignment.bottomLeft,
             child: SizedBox(
-            height: 230.0,
+            height: 250.0,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
@@ -483,7 +483,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 25),
+                    padding: const EdgeInsets.only(left: 25, top: 7.0),
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Text(
@@ -604,6 +604,17 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   Widget _detailsScreen(bool isVisible, RidesModel ride, List<ReviewModel> list) {
     UserModel driver = ride.driver;
+    String from, to;
+    if(ride.fromText.length > 30)
+      from = ride.fromText.substring(0, 27) + "...";
+    else
+      from = ride.fromText;
+
+    if(ride.toText.length > 30)
+      to = ride.toText.substring(0, 27) + "...";
+    else
+      to = ride.toText;
+
     return Align(
       alignment: Alignment.bottomLeft,
       child: Visibility(
@@ -632,7 +643,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundImage: new NetworkImage(driver.getUrlFromNameHash(genderInput: driver.gender)),
-                      radius: 30.0,
+                      radius: 28.0,
                     ),
                     title: Text(
                       driver.name,
@@ -687,7 +698,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                           child: Column(
                             children: <Widget>[
                               Text(
-                                ride.fromText,
+                                from,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 20.0, color: Colors.white),
@@ -698,7 +709,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                                 color: Colors.white,
                               ),
                               Text(
-                                ride.toText,
+                                to,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 20.0, color: Colors.white),
@@ -760,23 +771,21 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                       SizedBox(
                         height: 2,
                       ),
-                      FlatButton(
+                      RaisedButton(
                         onPressed: () {
                           _requestRideFinal();
                         },
-                        child: DecoratedBox(
-                          child: Text(
-                            "Request Ride",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22.0
-                            ),
-                          ),
-                          decoration: new BoxDecoration(
-                            color: Colors.deepPurple[900],
-                            borderRadius: BorderRadius.circular(20.0),
+                        child: Text(
+                          "Select Pick-Up Point",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22.0,
                           ),
                         ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0)),
+                        color: Colors.deepPurple[900],
                       )
                     ],
                   ),
@@ -788,6 +797,10 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       ),
     );
   } //showDetails
+
+  _selectRendezvousPoint(){
+
+  }
 
   List<Widget> _getReviews(List<ReviewModel> list){
     List<ReviewCard> reviews = new List<ReviewCard>();

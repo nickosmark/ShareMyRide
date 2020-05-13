@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/models/RidesModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
 import 'package:flutter_app/models/UserRide.dart';
+import 'package:flutter_app/screens/MyApp.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
 import 'package:flutter_app/screens/ReviewsScreen.dart';
 import 'package:flutter_app/services/DataBase.dart';
@@ -30,15 +31,26 @@ class RidesScreen extends StatelessWidget {
 
 
 
-  void acceptRide(UserRide ride){
-    db.updateRideToConfirmed(ride);
-    //update for me as well...
+  void acceptRide(UserRide ride, BuildContext context) async{
+    await db.updateRideToConfirmed(ride);
+    //Navigate again to Rides Tab
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+    );
   }
   void declineRide(UserRide ride){
     //db.deleteRide(fellowTravellerPhone)
   }
-  void completeRide(UserRide ride){
-    db.updateRideToCompleted(ride);
+  void completeRide(UserRide ride, BuildContext context) async{
+    await db.updateRideToCompleted(ride);
+    //navigate again to Rides Tab
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+    );
   }
   void cancelRide(UserRide ride){
 
@@ -79,7 +91,12 @@ class RidesScreen extends StatelessWidget {
           confirmedList.add(confirmedCard(item,fellowTraveller,ride, context));
         }
         if(item.status == Status.completed){
-          completedList.add(completedCard(item,fellowTraveller,ride, context));
+          if(item.isFinished != null){
+            if(!item.isFinished){
+              completedList.add(completedCard(item,fellowTraveller,ride, context));
+            }
+          }
+
         }
         if(item.isFinished != null){
           if (item.isFinished) {
@@ -254,7 +271,7 @@ class RidesScreen extends StatelessWidget {
               padding: const EdgeInsets.only(right: 30.0),
               child: IconButton(
                 onPressed: () {
-                  acceptRide(userRide);
+                  acceptRide(userRide, context);
                 },
                 icon: Icon(
                   Icons.check,
@@ -317,7 +334,7 @@ class RidesScreen extends StatelessWidget {
               padding: const EdgeInsets.only(right: 30.0),
               child: IconButton(
                 onPressed: () {
-                  completeRide(userRide);
+                  completeRide(userRide, context);
                 },
                 icon: Icon(
                   Icons.check_circle,

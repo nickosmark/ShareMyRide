@@ -107,7 +107,7 @@ class ReviewsScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.only(top: 50.0, bottom: 100.0),
                   child: RaisedButton(
-                    onPressed: () {
+                    onPressed: () async{
                       var review = ReviewModel(
                         phone: reviewee.phone,
                         name: myUser.name,
@@ -116,8 +116,9 @@ class ReviewsScreen extends StatelessWidget {
                         rating: this.revRating,
                       );
                       db.createReviewModel(review);
-                      //TODO make this UserRide as Finished so you can't create multiple reviews
-                      db.updateRideToFinished(ride);
+                      await db.updateRideToFinished(ride);
+                      //TODO delete the Ride from the public list . It's over..
+                      //db.deleteRideModel(ride);
                       //navigate to ridescreen
                       Navigator.push(
                         context,

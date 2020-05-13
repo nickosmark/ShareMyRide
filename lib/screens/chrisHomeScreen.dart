@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/RidesModel.dart';
+import 'package:flutter_app/models/SearchModel.dart';
 import 'package:flutter_app/models/UserModel.dart';
+import 'package:flutter_app/models/UserRide.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -19,6 +21,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_app/services/DataBase.dart';
 
 class ChrisHomeScreen extends StatefulWidget {
+  final DataBase db;
+
+  ChrisHomeScreen({@required this.db});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -55,11 +61,17 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   //fake data
   static RidesModel fakeRide = FakeDB.fakeRide;
-  List<RidesModel> results = [fakeRide];
-  RidesModel currentRide = new RidesModel(fromText: 'from', toText: 'to', randPoints: [new LatLng(38.236785, 23.94523)], toLatLng: new LatLng(37.236785, 23.44523), dateTime: new DateTime(2020), driver: fakeUser);
   static UserModel fakeUser = FakeDB.fakeUser;
   static ReviewModel reviewModel = FakeDB.reviewModel;
-  List <ReviewModel> reviewList = [reviewModel,reviewModel,reviewModel,reviewModel];
+
+
+  //Data displayed on result screen
+  List<RidesModel> rideSearchResults = [fakeRide];
+  UserModel currentUser = UserModel(name: 'waiting name', gender: null, phone: '000000', email: 'waiting mail', carInfo: 'subaru', rating: 0.0);
+  //Data displayed on details Screen
+  //They get updated when Request Ride is tapped.
+  RidesModel detailsRide = new RidesModel(fromText: 'from', toText: 'to', randPoints: [new LatLng(38.236785, 23.94523)], toLatLng: new LatLng(37.236785, 23.44523), dateTime: new DateTime(2020), driver: fakeUser);
+  List <ReviewModel> detailsReviewList = [reviewModel,reviewModel,reviewModel,reviewModel];
 
   @override
   void dispose() {
@@ -68,6 +80,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   @override
   void initState() {
+
     _loadMapStyle();
     super.initState();
   }
@@ -86,8 +99,8 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
           children: <Widget>[
             _googleMap(context),
             _startingScreen(showStartingScreen),
-            _resultsScreen(showResults, fakeUser.name, results),
-            _detailsScreen(showDetails, currentRide, reviewList),
+            _resultsScreen(showResults, currentUser.name, rideSearchResults),
+            _detailsScreen(showDetails, detailsRide, detailsReviewList),
             _createScreen(showCreate),
           ],
       ),
@@ -250,11 +263,22 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   }
 
   //the method called when the user presses the search button
-  _onSearchPressed() {
+  _onSearchPressed() async {
     _clearPolylines();
     if(_areFieldsFilled()) {
-      SearchEngine searchEngine = new SearchEngine(from, to, startCords, endCords, dateTime);
-      results = searchEngine.getResults();
+      this.currentUser = await widget.db.getCurrentUserModel();
+      var search = SearchModel(
+        fromText: this.from,
+        toText: this.to,
+        fromCords: this.startCords,
+        toCords: this.endCords,
+        searchDate: this.dateTime,
+        searcher: currentUser,
+      );
+      this.rideSearchResults = await widget.db.getRidesModelsFromSearch(search);
+
+//      SearchEngine searchEngine = new SearchEngine(from, to, startCords, endCords, dateTime);
+//      results = searchEngine.getResults();
       setState(() {
         showStartingScreen = false;
         showResults = true;
@@ -263,7 +287,27 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   }//onSearchPressed
 
   //the method called when the user presses the create button
-  _onCreatePressed() {
+  _onCreatePressed() async{
+    this.currentUser = await widget.db.getCurrentUserModel();
+    var userReviews = await widget.db.getCurrentUserReviews();
+    //update rating on db ??? Do we need that?
+    widget.db.updateCurrentUserRating(userReviews);
+    //update local user rating value. This should be used on ride used by confirmed button
+    double getRatingAverage(List<ReviewModel> reviewsList){
+
+      if(reviewsList.isEmpty){
+        return 0.0;
+      }else{
+        double sum = 0;
+        for (var item in reviewsList) {
+          var currentRating = item.rating;
+          sum = sum + currentRating;
+        }
+        return sum/reviewsList.length;
+      }
+    }
+    this.currentUser.rating = getRatingAverage(userReviews);
+    //update rating on db
     if(_areFieldsFilled()) {
       setState(() {
         showStartingScreen = false;
@@ -346,7 +390,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   }
 
   _onFinishPressed(){
-    RidesModel ridesModel = new RidesModel(fromText: from, toText: to, randPoints: randPoints, toLatLng: endCords, dateTime: dateTime, driver: fakeUser);
+    RidesModel ridesModel = new RidesModel(fromText: from, toText: to, randPoints: randPoints, toLatLng: endCords, dateTime: dateTime, driver: currentUser);
     showDialog(context: context, barrierDismissible: true, child:
     new CupertinoAlertDialog(
       title: new Text('Ride Overview'),
@@ -384,6 +428,14 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   //TODO Make it work baby. This function will get your RidesModel to the firebase
   _onConfirmPressed(RidesModel ridesModel){
     //Do your thing Mark
+    //right on it baby <3 <3 :)
+    var result = widget.db.createRidesModel(ridesModel);
+    if(result == null){
+      print('error creating ride in homescreen');
+    }
+
+    //TODO setstate na girnaei stin arxiki katastasi or navigator push sto Rides tab (xreiazetai context)
+    
   }
 
   String _showSelectedPoints(){
@@ -494,12 +546,51 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   }//list items
 
-  _requestRide(RidesModel ridesModel){
-    setState(() {
+  _requestRide(RidesModel ridesModel) async{
+    //this.detailsReviewList = await
+    detailsReviewList = await widget.db.getUserReviewsFromPhone(ridesModel.driver.phone);
+    setState((){
       showResults = false;
       showDetails = true;
-      currentRide = ridesModel;
+      detailsRide = ridesModel;
     });
+  }
+
+  _requestRideFinal(){
+    //create two userRides/
+    //pass it to UserRide of the currentUser
+    var currentUserRide = UserRide(
+      isDriver: false,
+      phone: this.currentUser.phone,
+      status: Status.pending,
+      ride: this.detailsRide,
+      fellowTraveler: this.detailsRide.driver,
+      randPoint: LatLng(37.000, 37.000),
+      isFinished: false,
+    );
+    //create waiting pending for this currentUser
+    var result = widget.db.createUserRide(currentUserRide);
+    if(result == null){
+      print('couldnt create a current user Ride');
+    }else{
+      print('current UserRide creation Successfull!!');
+    }
+    //create accept/decline pending for driver
+    var driverUserRide = UserRide(
+        isDriver: true,
+        phone: this.detailsRide.driver.phone,
+        status: Status.pending,
+        ride: this.detailsRide,
+        fellowTraveler: this.currentUser,
+        randPoint: LatLng(37.000, 37.000),
+        isFinished: false
+    );
+    var result2 = widget.db.createUserRide(driverUserRide);
+    if(result2 == null){
+    print('couldnt create a new driver user Ride');
+    }else{
+    print('driver UserRide creation Successfull!!');
+    }
   }
 
   Widget createCard(RideResultCard rideResultCard){
@@ -671,7 +762,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                       ),
                       FlatButton(
                         onPressed: () {
-
+                          _requestRideFinal();
                         },
                         child: DecoratedBox(
                           child: Text(

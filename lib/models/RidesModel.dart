@@ -81,6 +81,7 @@ class RidesModel {
       return LatLng(point.latitude, point.longitude);
     }
 
+
     return RidesModel(
       fromText: map['fromText'],
       toText: map['toText'],

@@ -160,7 +160,7 @@ class DataBase {
     return docRef;
   }
 
-
+  //TODO change for specific ride not all pending
   Future<void> updateRideToConfirmed(UserRide ride) async{
     String phone = ride.phone;
     String fellowTravellerPhone = ride.fellowTraveler.phone;
@@ -195,6 +195,7 @@ class DataBase {
     }
   }
 
+  //TODO change for specific ride not all pending
   Future<void> updateRideToCompleted(UserRide ride) async{
     String phone = ride.phone;
     String fellowTravellerPhone = ride.fellowTraveler.phone;
@@ -238,11 +239,16 @@ class DataBase {
     var remoteDoc = await query.getDocuments();
     for(var i in remoteDoc.documents){
       if(i.data['status'] == "Status.completed"){
-        try {
-          i.reference.updateData({'isFinished' : true});
-        } on Exception catch (e) {
-          print('couldnt change from completed to finished ');
+        //TODO changes ALL rides from completed to finished. Change only one
+        //if the ride refers to this specific user then update...
+        if(i.data['fellowTraveler.phone'] == ride.fellowTraveler.phone){
+          try {
+            i.reference.updateData({'isFinished' : true});
+          } on Exception catch (e) {
+            print('couldnt change from completed to finished ');
+          }
         }
+
       }
     }
   }

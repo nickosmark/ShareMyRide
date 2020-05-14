@@ -53,6 +53,7 @@ class RidesScreen extends StatelessWidget {
   void completeRide(UserRide ride, BuildContext context) async{
     //When a ride is completed, delete ride from results
     await db.deleteRideModelFromUserRide(ride);
+    await db.deleteUserRide(ride);
     await db.updateRideToCompleted(ride);
     //navigate again to Rides Tab
     Navigator.push(

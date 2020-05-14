@@ -287,6 +287,12 @@ class DataBase {
   }
 
 
+  void deleteRideModelFromUserRide(UserRide userRide) async{
+    var ridesCollection = db.collection(Paths.RidesModel);
+    var query = ridesCollection.where('phone',isEqualTo: userRide.phone);
+    var remoteDoc = await query.getDocuments();
+
+  }
 
 
   Future<List<Map>> getAllUserModelsFromDb() async{

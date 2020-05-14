@@ -41,8 +41,14 @@ class RidesScreen extends StatelessWidget {
           builder: (context) => MyApp(db: db, selectedIndex: 1,)),
     );
   }
-  void declineRide(UserRide ride){
-    //db.deleteRide(fellowTravellerPhone)
+  void declineRide(UserRide ride, BuildContext context){
+    //remove userride from this user and fellowTravellers pending!! list
+    //db.deleteUserRide(fellowTravellerPhone)
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+    );
   }
   void completeRide(UserRide ride, BuildContext context) async{
     await db.updateRideToCompleted(ride);
@@ -53,8 +59,23 @@ class RidesScreen extends StatelessWidget {
           builder: (context) => MyApp(db: db, selectedIndex: 1,)),
     );
   }
-  void cancelRide(UserRide ride){
+  void cancelRide(UserRide ride, BuildContext context){
+    //remove from both confirmed list
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+    );
+  }
 
+  void deleteRide(RidesModel ride, BuildContext context){
+    //Completely delete ride. Cant be searched again
+    //await db.deleteRideModel(ride);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+    );
   }
 
   void organizeUserRidesInCategories(List<UserRide> userRides, BuildContext context){
@@ -174,18 +195,36 @@ class RidesScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  IconButton(
-                    onPressed: (){},
-                    icon: Icon(
-                      Icons.refresh,
-                      size: 25.0,
-                      color: Colors.black,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      //padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
+                      child: Text(
+                        'refresh',
+                        style:TextStyle(
+                          fontSize: 12.0,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                    IconButton(
+                      onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.refresh,
+                        size: 25.0,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

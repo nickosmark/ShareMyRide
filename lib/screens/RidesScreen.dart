@@ -27,6 +27,7 @@ class RidesScreen extends StatelessWidget {
   List<Widget> pendingList = [];
   List<Widget> confirmedList = [];
   List<Widget> completedList = [];
+  List<Widget> myRidesList = [];
 
 
 
@@ -76,6 +77,10 @@ class RidesScreen extends StatelessWidget {
 
         UserModel fellowTraveller = item.fellowTraveler;
         RidesModel ride = item.ride;
+
+        if(item.status == Status.myRides){
+          myRidesList.add(myRidesCard(item,ride,context));
+        }
 
         if(item.status == Status.pending){
 
@@ -169,6 +174,45 @@ class RidesScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  IconButton(
+                    onPressed: (){},
+                    icon: Icon(
+                      Icons.refresh,
+                      size: 25.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
+                    child: Text(
+                      'My Rides',
+                      style:TextStyle(
+                        fontSize: 32.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.expand_more,
+                      size: 25.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                children: myRidesList,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -412,7 +456,26 @@ class RidesScreen extends StatelessWidget {
     );
   }
 
-
+  Widget myRidesCard(UserRide userRide, RidesModel ride, BuildContext context){
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
+      child: ListTile(
+        title: Text(' ${ride.fromText} -> ${ride.toText}'),
+        subtitle: Text(' waiting for passengers...'),
+        trailing: Padding(
+          padding: const EdgeInsets.only(right: 0.0),
+          child: IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.delete,
+              size: 25.0,
+              color: Colors.red,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
 }
 

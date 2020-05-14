@@ -307,7 +307,10 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       }
     }
     this.currentUser.rating = getRatingAverage(userReviews);
-    //update rating on db
+
+
+
+
     if(_areFieldsFilled()) {
       setState(() {
         showStartingScreen = false;
@@ -432,6 +435,21 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     var result = widget.db.createRidesModel(ridesModel);
     if(result == null){
       print('error creating ride in homescreen');
+    }
+
+    //Add created ride to my rides section on rides tab
+    var myRidesRide = UserRide(
+        phone: this.currentUser.phone,
+        status: Status.myRides,
+        isDriver: true,
+        isFinished: false,
+        ride: ridesModel,
+        fellowTraveler: UserModel(),
+        randPoint: LatLng(13.00,14.00),
+    );
+    var result2 = widget.db.createUserRide(myRidesRide);
+    if(result2 == null){
+      print('error creating My Rides ride');
     }
 
     //TODO setstate na girnaei stin arxiki katastasi or navigator push sto Rides tab (xreiazetai context)

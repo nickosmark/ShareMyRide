@@ -235,21 +235,16 @@ class DataBase {
     //search for this user
     //update status of this user
     var userRideCollection = db.collection(Paths.UserRide);
-    var query = userRideCollection.where('phone', isEqualTo: ride.phone);
+    var query = userRideCollection
+        .where('phone', isEqualTo: ride.phone)
+        .where('status', isEqualTo:  'Status.completed')
+        .where('fellowTraveler.phone', isEqualTo: reviewee.phone);
     var remoteDoc = await query.getDocuments();
     for(var i in remoteDoc.documents){
-      if(i.data['status'] == "Status.completed"){
-        //TODO changes ALL rides from completed to finished. Change only one
-        //if the ride refers to this specific user then update...
-        if(i.data['fellowTraveler']['phone'] == reviewee.phone){
-          try {
-            i.reference.updateData({'isFinished' : true});
-          } on Exception catch (e) {
-            print('couldnt change from completed to finished ');
-          }
-          }
-
-
+      try {
+        i.reference.updateData({'isFinished' : true});
+      } on Exception catch (e) {
+        print('couldnt change from completed to finished ');
       }
     }
   }

@@ -14,33 +14,47 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
 
-class RidesScreen extends StatelessWidget {
+class RidesScreen extends StatefulWidget {
   final DataBase db ;
   RidesScreen({this.db});
 
+  @override
+  _RidesScreenState createState() => _RidesScreenState();
+}
+
+class _RidesScreenState extends State<RidesScreen> {
   var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
+
   var lightBlueColor = Colors.blue;
+
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
 
   Future<List<UserRide>> futureUserRides;
 
   List<Widget> pendingList = [];
+
   List<Widget> confirmedList = [];
+
   List<Widget> completedList = [];
+
   List<Widget> myRidesList = [];
 
-
-
+  //
+  bool showMyRides = true;
+  bool showPending = true;
+  bool showConfirmed = true;
+  bool showCompleted = true;
 
   void acceptRide(UserRide ride, BuildContext context) async{
-    await db.updateRideToConfirmed(ride);
+    await widget.db.updateRideToConfirmed(ride);
     //Navigate again to Rides Tab
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+          builder: (context) => MyApp(db: widget.db, selectedIndex: 1,)),
     );
   }
+
   void declineRide(UserRide ride, BuildContext context){
     //remove userride from this user and fellowTravellers pending!! list
     //db.deleteUserRide(fellowTravellerPhone)
@@ -48,43 +62,45 @@ class RidesScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+          builder: (context) => MyApp(db: widget.db, selectedIndex: 1,)),
     );
   }
+
   void completeRide(UserRide ride, BuildContext context) async{
     //When a ride is completed, delete ride from results
     //TODO prosoxi diagrafi to ride
-    await db.deleteRideModelFromUserRide(ride);
+    //await widget.db.deleteRideModelFromUserRide(ride);
     //It gets deleted before updating. Should delete somewhere else?
-    //TODO uncomment to test new change indb
+    //uncomment to test new change indb
     //await db.deleteUserRide(ride);
-    await db.updateRideToCompleted(ride);
+    await widget.db.updateRideToCompleted(ride);
     //navigate again to Rides Tab
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+          builder: (context) => MyApp(db: widget.db, selectedIndex: 1,)),
     );
   }
+
   void cancelRide(UserRide ride, BuildContext context){
     //remove from both confirmed list
     //TODO
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+          builder: (context) => MyApp(db: widget.db, selectedIndex: 1,)),
     );
   }
 
   void deleteRide(UserRide userRide, BuildContext context) async{
     //Completely delete ride. Cant be searched again
-    await db.deleteRideModelFromUserRide(userRide);
+    await widget.db.deleteRideModelFromUserRide(userRide);
     //also delete from this users UserRide list
-    await db.deleteUserRide(userRide);
+    await widget.db.deleteUserRide(userRide);
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+          builder: (context) => MyApp(db: widget.db, selectedIndex: 1,)),
     );
   }
 
@@ -144,12 +160,20 @@ class RidesScreen extends StatelessWidget {
   }
 
   void getDataFromDb(){
-    futureUserRides = db.getCurrentUserRides();
+    futureUserRides = widget.db.getCurrentUserRides();
   }
-
 
   @override
   Widget build(BuildContext context) {
+    //clear lists
+     pendingList = [];
+
+    confirmedList = [];
+
+    completedList = [];
+
+    myRidesList = [];
+
     //get a Future list from database
     getDataFromDb();
 
@@ -176,6 +200,95 @@ class RidesScreen extends StatelessWidget {
        }
      },
     );
+  }
+  
+  IconButton expandedIconButton(bool showDetails, String status){
+    var moreDetails = IconButton(
+      onPressed: () {
+        setState(() {
+          if (showDetails){
+            switch (status){
+              case 'myRides':
+                this.showMyRides = false;
+                break;
+              case 'pending':
+                this.showPending = false;
+                break;
+              case 'confirmed':
+                this.showConfirmed = false;
+                break;
+              case 'completed':
+                this.showCompleted = false;
+                break;
+            }
+          }else{
+            switch (status){
+              case 'myRides':
+                this.showMyRides = true;
+                break;
+              case 'pending':
+                this.showPending = true;
+                break;
+              case 'confirmed':
+                this.showConfirmed = true;
+                break;
+              case 'completed':
+                this.showCompleted = true;
+                break;
+            }
+          }
+        });
+      },
+      icon: Icon(
+        Icons.expand_more,
+        size: 25.0,
+        color: Colors.black,
+      ),
+    );
+    
+    var lessDetails = IconButton(
+      onPressed: () {
+        setState(() {
+          if (showDetails){
+            switch (status){
+              case 'myRides':
+                this.showMyRides = false;
+                break;
+              case 'pending':
+                this.showPending = false;
+                break;
+              case 'confirmed':
+                this.showConfirmed = false;
+                break;
+              case 'completed':
+                this.showCompleted = false;
+                break;
+            }
+          }else{
+            switch (status){
+              case 'myRides':
+                this.showMyRides = true;
+                break;
+              case 'pending':
+                this.showPending = true;
+                break;
+              case 'confirmed':
+                this.showConfirmed = true;
+                break;
+              case 'completed':
+                this.showCompleted = true;
+                break;
+            }
+          }
+        });
+      },
+      icon: Icon(
+        Icons.expand_less,
+        size: 25.0,
+        color: Colors.black,
+      ),
+    );
+    return showDetails ? moreDetails : lessDetails;
   }
 
   MaterialApp buildRideScreen(List<UserRide> userRides, BuildContext context,) {
@@ -224,7 +337,7 @@ class RidesScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+                              builder: (context) => MyApp(db: widget.db, selectedIndex: 1,)),
                         );
                       },
                       icon: Icon(
@@ -249,18 +362,14 @@ class RidesScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.expand_more,
-                      size: 25.0,
-                      color: Colors.black,
-                    ),
-                  ),
+                  expandedIconButton(showMyRides, 'myRides'),
                 ],
               ),
-              Column(
-                children: myRidesList,
+              Visibility(
+                visible: showMyRides,
+                child: Column(
+                  children: myRidesList,
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -275,18 +384,14 @@ class RidesScreen extends StatelessWidget {
                         ),
                     ),
                   ),
-                  IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.expand_more,
-                          size: 25.0,
-                          color: Colors.black,
-                        ),
-                      ),
+                  expandedIconButton(showPending, 'pending'),
                 ],
               ),
-              Column(
-                children: pendingList,
+              Visibility(
+                visible: showPending,
+                child: Column(
+                  children: pendingList,
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -301,18 +406,14 @@ class RidesScreen extends StatelessWidget {
                         ),
                     ),
                   ),
-                  IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.expand_more,
-                          size: 25.0,
-                          color: Colors.black,
-                        ),
-                      ),
+                  expandedIconButton(showConfirmed, 'confirmed'),
                 ],
               ),
-              Column(
-                children: confirmedList,
+              Visibility(
+                visible: showConfirmed,
+                child: Column(
+                  children: confirmedList,
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -327,18 +428,14 @@ class RidesScreen extends StatelessWidget {
                         ),
                     ),
                   ),
-                  IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.expand_more,
-                          size: 25.0,
-                          color: Colors.black,
-                        ),
-                      ),
+                  expandedIconButton(showCompleted, 'completed'),
                 ],
               ),
-              Column(
-                children: completedList,
+              Visibility(
+                visible: showCompleted,
+                child: Column(
+                  children: completedList,
+                ),
               ),
             ],
           ),
@@ -347,7 +444,6 @@ class RidesScreen extends StatelessWidget {
     ),
   );
   }
-
 
   Widget pendingCardDriver(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
@@ -387,7 +483,6 @@ class RidesScreen extends StatelessWidget {
     );
   }
 
-  //Should show the name of the driver
   Widget pendingCardPassenger(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
@@ -410,7 +505,6 @@ class RidesScreen extends StatelessWidget {
       ),
     );
   }
-
 
   Widget confirmedCard(UserRide userRide,UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
@@ -450,7 +544,6 @@ class RidesScreen extends StatelessWidget {
     );
   }
 
-
   Widget completedCard(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
@@ -463,12 +556,12 @@ class RidesScreen extends StatelessWidget {
           padding: const EdgeInsets.only(right: 0.0),
           child: IconButton(
             onPressed: () async{
-              UserModel currentUser = await db.getCurrentUserModel();
+              UserModel currentUser = await widget.db.getCurrentUserModel();
               //leaveReview(fellowTraveller, currentUser, context);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ReviewsScreen(db: db, ride: userRide, reviewee: fellowTraveller, myUser: currentUser,)),
+                    builder: (context) => ReviewsScreen(db: widget.db, ride: userRide, reviewee: fellowTraveller, myUser: currentUser,)),
               );
             },
             icon: Icon(
@@ -527,7 +620,6 @@ class RidesScreen extends StatelessWidget {
       ),
     );
   }
-
 }
 
 //class completedCard extends StatelessWidget {

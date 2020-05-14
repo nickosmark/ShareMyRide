@@ -231,7 +231,7 @@ class DataBase {
   }
 
 
-  Future<void> updateRideToFinished(UserRide ride) async{
+  Future<void> updateRideToFinished(UserRide ride, UserModel reviewee) async{
     //search for this user
     //update status of this user
     var userRideCollection = db.collection(Paths.UserRide);
@@ -241,13 +241,14 @@ class DataBase {
       if(i.data['status'] == "Status.completed"){
         //TODO changes ALL rides from completed to finished. Change only one
         //if the ride refers to this specific user then update...
-        if(i.data['fellowTraveler.phone'] == ride.fellowTraveler.phone){
+        if(i.data['fellowTraveler']['phone'] == reviewee.phone){
           try {
             i.reference.updateData({'isFinished' : true});
           } on Exception catch (e) {
             print('couldnt change from completed to finished ');
           }
-        }
+          }
+
 
       }
     }
@@ -308,7 +309,7 @@ class DataBase {
   Future<void> deleteUserRide(UserRide userRide) async{
     var userRidesCollection = db.collection(Paths.UserRide);
     var query = userRidesCollection
-        .where('phone',isEqualTo: userRide.phone)
+        .where('status', isEqualTo: "Status.MyRides")
         .where('ride.fromText',isEqualTo: userRide.ride.fromText)
         .where('ride.toText',isEqualTo: userRide.ride.toText);
     var remoteDoc = await query.getDocuments();

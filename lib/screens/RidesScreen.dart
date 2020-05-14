@@ -44,6 +44,7 @@ class RidesScreen extends StatelessWidget {
   void declineRide(UserRide ride, BuildContext context){
     //remove userride from this user and fellowTravellers pending!! list
     //db.deleteUserRide(fellowTravellerPhone)
+    //TODO
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -52,8 +53,11 @@ class RidesScreen extends StatelessWidget {
   }
   void completeRide(UserRide ride, BuildContext context) async{
     //When a ride is completed, delete ride from results
+    //TODO prosoxi diagrafi to ride
     await db.deleteRideModelFromUserRide(ride);
-    await db.deleteUserRide(ride);
+    //It gets deleted before updating. Should delete somewhere else?
+    //TODO uncomment to test new change indb
+    //await db.deleteUserRide(ride);
     await db.updateRideToCompleted(ride);
     //navigate again to Rides Tab
     Navigator.push(
@@ -64,6 +68,7 @@ class RidesScreen extends StatelessWidget {
   }
   void cancelRide(UserRide ride, BuildContext context){
     //remove from both confirmed list
+    //TODO
     Navigator.push(
       context,
       MaterialPageRoute(

@@ -50,6 +50,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   String from = "";
   String to = "";
   DateTime dateTime;
+  LatLng pickUpPoint;
   List<LatLng> randPoints = new List<LatLng>();
   List<String> selectedPoints = new List<String>();
   //booleans for widgets' visibility
@@ -265,6 +266,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   //the method called when the user presses the search button
   _onSearchPressed() async {
     _clearPolylines();
+    _clearMarkers();
     if(_areFieldsFilled()) {
       this.currentUser = await widget.db.getCurrentUserModel();
       var search = SearchModel(
@@ -276,9 +278,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         searcher: currentUser,
       );
       this.rideSearchResults = await widget.db.getRidesModelsFromSearch(search);
-
-//      SearchEngine searchEngine = new SearchEngine(from, to, startCords, endCords, dateTime);
-//      results = searchEngine.getResults();
       setState(() {
         showStartingScreen = false;
         showResults = true;
@@ -433,7 +432,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     if(result == null){
       print('error creating ride in homescreen');
     }
-
     //TODO setstate na girnaei stin arxiki katastasi or navigator push sto Rides tab (xreiazetai context)
     
   }
@@ -537,7 +535,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
     for(final ride in results){
       items.add(box);
-      resultCard = new RideResultCard(ridesModel: ride, onPressed: _requestRide);
+      resultCard = new RideResultCard(ridesModel: ride, onPressed: _showRideDetails);
       card = createCard(resultCard);
       items.add(card);
     }
@@ -546,7 +544,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   }//list items
 
-  _requestRide(RidesModel ridesModel) async{
+  _showRideDetails(RidesModel ridesModel) async{
     //this.detailsReviewList = await
     detailsReviewList = await widget.db.getUserReviewsFromPhone(ridesModel.driver.phone);
     setState((){
@@ -565,7 +563,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       status: Status.pending,
       ride: this.detailsRide,
       fellowTraveler: this.detailsRide.driver,
-      randPoint: LatLng(37.000, 37.000),
+      randPoint: pickUpPoint,
       isFinished: false,
     );
     //create waiting pending for this currentUser
@@ -582,7 +580,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         status: Status.pending,
         ride: this.detailsRide,
         fellowTraveler: this.currentUser,
-        randPoint: LatLng(37.000, 37.000),
+        randPoint: pickUpPoint,
         isFinished: false
     );
     var result2 = widget.db.createUserRide(driverUserRide);
@@ -773,7 +771,8 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                       ),
                       RaisedButton(
                         onPressed: () {
-                          _requestRideFinal();
+                          //_requestRideFinal();
+                          _selectPickUpPoint(ride);
                         },
                         child: Text(
                           "Select Pick-Up Point",
@@ -798,8 +797,55 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     );
   } //showDetails
 
-  _selectRendezvousPoint(){
+  _selectPickUpPoint(RidesModel ride) async{
+    showDetails = false;
+    _originLatitude = ride.randPoints[0].latitude;
+    _originLongitude = ride.randPoints[0].longitude;
+    _destLatitude = ride.toLatLng.latitude;
+    _destLongitude = ride.toLatLng.longitude;
+    _getPolyline();
+    LatLng dest = new LatLng(_destLatitude, _destLongitude);
+    final String destination = await _getAddressFromLatLng(dest);
+    _addMarker(dest, "to", BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed), destination);
+    for(final point in ride.randPoints){
+      final String address = await _getAddressFromLatLng(point);
+      _showRendezvousPoint(address, point, true);
+    }
+  }
 
+  _onPickUpPointSelected(){
+    //_clearMarkers();
+    //_clearPolylines();
+    showDialog(context: context, barrierDismissible: true, child:
+    new CupertinoAlertDialog(
+      title: Text('Request Ride Successful!'),
+      content: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 10.0,
+          ),
+          Text(
+            "You are waiting for confimation.\nCheck your Rides tab."
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+          Image(
+            image: new AssetImage('assets/images/check_img.png'),
+          ),
+        ],
+      ),
+      actions: [
+        FlatButton(
+          child: Text('YAY!'),
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).pop('dialog');
+          },
+        ),
+
+      ],
+    )
+    );
   }
 
   List<Widget> _getReviews(List<ReviewModel> list){
@@ -860,7 +906,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
           FlatButton(
             child: Text('Yes'),
             onPressed: () {
-              _showRendezvousPoint(name, point);
+              _showRendezvousPoint(name, point, false);
               randPoints.add(point);
               selectedPoints.add(name);
               Navigator.of(context, rootNavigator: true).pop('dialog');
@@ -879,10 +925,36 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     return name;
   }
 
-  void _showRendezvousPoint(String title, LatLng point){
+  void _showRendezvousPoint(String title, LatLng point, bool selectOn){
     Marker rendezvousPoint =
     Marker(markerId: MarkerId(title),
       position: point,
+      onTap: () {
+        if(selectOn) {
+          showDialog(context: context, barrierDismissible: true, child:
+          new CupertinoAlertDialog(
+            title: new Text('Select this pick-up point?'),
+            content: new Text(title),
+            actions: [
+              FlatButton(
+                child: Text('No'),
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop('dialog');
+                },
+              ),
+              FlatButton(
+                child: Text('Yes'),
+                onPressed: () {
+                  pickUpPoint = point;
+                  Navigator.of(context, rootNavigator: true).pop('dialog');
+                  _onPickUpPointSelected();
+                },
+              ),
+            ],
+          )
+          );
+        }
+      },
       infoWindow: new InfoWindow(title: title),
       icon:
       BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),

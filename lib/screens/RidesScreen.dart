@@ -51,6 +51,8 @@ class RidesScreen extends StatelessWidget {
     );
   }
   void completeRide(UserRide ride, BuildContext context) async{
+    //When a ride is completed, delete ride from results
+    await db.deleteRideModelFromUserRide(ride);
     await db.updateRideToCompleted(ride);
     //navigate again to Rides Tab
     Navigator.push(
@@ -68,9 +70,11 @@ class RidesScreen extends StatelessWidget {
     );
   }
 
-  void deleteRide(RidesModel ride, BuildContext context){
+  void deleteRide(UserRide userRide, BuildContext context) async{
     //Completely delete ride. Cant be searched again
-    //await db.deleteRideModel(ride);
+    await db.deleteRideModelFromUserRide(userRide);
+    //also delete from this users UserRide list
+    await db.deleteUserRide(userRide);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -504,7 +508,9 @@ class RidesScreen extends StatelessWidget {
         trailing: Padding(
           padding: const EdgeInsets.only(right: 0.0),
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              deleteRide(userRide, context);
+            },
             icon: Icon(
               Icons.delete,
               size: 25.0,

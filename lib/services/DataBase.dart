@@ -287,10 +287,28 @@ class DataBase {
   }
 
 
-  void deleteRideModelFromUserRide(UserRide userRide) async{
+  Future<void> deleteRideModelFromUserRide(UserRide userRide) async{
     var ridesCollection = db.collection(Paths.RidesModel);
-    var query = ridesCollection.where('phone',isEqualTo: userRide.phone);
+    var query = ridesCollection
+        .where('driver.phone',isEqualTo: userRide.phone)
+        .where('fromText',isEqualTo: userRide.ride.fromText)
+        .where('toText',isEqualTo: userRide.ride.toText);
     var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      i.reference.delete();
+    }
+  }
+
+  Future<void> deleteUserRide(UserRide userRide) async{
+    var userRidesCollection = db.collection(Paths.UserRide);
+    var query = userRidesCollection
+        .where('phone',isEqualTo: userRide.phone)
+        .where('ride.fromText',isEqualTo: userRide.ride.fromText)
+        .where('ride.toText',isEqualTo: userRide.ride.toText);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      i.reference.delete();
+    }
 
   }
 

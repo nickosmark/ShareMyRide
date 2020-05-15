@@ -6,6 +6,7 @@ class RideResultCard extends StatelessWidget {
 
   final RidesModel ridesModel;
   final Function(RidesModel) onPressed;
+  final Color darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
 
   RideResultCard({
     this.ridesModel,
@@ -17,12 +18,12 @@ class RideResultCard extends StatelessWidget {
     UserModel userModel = ridesModel.driver;
     String from, to;
     double rating = double.parse((userModel.rating).toStringAsFixed(1));
-    if(ridesModel.fromText.length > 40)
+    if(ridesModel.fromText.length > 400)
       from = ridesModel.fromText.substring(0, 37) + "...";
     else
       from = ridesModel.fromText;
 
-    if(ridesModel.toText.length > 40)
+    if(ridesModel.toText.length > 400)
       to = ridesModel.toText.substring(0, 37) + "...";
     else
       to = ridesModel.toText;
@@ -43,21 +44,23 @@ class RideResultCard extends StatelessWidget {
             SizedBox(
               height: 7.0,
             ),
-            Text(from),
+            SizedBox(child: Text(from), height: 35),
             Icon(
                 Icons.arrow_downward
             ),
-            Text(to),
+            SizedBox(child: Text(to), height: 35),
             SizedBox(
               height: 3.0,
             ),
-            FlatButton(
-              color: Colors.black,
+            RaisedButton(
+              color: darkBlueColor,
               textColor: Colors.white,
               child: Text('Show Details'),
               onPressed: () {
                 onPressed(ridesModel);
-              },//onPressed
+              },
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0)),
             ),
           ],
         ),

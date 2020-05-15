@@ -46,6 +46,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   //In app necessary variables
   final format = DateFormat("dd-MM-yyyy HH:mm");
+  final Color darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
   //Search/Create variables
   String from = "";
   String to = "";
@@ -630,12 +631,12 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     UserModel driver = ride.driver;
     String from, to;
     double rating = double.parse((driver.rating).toStringAsFixed(1));
-    if(ride.fromText.length > 30)
+    if(ride.fromText.length > 300)
       from = ride.fromText.substring(0, 27) + "...";
     else
       from = ride.fromText;
 
-    if(ride.toText.length > 30)
+    if(ride.toText.length > 300)
       to = ride.toText.substring(0, 27) + "...";
     else
       to = ride.toText;
@@ -711,7 +712,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(40.0),
                         topRight: Radius.circular(40.0)),
-                    color: Colors.deepPurple[900],
+                    color: darkBlueColor,
                   ),
                   child: Padding(
                     padding:
@@ -742,6 +743,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                             ],
                           ),
                         ),
+                        /*
                         Expanded(
                           flex: 1,
                           child: Column(
@@ -767,6 +769,8 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                             ],
                           ),
                         ),
+
+                         */
                       ],
                     ),
                   ),
@@ -811,7 +815,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                         ),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0)),
-                        color: Colors.deepPurple[900],
+                        color: darkBlueColor,
                       )
                     ],
                   ),

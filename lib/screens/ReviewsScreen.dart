@@ -6,6 +6,7 @@ import 'package:flutter_app/screens/MyApp.dart';
 import 'package:flutter_app/services/DataBase.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ReviewsScreen extends StatelessWidget {
   final DataBase db;
@@ -108,24 +109,34 @@ class ReviewsScreen extends StatelessWidget {
                   padding: EdgeInsets.only(top: 50.0, bottom: 100.0),
                   child: RaisedButton(
                     onPressed: () async{
-                      var review = ReviewModel(
-                        phone: reviewee.phone,
-                        name: myUser.name,
-                        imageUrl: myUser.getUrlFromNameHash(genderInput: myUser.gender),
-                        reviewText: this.reviewText,
-                        rating: this.revRating,
-                      );
-                      db.createReviewModel(review);
-                      await db.updateRideToFinished(ride);
-                      //TODO delete the Ride from the public list . It's over..
-                      //db.deleteRideModel(ride);
-                      //navigate to ridescreen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MyApp(db: db,selectedIndex: 1),
-                        ),
-                      );
+
+                      if(revRating == null && reviewText == null){
+                        Fluttertoast.showToast(
+                          msg: 'Please re-enter a valid rating and/or text',
+                          timeInSecForIosWeb: 1,
+                        );
+                      }else{
+                        var review = ReviewModel(
+                          phone: reviewee.phone,
+                          name: myUser.name,
+                          imageUrl: myUser.getUrlFromNameHash(genderInput: myUser.gender),
+                          reviewText: this.reviewText,
+                          rating: this.revRating,
+                        );
+                        db.createReviewModel(review);
+                        await db.updateRideToFinished(ride,reviewee);
+                        //TODO delete the Ride from the public list . It's over..
+                        //db.deleteRideModel(ride);
+                        //navigate to ridescreen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MyApp(db: db,selectedIndex: 1),
+                          ),
+                        );
+                      }
+
+
                     }, //onPressed
                     child: Text(
                       "SUBMIT",

@@ -457,6 +457,22 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     if(result == null){
       print('error creating ride in homeScreen');
     }
+
+    //Add created ride to my rides section on rides tab
+    var myRidesRide = UserRide(
+        phone: this.currentUser.phone,
+        status: Status.myRides,
+        isDriver: true,
+        isFinished: false,
+        ride: ridesModel,
+        fellowTraveler: UserModel(),
+        randPoint: LatLng(13.00,14.00),
+    );
+    var result2 = widget.db.createUserRide(myRidesRide);
+    if(result2 == null){
+      print('error creating My Rides ride');
+    }
+
   }
 
   String _showSelectedPoints(){

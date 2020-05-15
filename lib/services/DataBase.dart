@@ -160,7 +160,7 @@ class DataBase {
     return docRef;
   }
 
-
+  //TODO change for specific ride not all pending
   Future<void> updateRideToConfirmed(UserRide ride) async{
     String phone = ride.phone;
     String fellowTravellerPhone = ride.fellowTraveler.phone;
@@ -195,6 +195,7 @@ class DataBase {
     }
   }
 
+  //TODO change for specific ride not all pending
   Future<void> updateRideToCompleted(UserRide ride) async{
     String phone = ride.phone;
     String fellowTravellerPhone = ride.fellowTraveler.phone;
@@ -230,19 +231,20 @@ class DataBase {
   }
 
 
-  Future<void> updateRideToFinished(UserRide ride) async{
+  Future<void> updateRideToFinished(UserRide ride, UserModel reviewee) async{
     //search for this user
     //update status of this user
     var userRideCollection = db.collection(Paths.UserRide);
-    var query = userRideCollection.where('phone', isEqualTo: ride.phone);
+    var query = userRideCollection
+        .where('phone', isEqualTo: ride.phone)
+        .where('status', isEqualTo:  'Status.completed')
+        .where('fellowTraveler.phone', isEqualTo: reviewee.phone);
     var remoteDoc = await query.getDocuments();
     for(var i in remoteDoc.documents){
-      if(i.data['status'] == "Status.completed"){
-        try {
-          i.reference.updateData({'isFinished' : true});
-        } on Exception catch (e) {
-          print('couldnt change from completed to finished ');
-        }
+      try {
+        i.reference.updateData({'isFinished' : true});
+      } on Exception catch (e) {
+        print('couldnt change from completed to finished ');
       }
     }
   }
@@ -287,6 +289,30 @@ class DataBase {
   }
 
 
+  Future<void> deleteRideModelFromUserRide(UserRide userRide) async{
+    var ridesCollection = db.collection(Paths.RidesModel);
+    var query = ridesCollection
+        .where('driver.phone',isEqualTo: userRide.phone)
+        .where('fromText',isEqualTo: userRide.ride.fromText)
+        .where('toText',isEqualTo: userRide.ride.toText);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      i.reference.delete();
+    }
+  }
+
+  Future<void> deleteUserRide(UserRide userRide) async{
+    var userRidesCollection = db.collection(Paths.UserRide);
+    var query = userRidesCollection
+        .where('status', isEqualTo: "Status.MyRides")
+        .where('ride.fromText',isEqualTo: userRide.ride.fromText)
+        .where('ride.toText',isEqualTo: userRide.ride.toText);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      i.reference.delete();
+    }
+
+  }
 
 
   Future<List<Map>> getAllUserModelsFromDb() async{

@@ -10,6 +10,7 @@ enum Status{
   pending,
   confirmed,
   completed,
+  myRides,
 }
 
 class UserRide {
@@ -93,6 +94,8 @@ class UserRide {
       status = Status.confirmed;
     }else if(map['status'] == 'Status.completed'){
       status = Status.completed;
+    }else if(map['status'] == 'Status.myRides'){
+      status = Status.myRides;
     }else{
       status = null;
     }

@@ -304,7 +304,8 @@ class DataBase {
   Future<void> deleteUserRide(UserRide userRide) async{
     var userRidesCollection = db.collection(Paths.UserRide);
     var query = userRidesCollection
-        .where('status', isEqualTo: "Status.MyRides")
+        .where('phone',isEqualTo: userRide.phone)
+        .where('status', isEqualTo: "Status.myRides")
         .where('ride.fromText',isEqualTo: userRide.ride.fromText)
         .where('ride.toText',isEqualTo: userRide.ride.toText);
     var remoteDoc = await query.getDocuments();

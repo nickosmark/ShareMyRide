@@ -252,30 +252,62 @@ class _RidesScreenState extends State<RidesScreen> {
           if (showDetails){
             switch (status){
               case 'myRides':
+                this.myRidesList = [];
+                this.pendingList = [];
+                this.confirmedList= [];
+                this.completedList = [];
                 this.showMyRides = false;
                 break;
               case 'pending':
+                this.myRidesList = [];
+                this.pendingList = [];
+                this.confirmedList= [];
+                this.completedList = [];
                 this.showPending = false;
                 break;
               case 'confirmed':
+                this.myRidesList = [];
+                this.pendingList = [];
+                this.confirmedList= [];
+                this.completedList = [];
                 this.showConfirmed = false;
                 break;
               case 'completed':
+                this.myRidesList = [];
+                this.pendingList = [];
+                this.confirmedList= [];
+                this.completedList = [];
                 this.showCompleted = false;
                 break;
             }
           }else{
             switch (status){
               case 'myRides':
+                this.myRidesList = [];
+                this.pendingList = [];
+                this.confirmedList= [];
+                this.completedList = [];
                 this.showMyRides = true;
                 break;
               case 'pending':
+                this.myRidesList = [];
+                this.pendingList = [];
+                this.confirmedList= [];
+                this.completedList = [];
                 this.showPending = true;
                 break;
               case 'confirmed':
+                this.myRidesList = [];
+                this.pendingList = [];
+                this.confirmedList= [];
+                this.completedList = [];
                 this.showConfirmed = true;
                 break;
               case 'completed':
+                this.myRidesList = [];
+                this.pendingList = [];
+                this.confirmedList= [];
+                this.completedList = [];
                 this.showCompleted = true;
                 break;
             }
@@ -314,41 +346,21 @@ class _RidesScreenState extends State<RidesScreen> {
       ),
     ),
     home: Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MyApp(db: widget.db, selectedIndex: 1,)),
+          );
+        },
+        child: Icon(Icons.refresh),
+        backgroundColor: darkBlueColor,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      //padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
-                      child: Text(
-                        'refresh',
-                        style:TextStyle(
-                          fontSize: 12.0,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyApp(db: widget.db, selectedIndex: 1,)),
-                        );
-                      },
-                      icon: Icon(
-                        Icons.refresh,
-                        size: 25.0,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[

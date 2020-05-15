@@ -50,6 +50,7 @@ flutter:
   assets:
     - assets/images/login_icon.png
     - assets/map_style.txt
+    - assets/images/check_img.png
 
 
   fonts:

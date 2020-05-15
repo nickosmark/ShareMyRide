@@ -449,6 +449,9 @@ class _RidesScreenState extends State<RidesScreen> {
                   children: completedList,
                 ),
               ),
+              Container(
+                height: 70.0,
+              )
             ],
           ),
         ),

@@ -230,7 +230,7 @@ class DataBase {
     }
   }
 
-
+  //TODO i guess query doesn't work
   Future<void> updateRideToFinished(UserRide ride, UserModel reviewee) async{
     //search for this user
     //update status of this user

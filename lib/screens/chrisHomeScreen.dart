@@ -431,15 +431,10 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         FlatButton(
           child: Text("Confirm"),
           onPressed: () {
-            _onConfirmPressed();
             Navigator.of(context, rootNavigator: true).pop('dialog');
             _showToast("Ride Successfully created!");
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MyApp(db: widget.db, selectedIndex: 1,),
-              ),
-            );
+            _onConfirmPressed();
+
           },
         ),
       ],
@@ -453,7 +448,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     //right on it baby <3 <3 :)
     await _getUserDataFromDB();
     RidesModel ridesModel = new RidesModel(fromText: from, toText: to, randPoints: randPoints, toLatLng: endCords, dateTime: dateTime, driver: currentUser);
-    var result = widget.db.createRidesModel(ridesModel);
+    var result = await widget.db.createRidesModel(ridesModel);
     if(result == null){
       print('error creating ride in homeScreen');
     }
@@ -468,10 +463,16 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         fellowTraveler: UserModel(),
         randPoint: LatLng(13.00,14.00),
     );
-    var result2 = widget.db.createUserRide(myRidesRide);
+    var result2 = await widget.db.createUserRide(myRidesRide);
     if(result2 == null){
       print('error creating My Rides ride');
     }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyApp(db: widget.db, selectedIndex: 1,),
+      ),
+    );
 
   }
 

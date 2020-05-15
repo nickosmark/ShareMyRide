@@ -20,6 +20,8 @@ import 'package:geocoder/geocoder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_app/services/DataBase.dart';
 
+import 'MyApp.dart';
+
 class ChrisHomeScreen extends StatefulWidget {
   final DataBase db;
 
@@ -412,8 +414,8 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         child: Column(
           children: <Widget>[
             Text('From: $from', style: TextStyle(fontSize: 18.0),),
-            Text('To: $to}', style: TextStyle(fontSize: 18.0),),
-            Text('Date: $dateTime}', style: TextStyle(fontSize: 18.0),),
+            Text('To: $to', style: TextStyle(fontSize: 18.0),),
+            Text('Date: $dateTime', style: TextStyle(fontSize: 18.0),),
             Text('Selected rendezvous points:', style: TextStyle(fontSize: 18.0),),
             Text(_showSelectedPoints())
           ],
@@ -431,8 +433,13 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
           onPressed: () {
             _onConfirmPressed();
             Navigator.of(context, rootNavigator: true).pop('dialog');
-            _onCancelPressed();
-            //TODO setstate na girnaei stin arxiki katastasi or navigator push sto Rides tab (xreiazetai context)
+            _showToast("Ride Successfully created!");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyApp(db: widget.db, selectedIndex: 1,),
+              ),
+            );
           },
         ),
       ],

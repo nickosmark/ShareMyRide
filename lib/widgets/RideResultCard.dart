@@ -16,6 +16,7 @@ class RideResultCard extends StatelessWidget {
   Widget build(BuildContext context) {
     UserModel userModel = ridesModel.driver;
     String from, to;
+    double rating = double.parse((userModel.rating).toStringAsFixed(1));
     if(ridesModel.fromText.length > 40)
       from = ridesModel.fromText.substring(0, 37) + "...";
     else
@@ -63,7 +64,7 @@ class RideResultCard extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(userModel.rating.toString()),
+            Text(rating.toString()),
             Icon(
               Icons.star,
               size: 15.0,

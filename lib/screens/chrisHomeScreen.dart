@@ -86,6 +86,13 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     super.initState();
   }
 
+  @override
+  void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -117,13 +124,13 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             height: 250.0,
             child: ListView(
               children: <Widget>[
-                fillField("From: ", Colors.blue, 10.0, BitmapDescriptor.defaultMarkerWithHue(
+                _fillField("From: ", Colors.blue, 10.0, BitmapDescriptor.defaultMarkerWithHue(
                   BitmapDescriptor.hueBlue,
                 )),
-                fillField("To: ", Colors.red, 10.0, BitmapDescriptor.defaultMarkerWithHue(
+                _fillField("To: ", Colors.red, 10.0, BitmapDescriptor.defaultMarkerWithHue(
                     BitmapDescriptor.hueRed
                 )),
-                dateField(),
+                _dateField(),
               ],
 
             ),
@@ -135,7 +142,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     );
   }
 
-  Align fillField(String str, Color clr, double top, BitmapDescriptor bitmapDescriptor) {
+  Align _fillField(String str, Color clr, double top, BitmapDescriptor bitmapDescriptor) {
     return Align(
         alignment: Alignment.topCenter,
         child: Padding(
@@ -163,6 +170,9 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                   _originLatitude = placeCords.latitude;
                   _originLongitude = placeCords.longitude;
                   startCords = placeCords;
+                  setState(() {
+
+                  });
                 }
 
                 if(str=="To: "){
@@ -172,7 +182,9 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                   _destLongitude = placeCords.longitude;
                   endCords = placeCords;
                 }
-                _getPolyline();
+
+                if(_originLongitude!= null && _originLatitude != null && _destLongitude != null && _destLatitude != null)
+                  _getPolyline("demo");
 
               },
 
@@ -180,7 +192,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         ));
   }
 
-  Align dateField() {
+  Align _dateField() {
     return Align(
         alignment: Alignment.topCenter,
         child: Padding(
@@ -286,7 +298,20 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   }//onSearchPressed
 
   //the method called when the user presses the create button
-  _onCreatePressed() async{
+  _onCreatePressed() {
+    if(_areFieldsFilled()) {
+      _convertPolylineToRandPoints();
+      randPoints.add(startCords);
+      setState(() {
+        showStartingScreen = false;
+        showCreate = true;
+        isTouchable = true;
+        _mapController.animateCamera(CameraUpdate.newLatLngZoom(startCords, 15));
+      });
+    }
+  }//onCreatePressed
+
+  _getUserDataFromDB() async {
     this.currentUser = await widget.db.getCurrentUserModel();
     var userReviews = await widget.db.getCurrentUserReviews();
     //update rating on db ??? Do we need that?
@@ -307,16 +332,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     }
     this.currentUser.rating = getRatingAverage(userReviews);
     //update rating on db
-    if(_areFieldsFilled()) {
-      setState(() {
-        showStartingScreen = false;
-        showCreate = true;
-        isTouchable = true;
-        randPoints.add(startCords);
-        _convertPolylineToRandPoints();
-      });
-    }
-  }//onCreatePressed
+  }
 
   bool _areFieldsFilled(){
     if(from == "") {
@@ -334,13 +350,11 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     return true;
   }
 
-  void _convertPolylineToRandPoints() async{
-    PolylineId id = PolylineId("poly");
+  void _convertPolylineToRandPoints() {
+    PolylineId id = PolylineId("demo");
     for(final x in polylines[id].points){
       LatLng temp = x;
       randPoints.add(temp);
-      //final String address = await _getAddressFromLatLng(temp);
-      //_showRendezvousPoint(address, temp);
     }
   }
 
@@ -389,7 +403,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   }
 
   _onFinishPressed(){
-    RidesModel ridesModel = new RidesModel(fromText: from, toText: to, randPoints: randPoints, toLatLng: endCords, dateTime: dateTime, driver: currentUser);
     showDialog(context: context, barrierDismissible: true, child:
     new CupertinoAlertDialog(
       title: new Text('Ride Overview'),
@@ -397,9 +410,9 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         //height: 300,
         child: Column(
           children: <Widget>[
-            Text('From: ${ridesModel.fromText}', style: TextStyle(fontSize: 18.0),),
-            Text('To: ${ridesModel.toText}', style: TextStyle(fontSize: 18.0),),
-            Text('Date: ${ridesModel.dateTime}', style: TextStyle(fontSize: 18.0),),
+            Text('From: $from', style: TextStyle(fontSize: 18.0),),
+            Text('To: $to}', style: TextStyle(fontSize: 18.0),),
+            Text('Date: $dateTime}', style: TextStyle(fontSize: 18.0),),
             Text('Selected rendezvous points:', style: TextStyle(fontSize: 18.0),),
             Text(_showSelectedPoints())
           ],
@@ -415,8 +428,10 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         FlatButton(
           child: Text("Confirm"),
           onPressed: () {
-            _onConfirmPressed(ridesModel);
+            _onConfirmPressed();
             Navigator.of(context, rootNavigator: true).pop('dialog');
+            _onCancelPressed();
+            //TODO setstate na girnaei stin arxiki katastasi or navigator push sto Rides tab (xreiazetai context)
           },
         ),
       ],
@@ -425,15 +440,15 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   }
 
   //TODO Make it work baby. This function will get your RidesModel to the firebase
-  _onConfirmPressed(RidesModel ridesModel){
+  _onConfirmPressed() async{
     //Do your thing Mark
     //right on it baby <3 <3 :)
+    await _getUserDataFromDB();
+    RidesModel ridesModel = new RidesModel(fromText: from, toText: to, randPoints: randPoints, toLatLng: endCords, dateTime: dateTime, driver: currentUser);
     var result = widget.db.createRidesModel(ridesModel);
     if(result == null){
-      print('error creating ride in homescreen');
+      print('error creating ride in homeScreen');
     }
-    //TODO setstate na girnaei stin arxiki katastasi or navigator push sto Rides tab (xreiazetai context)
-    
   }
 
   String _showSelectedPoints(){
@@ -453,10 +468,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       showStartingScreen = true;
       showCreate = false;
       isTouchable = false;
-      _clearPolylines();
-      _clearMarkers();
-      from = to = "";
-      dateTime = null;
+      _resetAllData();
       selectedPoints.clear();
     });
   }
@@ -520,11 +532,16 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     setState(() {
       showStartingScreen = true;
       showResults = false;
-      _clearPolylines();
-      _clearMarkers();
-      from = to = "";
-      dateTime = null;
+      _resetAllData();
     });
+  }
+
+  _resetAllData(){
+    _clearPolylines();
+    _clearMarkers();
+    from = to = "";
+    dateTime = null;
+    _destLatitude = _destLongitude = _originLatitude = _originLongitude = null;
   }
 
   List<Widget> _listResultItem(List<RidesModel> results) {
@@ -594,7 +611,16 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   Widget createCard(RideResultCard rideResultCard){
     return GestureDetector(
       onTap: () {
-
+        _originLatitude = rideResultCard.ridesModel.randPoints[0].latitude;
+        _originLongitude = rideResultCard.ridesModel.randPoints[0].longitude;
+        _destLatitude = rideResultCard.ridesModel.toLatLng.latitude;
+        _destLongitude = rideResultCard.ridesModel.toLatLng.longitude;
+        _addMarker(rideResultCard.ridesModel.randPoints[0], "Start", BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueBlue), "Start");
+        _addMarker(rideResultCard.ridesModel.toLatLng, "End", BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueRed), "End");
+        _getPolyline(rideResultCard.ridesModel.driver.name);
+        _mapController.animateCamera(CameraUpdate.newLatLngZoom(rideResultCard.ridesModel.randPoints[0], 14));
       },
       child: Container(width: 300, child: rideResultCard),
     );
@@ -603,6 +629,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   Widget _detailsScreen(bool isVisible, RidesModel ride, List<ReviewModel> list) {
     UserModel driver = ride.driver;
     String from, to;
+    double rating = double.parse((driver.rating).toStringAsFixed(1));
     if(ride.fromText.length > 30)
       from = ride.fromText.substring(0, 27) + "...";
     else
@@ -665,7 +692,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text(driver.rating.toString()),
+                        Text(rating.toString()),
                         Icon(
                           Icons.star,
                           size: 15.0,
@@ -799,52 +826,63 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   _selectPickUpPoint(RidesModel ride) async{
     showDetails = false;
-    _originLatitude = ride.randPoints[0].latitude;
-    _originLongitude = ride.randPoints[0].longitude;
-    _destLatitude = ride.toLatLng.latitude;
-    _destLongitude = ride.toLatLng.longitude;
-    _getPolyline();
-    LatLng dest = new LatLng(_destLatitude, _destLongitude);
-    final String destination = await _getAddressFromLatLng(dest);
-    _addMarker(dest, "to", BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed), destination);
+    if(!(polylines.containsKey(PolylineId(ride.driver.name)))) {
+      print("redrawing polyline");
+      _originLatitude = ride.randPoints[0].latitude;
+      _originLongitude = ride.randPoints[0].longitude;
+      _destLatitude = ride.toLatLng.latitude;
+      _destLongitude = ride.toLatLng.longitude;
+      _getPolyline(ride.driver.name);
+      LatLng dest = new LatLng(_destLatitude, _destLongitude);
+      final String destination = await _getAddressFromLatLng(dest);
+      _addMarker(dest, "to", BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed), destination);
+    }
+    if(markers.containsKey(MarkerId("Start")))
+      markers.remove(MarkerId("Start"));
+    int i = 0;
     for(final point in ride.randPoints){
       final String address = await _getAddressFromLatLng(point);
-      _showRendezvousPoint(address, point, true);
+      if(i%2==0)
+        _showRendezvousPoint(address, point, true);
+      i++;
     }
   }
 
   _onPickUpPointSelected(){
-    //_clearMarkers();
-    //_clearPolylines();
-    showDialog(context: context, barrierDismissible: true, child:
-    new CupertinoAlertDialog(
-      title: Text('Request Ride Successful!'),
-      content: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 10.0,
-          ),
-          Text(
-            "You are waiting for confimation.\nCheck your Rides tab."
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Image(
-            image: new AssetImage('assets/images/check_img.png'),
+    _clearMarkers();
+    _clearPolylines();
+      showDialog(context: context, barrierDismissible: true, child:
+      new CupertinoAlertDialog(
+        title: Text('Request Ride Successful!'),
+        content: Column(
+          children: <Widget>[
+            SizedBox(
+              height: 10.0,
+            ),
+            Text(
+              "You are waiting for confirmation.\nCheck your Rides tab."
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Image(
+              image: new AssetImage('assets/images/check_img.gif'),
+            ),
+          ],
+        ),
+        actions: [
+          FlatButton(
+            child: Text('YAY!'),
+            onPressed: () {
+              Navigator.of(context, rootNavigator: true).pop('dialog');
+              _requestRideFinal();
+              setState(() {
+                showResults = true;
+              });
+            },
           ),
         ],
-      ),
-      actions: [
-        FlatButton(
-          child: Text('YAY!'),
-          onPressed: () {
-            Navigator.of(context, rootNavigator: true).pop('dialog');
-          },
-        ),
-
-      ],
-    )
+      )
     );
   }
 
@@ -956,8 +994,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         }
       },
       infoWindow: new InfoWindow(title: title),
-      icon:
-      BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
     );
     markers[MarkerId(title)] = rendezvousPoint;
     setState(() {
@@ -976,14 +1013,8 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     });
   }
 
-  Future<void> gotoLocation(double lat, double long) async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(lat, long), zoom: 15, tilt: 50.0, bearing: 45.0)));
-  }
-
   // method that creates the polyline given the from and to geolocation
-  _getPolyline() async {
+  _getPolyline(String name) async {
     List<PointLatLng> result = await polylinePoints.getRouteBetweenCoordinates(
       _googleAPiKey,
       _originLatitude,
@@ -995,7 +1026,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
     }
-    PolylineId id = PolylineId("poly");
+    PolylineId id = PolylineId(name);
     Polyline polyline = Polyline(
         polylineId: id, color: Colors.blue, points: polylineCoordinates);
     polylines[id] = polyline;
@@ -1006,6 +1037,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   _clearPolylines(){
     polylineCoordinates.clear();
+    polylines.clear();
   }
 
   _clearMarkers(){

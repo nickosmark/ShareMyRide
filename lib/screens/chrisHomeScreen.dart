@@ -612,16 +612,18 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   Widget createCard(RideResultCard rideResultCard){
     return GestureDetector(
       onTap: () {
-        _originLatitude = rideResultCard.ridesModel.randPoints[0].latitude;
-        _originLongitude = rideResultCard.ridesModel.randPoints[0].longitude;
-        _destLatitude = rideResultCard.ridesModel.toLatLng.latitude;
-        _destLongitude = rideResultCard.ridesModel.toLatLng.longitude;
-        _addMarker(rideResultCard.ridesModel.randPoints[0], "Start", BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueBlue), "Start");
-        _addMarker(rideResultCard.ridesModel.toLatLng, "End", BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueRed), "End");
-        _getPolyline(rideResultCard.ridesModel.driver.name);
-        _mapController.animateCamera(CameraUpdate.newLatLngZoom(rideResultCard.ridesModel.randPoints[0], 14));
+        if(!(polylines.containsKey(PolylineId(rideResultCard.ridesModel.driver.name)))){
+          _originLatitude = rideResultCard.ridesModel.randPoints[0].latitude;
+          _originLongitude = rideResultCard.ridesModel.randPoints[0].longitude;
+          _destLatitude = rideResultCard.ridesModel.toLatLng.latitude;
+          _destLongitude = rideResultCard.ridesModel.toLatLng.longitude;
+          _addMarker(rideResultCard.ridesModel.randPoints[0], "Start", BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueBlue), "Start");
+          _addMarker(rideResultCard.ridesModel.toLatLng, "End", BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueRed), "End");
+          _getPolyline(rideResultCard.ridesModel.driver.name);
+          _mapController.animateCamera(CameraUpdate.newLatLngZoom(rideResultCard.ridesModel.randPoints[0], 14));
+        }
       },
       child: Container(width: 300, child: rideResultCard),
     );
@@ -831,7 +833,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   _selectPickUpPoint(RidesModel ride) async{
     showDetails = false;
     if(!(polylines.containsKey(PolylineId(ride.driver.name)))) {
-      print("redrawing polyline");
       _originLatitude = ride.randPoints[0].latitude;
       _originLongitude = ride.randPoints[0].longitude;
       _destLatitude = ride.toLatLng.latitude;
@@ -870,7 +871,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
               height: 10.0,
             ),
             Image(
-              image: new AssetImage('assets/images/check_img.gif'),
+              image: new AssetImage('assets/images/check_img.png'),
             ),
           ],
         ),

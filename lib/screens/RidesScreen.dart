@@ -165,15 +165,6 @@ class _RidesScreenState extends State<RidesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //clear lists
-     pendingList = [];
-
-    confirmedList = [];
-
-    completedList = [];
-
-    myRidesList = [];
-
     //get a Future list from database
     getDataFromDb();
 
@@ -205,6 +196,10 @@ class _RidesScreenState extends State<RidesScreen> {
   IconButton expandedIconButton(bool showDetails, String status){
     var moreDetails = IconButton(
       onPressed: () {
+        this.myRidesList = [];
+        this.pendingList = [];
+        this.confirmedList= [];
+        this.completedList = [];
         setState(() {
           if (showDetails){
             switch (status){
@@ -248,66 +243,38 @@ class _RidesScreenState extends State<RidesScreen> {
     
     var lessDetails = IconButton(
       onPressed: () {
+        this.myRidesList = [];
+        this.pendingList = [];
+        this.confirmedList= [];
+        this.completedList = [];
         setState(() {
           if (showDetails){
             switch (status){
               case 'myRides':
-                this.myRidesList = [];
-                this.pendingList = [];
-                this.confirmedList= [];
-                this.completedList = [];
                 this.showMyRides = false;
                 break;
               case 'pending':
-                this.myRidesList = [];
-                this.pendingList = [];
-                this.confirmedList= [];
-                this.completedList = [];
                 this.showPending = false;
                 break;
               case 'confirmed':
-                this.myRidesList = [];
-                this.pendingList = [];
-                this.confirmedList= [];
-                this.completedList = [];
                 this.showConfirmed = false;
                 break;
               case 'completed':
-                this.myRidesList = [];
-                this.pendingList = [];
-                this.confirmedList= [];
-                this.completedList = [];
                 this.showCompleted = false;
                 break;
             }
           }else{
             switch (status){
               case 'myRides':
-                this.myRidesList = [];
-                this.pendingList = [];
-                this.confirmedList= [];
-                this.completedList = [];
                 this.showMyRides = true;
                 break;
               case 'pending':
-                this.myRidesList = [];
-                this.pendingList = [];
-                this.confirmedList= [];
-                this.completedList = [];
                 this.showPending = true;
                 break;
               case 'confirmed':
-                this.myRidesList = [];
-                this.pendingList = [];
-                this.confirmedList= [];
-                this.completedList = [];
                 this.showConfirmed = true;
                 break;
               case 'completed':
-                this.myRidesList = [];
-                this.pendingList = [];
-                this.confirmedList= [];
-                this.completedList = [];
                 this.showCompleted = true;
                 break;
             }
@@ -324,6 +291,10 @@ class _RidesScreenState extends State<RidesScreen> {
   }
 
   MaterialApp buildRideScreen(List<UserRide> userRides, BuildContext context,) {
+    this.myRidesList = [];
+    this.pendingList = [];
+    this.confirmedList= [];
+    this.completedList = [];
     organizeUserRidesInCategories(userRides, context);
     return MaterialApp(
     title: 'ShareMyRide',

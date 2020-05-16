@@ -168,30 +168,35 @@ class DataBase {
     //search for this user
     //update status of this user
     var userRideCollection = db.collection(Paths.UserRide);
-    var query = userRideCollection.where('phone', isEqualTo: phone);
+    var query = userRideCollection
+        .where('phone',isEqualTo: ride.phone)
+        .where('status', isEqualTo: "Status.pending")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
     var remoteDoc = await query.getDocuments();
     for(var i in remoteDoc.documents){
-      if(i.data['status'] == "Status.pending"){
         try {
           i.reference.updateData({'status' : 'Status.confirmed'});
         } on Exception catch (e) {
           print('couldnt change from pending to confirmed');
         }
-      }
     }
 
     //search for fellowTraveller
     //update status of fellowTraveller
-    var query2 = userRideCollection.where('phone', isEqualTo: fellowTravellerPhone);
+    var query2 = userRideCollection
+        .where('phone',isEqualTo: fellowTravellerPhone)
+        .where('status', isEqualTo: "Status.pending")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
     var remoteDoc2 = await query2.getDocuments();
     for(var i in remoteDoc2.documents){
-      if(i.data['status'] == 'Status.pending'){
         try {
           i.reference.updateData({'status' : 'Status.confirmed'});
         } on Exception catch (e) {
           print('couldnt change from pending to confirmed');
         }
-      }
+
     }
   }
 
@@ -203,30 +208,34 @@ class DataBase {
     //search for this user
     //update status of this user
     var userRideCollection = db.collection(Paths.UserRide);
-    var query = userRideCollection.where('phone', isEqualTo: phone);
+    var query = userRideCollection
+        .where('phone',isEqualTo: ride.phone)
+        .where('status', isEqualTo: "Status.confirmed")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
     var remoteDoc = await query.getDocuments();
     for(var i in remoteDoc.documents){
-      if(i.data['status'] == "Status.confirmed"){
         try {
           i.reference.updateData({'status' : 'Status.completed'});
         } on Exception catch (e) {
           print('couldnt change from confirmed to completed');
         }
-      }
     }
 
     //search for fellowTraveller
     //update status of fellowTraveller
-    var query2 = userRideCollection.where('phone', isEqualTo: fellowTravellerPhone);
+    var query2 = userRideCollection
+        .where('phone',isEqualTo: fellowTravellerPhone)
+        .where('status', isEqualTo: "Status.confirmed")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
     var remoteDoc2 = await query2.getDocuments();
     for(var i in remoteDoc2.documents){
-      if(i.data['status'] == 'Status.confirmed'){
         try {
           i.reference.updateData({'status' : 'Status.completed'});
         } on Exception catch (e) {
           print('couldnt change from confirmed to completed');
         }
-      }
     }
   }
 
@@ -236,9 +245,10 @@ class DataBase {
     //update status of this user
     var userRideCollection = db.collection(Paths.UserRide);
     var query = userRideCollection
-        .where('phone', isEqualTo: ride.phone)
-        .where('status', isEqualTo:  'Status.completed')
-        .where('fellowTraveler.phone', isEqualTo: reviewee.phone);
+        .where('phone',isEqualTo: ride.phone)
+        .where('status', isEqualTo: "Status.completed")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
     var remoteDoc = await query.getDocuments();
     for(var i in remoteDoc.documents){
       try {

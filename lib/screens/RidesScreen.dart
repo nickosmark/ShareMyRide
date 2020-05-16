@@ -431,6 +431,139 @@ class _RidesScreenState extends State<RidesScreen> {
   );
   }
 
+  void deleteAlertDialog(BuildContext context, UserRide userRide){
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Warning'),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Do you really want to delete this worderful ride?'),
+                Text('Are you sure bro?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Yes, delete'),
+              onPressed: () {
+                //TODO delete ride function
+              },
+            ),
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void rendevouzAlertDialog(BuildContext context, UserRide userRide, String action){
+
+    String dialogTitle = '';
+    String action1Text = '';
+    String action2Text = '';
+    Function onAction1Pressed = (){};
+    Function onAction2Pressed = (){};
+
+    //Change Strings and Functions according to  action
+    //if action == confirm
+    //if action == decline
+    //if action == complete
+    //if action == cancel
+
+    if(action == 'confirm'){
+      dialogTitle = 'Accept ride?';
+      action1Text = 'Yes, accept';
+      action2Text = 'No, decline';
+    }
+    if(action == 'decline'){
+
+    }
+    if(action == 'complete'){
+
+    }
+    if(action == 'cancel'){
+
+    }
+
+
+    //Google maps data
+     LatLng randPoint = userRide.randPoint;
+     List<Marker> markersList = [Marker(
+         markerId: MarkerId('0'),
+         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+         position: randPoint,
+         infoWindow: InfoWindow(title: 'Rendevous Point')
+     )];
+     showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))
+          ),
+          title: Text(dialogTitle),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Text('Selected Pick-Up point'),
+                SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                        target: randPoint,
+                        zoom: 15
+                    ),
+                    markers: Set.of(markersList),
+                    zoomControlsEnabled: false,
+                    myLocationEnabled: true,
+                    tiltGesturesEnabled: true,
+                    compassEnabled: true,
+                    scrollGesturesEnabled: true,
+                    zoomGesturesEnabled: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(action1Text),
+              onPressed: () {
+                onAction1Pressed();
+              },
+            ),
+            FlatButton(
+              child: Text(action2Text),
+              onPressed: () {
+                onAction2Pressed();
+              },
+            ),
+            FlatButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget pendingCardDriver(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context){
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
@@ -443,7 +576,7 @@ class _RidesScreenState extends State<RidesScreen> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(right: 30.0),
+              padding: const EdgeInsets.only(right: 10.0),
               child: IconButton(
                 onPressed: () {
                   acceptRide(userRide, context);
@@ -461,6 +594,16 @@ class _RidesScreenState extends State<RidesScreen> {
                 Icons.close,
                 size: 25.0,
                 color: Colors.red,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                rendevouzAlertDialog(context, userRide, 'more');
+              },
+              icon: Icon(
+                Icons.more_vert,
+                size: 25.0,
+                color: Colors.black,
               ),
             ),
           ],

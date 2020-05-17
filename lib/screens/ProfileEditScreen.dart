@@ -108,7 +108,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         //TODO update user
         //check if a specific field is updated in order to
         // correctly update the database
-        var updatedFields = new Map();
+        Map<String,dynamic> updatedFields = new Map();
         if(this.hasGenderChanged){
           updatedFields['gender'] = this.gender.toString();
           print("DEBUG the gender has changed");
@@ -126,7 +126,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           print("DEBUG carinfo changed");
         }
 
-        print(updatedFields);
+        //print(updatedFields);
+        await widget.db.updateCurrentUserModel(updatedFields);
 
         Navigator.push(
           context,

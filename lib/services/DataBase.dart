@@ -83,13 +83,21 @@ class DataBase {
     return generatedList;
   }
 
+  //Dont return rides from current rides
   //returns only if destination is the same;
   Future<List<RidesModel>> getRidesModelsFromSearch(SearchModel searchModel) async{
     GeoPoint toGeoPoint = GeoPoint(searchModel.toCords.latitude, searchModel.toCords.longitude);
+    GeoFirePoint toGeoFirePoint = GeoFirePoint(searchModel.toCords.latitude, searchModel.toCords.longitude);
     List<RidesModel> generatedList = [];
     var ridesModelCollection = db.collection(Paths.RidesModel);
     var query = ridesModelCollection.where('toLatLng.geopoint', isEqualTo: toGeoPoint);
+    //var query = ridesModelCollection.where('toLatLng.geopoint', isEqualTo: toGeoPoint);
+    var geoRef = geo.collection(collectionRef: ridesModelCollection)
+        .within(center: toGeoFirePoint, radius: 3, field: 'toLatLng');
     var remoteDoc = await query.getDocuments();
+    //fixme
+    var res = await geoRef.toList();
+
     for(var i in remoteDoc.documents){
       RidesModel ride = RidesModel.fromMap(i.data);
       generatedList.add(ride);

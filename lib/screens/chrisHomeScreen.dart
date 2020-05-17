@@ -62,6 +62,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   bool showDetails = false;
   bool showCreate = false;
   bool isTouchable = false;
+  bool showPickUpPoints = false;
 
   //fake data
   static RidesModel fakeRide = FakeDB.fakeRide;
@@ -113,6 +114,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
             _resultsScreen(showResults, currentUser.name, rideSearchResults),
             _detailsScreen(showDetails, detailsRide, detailsReviewList),
             _createScreen(showCreate),
+            _pickUpPointScreen(showPickUpPoints)
           ],
       ),
     );
@@ -407,7 +409,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
 
   _onFinishPressed(){
     showDialog(context: context, barrierDismissible: true, child:
-    new CupertinoAlertDialog(
+    new AlertDialog(
       title: new Text('Ride Overview'),
       content: new SizedBox(
         //height: 300,
@@ -854,8 +856,23 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     );
   } //showDetails
 
+  Widget _pickUpPointScreen(bool isVisible){
+    return Visibility(
+      visible: isVisible,
+      child: _customButton(Alignment.topLeft, 1.0, Icons.arrow_back_ios, "Return", _onReturnPressed)
+      );
+  }
+
+  _onReturnPressed(){
+    setState(() {
+      showPickUpPoints = false;
+      showDetails = true;
+    });
+  }
+
   _selectPickUpPoint(RidesModel ride) async{
     showDetails = false;
+    showPickUpPoints = true;
     if(!(polylines.containsKey(PolylineId(ride.driver.name)))) {
       _originLatitude = ride.randPoints[0].latitude;
       _originLongitude = ride.randPoints[0].longitude;
@@ -866,13 +883,13 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       final String destination = await _getAddressFromLatLng(dest);
       _addMarker(dest, "to", BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed), destination);
     }
+    _mapController.animateCamera(CameraUpdate.newLatLngZoom(ride.randPoints[0], 15));
     if(markers.containsKey(MarkerId("Start")))
       markers.remove(MarkerId("Start"));
     int i = 0;
     for(final point in ride.randPoints){
-      final String address = await _getAddressFromLatLng(point);
-      if(i%2==0)
-        _showRendezvousPoint(address, point, true);
+      if(i%3==0)
+        _showRendezvousPoint("address$i", point, true);
       i++;
     }
   }
@@ -960,7 +977,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
   void _showPointDialog (LatLng point) async{
     final String name = await _getAddressFromLatLng(point);
     showDialog(context: context, barrierDismissible: false, child:
-      new CupertinoAlertDialog(
+      new AlertDialog(
         title: new Text('Add this rendezvous point?'),
         content: new Text(name),
         actions: [
@@ -996,12 +1013,17 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     Marker rendezvousPoint =
     Marker(markerId: MarkerId(title),
       position: point,
-      onTap: () {
+      consumeTapEvents: true,
+      onTap: () async {
         if(selectOn) {
+          final String address = await _getAddressFromLatLng(point);
           showDialog(context: context, barrierDismissible: true, child:
-          new CupertinoAlertDialog(
+          new AlertDialog(
             title: new Text('Select this pick-up point?'),
-            content: new Text(title),
+            content: new Text(address),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0))
+            ),
             actions: [
               FlatButton(
                 child: Text('No'),

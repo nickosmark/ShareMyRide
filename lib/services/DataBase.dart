@@ -259,7 +259,83 @@ class DataBase {
     }
   }
 
-  //TODO should be implemented
+  Future<void> declineRide(UserRide ride) async{
+    String phone = ride.phone;
+    String fellowTravellerPhone = ride.fellowTraveler.phone;
+
+
+    //decline for this user
+    var userRideCollection = db.collection(Paths.UserRide);
+    var query = userRideCollection
+        .where('phone',isEqualTo: ride.phone)
+        .where('status', isEqualTo: "Status.pending")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      try {
+        i.reference.delete();
+      } on Exception catch (e) {
+        print('couldnt decline');
+      }
+    }
+
+
+    //decline for fellowtraveler
+    var query2 = userRideCollection
+        .where('phone',isEqualTo: fellowTravellerPhone)
+        .where('status', isEqualTo: "Status.pending")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
+    var remoteDoc2 = await query2.getDocuments();
+    for(var i in remoteDoc2.documents){
+      try {
+        i.reference.delete();
+      } on Exception catch (e) {
+        print('couldnt decline');
+      }
+    }
+  }
+
+  Future<void> cancelRide(UserRide ride) async{
+    String phone = ride.phone;
+    String fellowTravellerPhone = ride.fellowTraveler.phone;
+
+
+    //cancel for this user
+    var userRideCollection = db.collection(Paths.UserRide);
+    var query = userRideCollection
+        .where('phone',isEqualTo: ride.phone)
+        .where('status', isEqualTo: "Status.confirmed")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      try {
+        i.reference.delete();
+      } on Exception catch (e) {
+        print('couldnt cancel');
+      }
+    }
+
+
+    //cancel for fellowtraveler
+    var query2 = userRideCollection
+        .where('phone',isEqualTo: fellowTravellerPhone)
+        .where('status', isEqualTo: "Status.confirmed")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
+    var remoteDoc2 = await query2.getDocuments();
+    for(var i in remoteDoc2.documents){
+      try {
+        i.reference.delete();
+      } on Exception catch (e) {
+        print('couldnt cancel');
+      }
+    }
+  }
+
+
   Future<void> updateCurrentUserModel(Map<String,dynamic> userData) async{
     var userCollection = db.collection(Paths.UserModel);
     String currentUser = await auth.getCurrentFireBaseUserID();

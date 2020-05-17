@@ -55,9 +55,10 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
-  void declineRide(UserRide ride, BuildContext context){
+  void declineRide(UserRide ride, BuildContext context) async{
     //remove userride from this user and fellowTravellers pending!! list
     //db.deleteUserRide(fellowTravellerPhone)
+    await widget.db.declineRide(ride);
     //TODO
     Navigator.push(
       context,
@@ -82,9 +83,9 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
-  void cancelRide(UserRide ride, BuildContext context){
+  void cancelRide(UserRide ride, BuildContext context) async{
     //remove from both confirmed list
-    //TODO
+    await widget.db.cancelRide(ride);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -453,7 +454,7 @@ class _RidesScreenState extends State<RidesScreen> {
             FlatButton(
               child: Text('Yes, delete'),
               onPressed: () {
-                //TODO delete ride function
+                deleteRide(userRide, context);
               },
             ),
             FlatButton(
@@ -798,7 +799,8 @@ class _RidesScreenState extends State<RidesScreen> {
           padding: const EdgeInsets.only(right: 0.0),
           child: IconButton(
             onPressed: () {
-              deleteRide(userRide, context);
+              //deleteRide(userRide, context);
+              deleteAlertDialog(context, userRide);
             },
             icon: Icon(
               Icons.delete,

@@ -260,9 +260,19 @@ class DataBase {
   }
 
   //TODO should be implemented
-  void updateUserModel(UserModel user){
-    var collection = db.collection(Paths.UserModel);
-    //collection.a
+  Future<void> updateCurrentUserModel(Map<String,dynamic> userData) async{
+    var userCollection = db.collection(Paths.UserModel);
+    String currentUser = await auth.getCurrentFireBaseUserID();
+    var query = userCollection.where('phone',isEqualTo: currentUser);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      //Map result = i.data;
+      try {
+        i.reference.updateData(userData);
+      } on Exception catch (e) {
+        print('couldnt change from completed to finished ');
+      }
+    }
   }
 
   void updateCurrentUserRating(List<ReviewModel> reviewsList) async{

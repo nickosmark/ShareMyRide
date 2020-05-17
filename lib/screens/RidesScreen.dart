@@ -468,13 +468,14 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
+  //TODO continue...
   void rendevouzAlertDialog(BuildContext context, UserRide userRide, String action){
 
     String dialogTitle = '';
     String action1Text = '';
     String action2Text = '';
-    Function onAction1Pressed = (){};
-    Function onAction2Pressed = (){};
+    var onAction1Pressed ;
+    var onAction2Pressed ;
 
     //Change Strings and Functions according to  action
     //if action == confirm
@@ -482,19 +483,51 @@ class _RidesScreenState extends State<RidesScreen> {
     //if action == complete
     //if action == cancel
 
+
     if(action == 'confirm'){
       dialogTitle = 'Accept ride?';
       action1Text = 'Yes, accept';
-      action2Text = 'No, decline';
+      action2Text = 'No, go back';
+      onAction1Pressed = (){
+        acceptRide(userRide, context);
+      };
+      onAction2Pressed = () {
+        Navigator.of(context).pop();
+      };
     }
     if(action == 'decline'){
-
+      dialogTitle = 'Decline ride?';
+      action1Text = 'Yes, decline';
+      action2Text = 'No, go back';
+      onAction1Pressed = (){
+        Navigator.of(context).pop();
+        declineRide(userRide, context);
+      };
+      onAction2Pressed = () {
+        Navigator.of(context).pop();
+      };
     }
     if(action == 'complete'){
-
+      dialogTitle = 'Is the ride finshed?';
+      action1Text = 'Yes';
+      action2Text = 'No, go back';
+      onAction1Pressed = (){
+        completeRide(userRide, context);
+      };
+      onAction2Pressed = () {
+        Navigator.of(context).pop();
+      };
     }
     if(action == 'cancel'){
-
+      dialogTitle = 'Cancel Ride?';
+      action1Text = 'Yes, cancel';
+      action2Text = 'No, go back';
+      onAction1Pressed = (){
+        cancelRide(userRide, context);
+      };
+      onAction2Pressed = () {
+        Navigator.of(context).pop();
+      };
     }
 
 
@@ -579,7 +612,8 @@ class _RidesScreenState extends State<RidesScreen> {
               padding: const EdgeInsets.only(right: 10.0),
               child: IconButton(
                 onPressed: () {
-                  acceptRide(userRide, context);
+                  //acceptRide(userRide, context);
+                  rendevouzAlertDialog(context, userRide, 'confirm');
                 },
                 icon: Icon(
                   Icons.check,
@@ -589,7 +623,9 @@ class _RidesScreenState extends State<RidesScreen> {
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                rendevouzAlertDialog(context, userRide, 'decline');
+              },
               icon: Icon(
                 Icons.close,
                 size: 25.0,
@@ -650,7 +686,8 @@ class _RidesScreenState extends State<RidesScreen> {
               padding: const EdgeInsets.only(right: 30.0),
               child: IconButton(
                 onPressed: () {
-                  completeRide(userRide, context);
+                  //completeRide(userRide, context);
+                  rendevouzAlertDialog(context, userRide, 'complete');
                 },
                 icon: Icon(
                   Icons.check_circle,
@@ -660,7 +697,9 @@ class _RidesScreenState extends State<RidesScreen> {
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                rendevouzAlertDialog(context, userRide, 'cancel');
+              },
               icon: Icon(
                 Icons.cancel,
                 size: 25.0,

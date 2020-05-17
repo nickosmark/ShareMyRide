@@ -55,9 +55,10 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
-  void declineRide(UserRide ride, BuildContext context){
+  void declineRide(UserRide ride, BuildContext context) async{
     //remove userride from this user and fellowTravellers pending!! list
     //db.deleteUserRide(fellowTravellerPhone)
+    await widget.db.declineRide(ride);
     //TODO
     Navigator.push(
       context,
@@ -82,9 +83,9 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
-  void cancelRide(UserRide ride, BuildContext context){
+  void cancelRide(UserRide ride, BuildContext context) async{
     //remove from both confirmed list
-    //TODO
+    await widget.db.cancelRide(ride);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -165,15 +166,6 @@ class _RidesScreenState extends State<RidesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //clear lists
-     pendingList = [];
-
-    confirmedList = [];
-
-    completedList = [];
-
-    myRidesList = [];
-
     //get a Future list from database
     getDataFromDb();
 
@@ -205,6 +197,10 @@ class _RidesScreenState extends State<RidesScreen> {
   IconButton expandedIconButton(bool showDetails, String status){
     var moreDetails = IconButton(
       onPressed: () {
+        this.myRidesList = [];
+        this.pendingList = [];
+        this.confirmedList= [];
+        this.completedList = [];
         setState(() {
           if (showDetails){
             switch (status){
@@ -248,6 +244,10 @@ class _RidesScreenState extends State<RidesScreen> {
     
     var lessDetails = IconButton(
       onPressed: () {
+        this.myRidesList = [];
+        this.pendingList = [];
+        this.confirmedList= [];
+        this.completedList = [];
         setState(() {
           if (showDetails){
             switch (status){
@@ -292,6 +292,10 @@ class _RidesScreenState extends State<RidesScreen> {
   }
 
   MaterialApp buildRideScreen(List<UserRide> userRides, BuildContext context,) {
+    this.myRidesList = [];
+    this.pendingList = [];
+    this.confirmedList= [];
+    this.completedList = [];
     organizeUserRidesInCategories(userRides, context);
     return MaterialApp(
     title: 'ShareMyRide',
@@ -314,41 +318,21 @@ class _RidesScreenState extends State<RidesScreen> {
       ),
     ),
     home: Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MyApp(db: widget.db, selectedIndex: 1,)),
+          );
+        },
+        child: Icon(Icons.refresh),
+        backgroundColor: darkBlueColor,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      //padding: EdgeInsets.symmetric(horizontal: 20.0,vertical:20.0),
-                      child: Text(
-                        'refresh',
-                        style:TextStyle(
-                          fontSize: 12.0,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyApp(db: widget.db, selectedIndex: 1,)),
-                        );
-                      },
-                      icon: Icon(
-                        Icons.refresh,
-                        size: 25.0,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -437,12 +421,203 @@ class _RidesScreenState extends State<RidesScreen> {
                   children: completedList,
                 ),
               ),
+              Container(
+                height: 70.0,
+              )
             ],
           ),
         ),
       ),
     ),
   );
+  }
+
+  void deleteAlertDialog(BuildContext context, UserRide userRide){
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Warning'),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Do you really want to delete this worderful ride?'),
+                Text('Are you sure bro?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Yes, delete'),
+              onPressed: () {
+                deleteRide(userRide, context);
+              },
+            ),
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  //TODO continue...
+  void rendevouzAlertDialog(BuildContext context, UserRide userRide, String action){
+
+    String dialogTitle = '';
+    String action1Text = '';
+    String action2Text = '';
+    var onAction1Pressed ;
+    var onAction2Pressed ;
+
+    //Change Strings and Functions according to  action
+    //if action == confirm
+    //if action == decline
+    //if action == complete
+    //if action == cancel
+
+
+    if(action == 'confirm'){
+      dialogTitle = 'Accept ride?';
+      action1Text = 'Yes, accept';
+      action2Text = 'No, go back';
+      onAction1Pressed = (){
+        acceptRide(userRide, context);
+      };
+      onAction2Pressed = () {
+        Navigator.of(context).pop();
+      };
+    }
+    if(action == 'decline'){
+      dialogTitle = 'Decline ride?';
+      action1Text = 'Yes, decline';
+      action2Text = 'No, go back';
+      onAction1Pressed = (){
+        Navigator.of(context).pop();
+        declineRide(userRide, context);
+      };
+      onAction2Pressed = () {
+        Navigator.of(context).pop();
+      };
+    }
+    if(action == 'complete'){
+      dialogTitle = 'Is the ride finshed?';
+      action1Text = 'Yes';
+      action2Text = 'No, go back';
+      onAction1Pressed = (){
+        completeRide(userRide, context);
+      };
+      onAction2Pressed = () {
+        Navigator.of(context).pop();
+      };
+    }
+    if(action == 'cancel'){
+      dialogTitle = 'Cancel Ride?';
+      action1Text = 'Yes, cancel';
+      action2Text = 'No, go back';
+      onAction1Pressed = (){
+        cancelRide(userRide, context);
+      };
+      onAction2Pressed = () {
+        Navigator.of(context).pop();
+      };
+    }
+
+
+    //Google maps data
+     LatLng randPoint = userRide.randPoint;
+     List<Marker> markersList = [Marker(
+         markerId: MarkerId('0'),
+         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+         position: randPoint,
+         infoWindow: InfoWindow(title: 'Rendevous Point')
+     )];
+     showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))
+          ),
+          title: Text(dialogTitle),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Text('Selected Pick-Up point'),
+                SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                        target: randPoint,
+                        zoom: 15
+                    ),
+                    markers: Set.of(markersList),
+                    zoomControlsEnabled: false,
+                    myLocationEnabled: true,
+                    tiltGesturesEnabled: true,
+                    compassEnabled: true,
+                    scrollGesturesEnabled: true,
+                    zoomGesturesEnabled: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(action1Text),
+              onPressed: () {
+                if(action == 'confirm'){
+                  acceptRide(userRide, context);
+                }
+                if(action == 'decline'){
+                  declineRide(userRide, context);
+                }
+                if(action == 'complete'){
+                  completeRide(userRide, context);
+                }
+                if(action == 'cancel'){
+                  cancelRide(userRide, context);
+                }
+              },
+            ),
+            FlatButton(
+              child: Text(action2Text),
+              onPressed: () {
+                if(action == 'confirm'){
+                  Navigator.of(context).pop();
+                }
+                if(action == 'decline'){
+                  Navigator.of(context).pop();
+                }
+                if(action == 'complete'){
+                  Navigator.of(context).pop();
+                }
+                if(action == 'cancel'){
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+            FlatButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget pendingCardDriver(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context){
@@ -457,10 +632,11 @@ class _RidesScreenState extends State<RidesScreen> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(right: 30.0),
+              padding: const EdgeInsets.only(right: 10.0),
               child: IconButton(
                 onPressed: () {
-                  acceptRide(userRide, context);
+                  //acceptRide(userRide, context);
+                  rendevouzAlertDialog(context, userRide, 'confirm');
                 },
                 icon: Icon(
                   Icons.check,
@@ -470,11 +646,23 @@ class _RidesScreenState extends State<RidesScreen> {
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                rendevouzAlertDialog(context, userRide, 'decline');
+              },
               icon: Icon(
                 Icons.close,
                 size: 25.0,
                 color: Colors.red,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                rendevouzAlertDialog(context, userRide, 'more');
+              },
+              icon: Icon(
+                Icons.more_vert,
+                size: 25.0,
+                color: Colors.black,
               ),
             ),
           ],
@@ -521,7 +709,8 @@ class _RidesScreenState extends State<RidesScreen> {
               padding: const EdgeInsets.only(right: 30.0),
               child: IconButton(
                 onPressed: () {
-                  completeRide(userRide, context);
+                  //completeRide(userRide, context);
+                  rendevouzAlertDialog(context, userRide, 'complete');
                 },
                 icon: Icon(
                   Icons.check_circle,
@@ -531,7 +720,9 @@ class _RidesScreenState extends State<RidesScreen> {
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                rendevouzAlertDialog(context, userRide, 'cancel');
+              },
               icon: Icon(
                 Icons.cancel,
                 size: 25.0,
@@ -608,7 +799,8 @@ class _RidesScreenState extends State<RidesScreen> {
           padding: const EdgeInsets.only(right: 0.0),
           child: IconButton(
             onPressed: () {
-              deleteRide(userRide, context);
+              //deleteRide(userRide, context);
+              deleteAlertDialog(context, userRide);
             },
             icon: Icon(
               Icons.delete,

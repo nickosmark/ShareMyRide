@@ -168,30 +168,35 @@ class DataBase {
     //search for this user
     //update status of this user
     var userRideCollection = db.collection(Paths.UserRide);
-    var query = userRideCollection.where('phone', isEqualTo: phone);
+    var query = userRideCollection
+        .where('phone',isEqualTo: ride.phone)
+        .where('status', isEqualTo: "Status.pending")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
     var remoteDoc = await query.getDocuments();
     for(var i in remoteDoc.documents){
-      if(i.data['status'] == "Status.pending"){
         try {
           i.reference.updateData({'status' : 'Status.confirmed'});
         } on Exception catch (e) {
           print('couldnt change from pending to confirmed');
         }
-      }
     }
 
     //search for fellowTraveller
     //update status of fellowTraveller
-    var query2 = userRideCollection.where('phone', isEqualTo: fellowTravellerPhone);
+    var query2 = userRideCollection
+        .where('phone',isEqualTo: fellowTravellerPhone)
+        .where('status', isEqualTo: "Status.pending")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
     var remoteDoc2 = await query2.getDocuments();
     for(var i in remoteDoc2.documents){
-      if(i.data['status'] == 'Status.pending'){
         try {
           i.reference.updateData({'status' : 'Status.confirmed'});
         } on Exception catch (e) {
           print('couldnt change from pending to confirmed');
         }
-      }
+
     }
   }
 
@@ -203,42 +208,47 @@ class DataBase {
     //search for this user
     //update status of this user
     var userRideCollection = db.collection(Paths.UserRide);
-    var query = userRideCollection.where('phone', isEqualTo: phone);
+    var query = userRideCollection
+        .where('phone',isEqualTo: ride.phone)
+        .where('status', isEqualTo: "Status.confirmed")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
     var remoteDoc = await query.getDocuments();
     for(var i in remoteDoc.documents){
-      if(i.data['status'] == "Status.confirmed"){
         try {
           i.reference.updateData({'status' : 'Status.completed'});
         } on Exception catch (e) {
           print('couldnt change from confirmed to completed');
         }
-      }
     }
 
     //search for fellowTraveller
     //update status of fellowTraveller
-    var query2 = userRideCollection.where('phone', isEqualTo: fellowTravellerPhone);
+    var query2 = userRideCollection
+        .where('phone',isEqualTo: fellowTravellerPhone)
+        .where('status', isEqualTo: "Status.confirmed")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
     var remoteDoc2 = await query2.getDocuments();
     for(var i in remoteDoc2.documents){
-      if(i.data['status'] == 'Status.confirmed'){
         try {
           i.reference.updateData({'status' : 'Status.completed'});
         } on Exception catch (e) {
           print('couldnt change from confirmed to completed');
         }
-      }
     }
   }
 
-
+  //TODO i guess query doesn't work
   Future<void> updateRideToFinished(UserRide ride, UserModel reviewee) async{
     //search for this user
     //update status of this user
     var userRideCollection = db.collection(Paths.UserRide);
     var query = userRideCollection
-        .where('phone', isEqualTo: ride.phone)
-        .where('status', isEqualTo:  'Status.completed')
-        .where('fellowTraveler.phone', isEqualTo: reviewee.phone);
+        .where('phone',isEqualTo: ride.phone)
+        .where('status', isEqualTo: "Status.completed")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
     var remoteDoc = await query.getDocuments();
     for(var i in remoteDoc.documents){
       try {
@@ -249,10 +259,96 @@ class DataBase {
     }
   }
 
-  //TODO should be implemented
-  void updateUserModel(UserModel user){
-    var collection = db.collection(Paths.UserModel);
-    //collection.a
+  Future<void> declineRide(UserRide ride) async{
+    String phone = ride.phone;
+    String fellowTravellerPhone = ride.fellowTraveler.phone;
+
+
+    //decline for this user
+    var userRideCollection = db.collection(Paths.UserRide);
+    var query = userRideCollection
+        .where('phone',isEqualTo: ride.phone)
+        .where('status', isEqualTo: "Status.pending")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      try {
+        i.reference.delete();
+      } on Exception catch (e) {
+        print('couldnt decline');
+      }
+    }
+
+
+    //decline for fellowtraveler
+    var query2 = userRideCollection
+        .where('phone',isEqualTo: fellowTravellerPhone)
+        .where('status', isEqualTo: "Status.pending")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
+    var remoteDoc2 = await query2.getDocuments();
+    for(var i in remoteDoc2.documents){
+      try {
+        i.reference.delete();
+      } on Exception catch (e) {
+        print('couldnt decline');
+      }
+    }
+  }
+
+  Future<void> cancelRide(UserRide ride) async{
+    String phone = ride.phone;
+    String fellowTravellerPhone = ride.fellowTraveler.phone;
+
+
+    //cancel for this user
+    var userRideCollection = db.collection(Paths.UserRide);
+    var query = userRideCollection
+        .where('phone',isEqualTo: ride.phone)
+        .where('status', isEqualTo: "Status.confirmed")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      try {
+        i.reference.delete();
+      } on Exception catch (e) {
+        print('couldnt cancel');
+      }
+    }
+
+
+    //cancel for fellowtraveler
+    var query2 = userRideCollection
+        .where('phone',isEqualTo: fellowTravellerPhone)
+        .where('status', isEqualTo: "Status.confirmed")
+        .where('ride.fromText',isEqualTo: ride.ride.fromText)
+        .where('ride.toText',isEqualTo: ride.ride.toText);
+    var remoteDoc2 = await query2.getDocuments();
+    for(var i in remoteDoc2.documents){
+      try {
+        i.reference.delete();
+      } on Exception catch (e) {
+        print('couldnt cancel');
+      }
+    }
+  }
+
+
+  Future<void> updateCurrentUserModel(Map<String,dynamic> userData) async{
+    var userCollection = db.collection(Paths.UserModel);
+    String currentUser = await auth.getCurrentFireBaseUserID();
+    var query = userCollection.where('phone',isEqualTo: currentUser);
+    var remoteDoc = await query.getDocuments();
+    for(var i in remoteDoc.documents){
+      //Map result = i.data;
+      try {
+        i.reference.updateData(userData);
+      } on Exception catch (e) {
+        print('couldnt change from completed to finished ');
+      }
+    }
   }
 
   void updateCurrentUserRating(List<ReviewModel> reviewsList) async{
@@ -304,7 +400,8 @@ class DataBase {
   Future<void> deleteUserRide(UserRide userRide) async{
     var userRidesCollection = db.collection(Paths.UserRide);
     var query = userRidesCollection
-        .where('status', isEqualTo: "Status.MyRides")
+        .where('phone',isEqualTo: userRide.phone)
+        .where('status', isEqualTo: "Status.myRides")
         .where('ride.fromText',isEqualTo: userRide.ride.fromText)
         .where('ride.toText',isEqualTo: userRide.ride.toText);
     var remoteDoc = await query.getDocuments();

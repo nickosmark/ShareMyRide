@@ -36,6 +36,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   String carInfo;
 
+  bool hasGenderChanged = false;
+
   var darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
 
   var lightBlueColor = Colors.blue;
@@ -106,6 +108,25 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         //TODO update user
         //check if a specific field is updated in order to
         // correctly update the database
+        var updatedFields = new Map();
+        if(this.hasGenderChanged){
+          updatedFields['gender'] = this.gender.toString();
+          print("DEBUG the gender has changed");
+        }
+        if (this.name != null){
+          updatedFields['name'] = this.name;
+          print("DEBUG name changed");
+        }
+        if(this.email != null){
+          updatedFields['email'] = this.email;
+          print("DEBUG phone changed");
+        }
+        if(this.carInfo != null){
+          updatedFields['carInfo'] = this.carInfo;
+          print("DEBUG carinfo changed");
+        }
+
+        print(updatedFields);
 
         Navigator.push(
           context,
@@ -261,6 +282,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                             elevation: 16,
                             style: TextStyle(color: Colors.deepPurple),
                             onChanged: (Gender newValue) {
+                              this.hasGenderChanged = true;
                               setState(() {
                                 gender = newValue;
                               });

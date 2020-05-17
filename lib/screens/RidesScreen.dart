@@ -576,13 +576,35 @@ class _RidesScreenState extends State<RidesScreen> {
             FlatButton(
               child: Text(action1Text),
               onPressed: () {
-                onAction1Pressed();
+                if(action == 'confirm'){
+                  acceptRide(userRide, context);
+                }
+                if(action == 'decline'){
+                  declineRide(userRide, context);
+                }
+                if(action == 'complete'){
+                  completeRide(userRide, context);
+                }
+                if(action == 'cancel'){
+                  cancelRide(userRide, context);
+                }
               },
             ),
             FlatButton(
               child: Text(action2Text),
               onPressed: () {
-                onAction2Pressed();
+                if(action == 'confirm'){
+                  Navigator.of(context).pop();
+                }
+                if(action == 'decline'){
+                  Navigator.of(context).pop();
+                }
+                if(action == 'complete'){
+                  Navigator.of(context).pop();
+                }
+                if(action == 'cancel'){
+                  Navigator.of(context).pop();
+                }
               },
             ),
             FlatButton(

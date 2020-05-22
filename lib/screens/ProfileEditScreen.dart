@@ -6,6 +6,7 @@ import 'package:flutter_app/screens/AuthScreen.dart';
 import 'package:flutter_app/screens/MyApp.dart';
 import 'package:flutter_app/screens/ProfileScreen.dart';
 import 'package:flutter_app/services/DataBase.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/services/fakeDB.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -73,10 +74,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       //just edits her profile navigate to profile screen
       if (widget.isNewUser) {
         //TODO check if phone, name,etc are null-> show a toast
-        //TODO for now i check name, we should check number when PhoneAuth
-        if(this.name.isEmpty){
-          //show dialog
-          print('phone is empty');
+        if(this.name==null || this.email==null || this.carInfo==null){
+          Fluttertoast.showToast(
+            msg: "Εrror, please fill all the fields",
+            timeInSecForIosWeb: 1,
+          );
         }else{
           //This is where a new UserModel get created
           //Identifier should be phone so i pass UUID to phone number

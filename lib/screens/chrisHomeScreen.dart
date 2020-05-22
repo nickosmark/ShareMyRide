@@ -411,6 +411,9 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     showDialog(context: context, barrierDismissible: true, child:
     new AlertDialog(
       title: new Text('Ride Overview'),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10.0))
+      ),
       content: new SizedBox(
         //height: 300,
         child: Column(
@@ -901,6 +904,9 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       showDialog(context: context, barrierDismissible: true, child:
       new AlertDialog(
         title: Text('Request Ride Successful!'),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0))
+        ),
         content: Column(
           children: <Widget>[
             SizedBox(
@@ -981,6 +987,9 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
       new AlertDialog(
         title: new Text('Add this rendezvous point?'),
         content: new Text(name),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0))
+        ),
         actions: [
           FlatButton(
             child: Text('No'),

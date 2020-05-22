@@ -11,15 +11,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/services/fakeDB.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-//random bourditses
-//final user = UserModel(id: 1, name: nameControler.text, gender: Gender.male, phone: phoneControler.text, email: emailControler.text, carInfo: carInfoControler.text,
-//    rating: 4.2, reviewsList: []);
 
 class ProfileEditScreen extends StatefulWidget {
   //Checks if the User is a new User so that close and check buttons have different behaviour
   final bool isNewUser;
   final DataBase db;
-  //TODO oti ekana paei strafi xreiazetai kainourgio ProfileCreateScreen h passaro userModel
   ProfileEditScreen({this.db, this.isNewUser});
 
   @override
@@ -46,14 +42,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   var lightGreyBackground = Color.fromRGBO(229, 229, 229, 1.0);
 
 
-  // Should pass User to profile edit screen
-//  void updateFakeUser() {
-//    FakeDB.randomUser12.name = this.name;
-//    FakeDB.randomUser12.phone = this.phone;
-//    FakeDB.randomUser12.email = this.email;
-//    FakeDB.randomUser12.gender = this.gender;
-//  }
-
   void deleteAccount() async {
     var user = await widget.db.auth.getCurrentFireBaseUser();
     print("deleting user...");
@@ -73,7 +61,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       //If the user is new navigate to Home Screen.If she
       //just edits her profile navigate to profile screen
       if (widget.isNewUser) {
-        //TODO check if phone, name,etc are null-> show a toast
+        // check if phone, name,etc are null-> show a toast
         if(this.name==null || this.email==null || this.carInfo==null){
           Fluttertoast.showToast(
             msg: "Εrror, please fill all the fields",
@@ -107,7 +95,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
       } else {
         //existing user. Update data
-        //TODO update user
         //check if a specific field is updated in order to
         // correctly update the database
         Map<String,dynamic> updatedFields = new Map();

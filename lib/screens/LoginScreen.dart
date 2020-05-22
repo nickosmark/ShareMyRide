@@ -71,7 +71,6 @@ class LoginScreen extends StatelessWidget {
                           padding: EdgeInsets.only(top: 50.0, bottom: 80.0),
                           child: RaisedButton(
                             onPressed: () {
-                              //TODO phone auth...
                             },
                             child: Text(
                               "Next",

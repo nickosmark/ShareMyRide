@@ -172,7 +172,6 @@ class DataBase {
     return docRef;
   }
 
-  //TODO change for specific ride not all pending
   Future<void> updateRideToConfirmed(UserRide ride) async{
     String phone = ride.phone;
     String fellowTravellerPhone = ride.fellowTraveler.phone;
@@ -212,7 +211,6 @@ class DataBase {
     }
   }
 
-  //TODO change for specific ride not all pending
   Future<void> updateRideToCompleted(UserRide ride) async{
     String phone = ride.phone;
     String fellowTravellerPhone = ride.fellowTraveler.phone;
@@ -251,7 +249,6 @@ class DataBase {
     }
   }
 
-  //TODO i guess query doesn't work
   Future<void> updateRideToFinished(UserRide ride, UserModel reviewee) async{
     //search for this user
     //update status of this user

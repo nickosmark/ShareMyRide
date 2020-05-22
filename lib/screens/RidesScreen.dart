@@ -59,7 +59,7 @@ class _RidesScreenState extends State<RidesScreen> {
     //remove userride from this user and fellowTravellers pending!! list
     //db.deleteUserRide(fellowTravellerPhone)
     await widget.db.declineRide(ride);
-    //TODO
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -108,7 +108,6 @@ class _RidesScreenState extends State<RidesScreen> {
   void organizeUserRidesInCategories(List<UserRide> userRides, BuildContext context){
 
 
-    //TODO needs work. doesnt check if i have pending but not completed
     if (userRides.isEmpty) {
       pendingList.add(
         Text('Go find/create a ride...'),
@@ -814,45 +813,5 @@ class _RidesScreenState extends State<RidesScreen> {
   }
 }
 
-//class completedCard extends StatelessWidget {
-//  final DataBase db;
-//  final UserModel fellowTraveller;
-//  final RidesModel ride;
-//
-//  completedCard({this.db,this.fellowTraveller, this.ride});
-//
-//  final darkBlueColor = Color.fromRGBO(26, 26, 48, 1.0);
-//  @override
-//  Widget build(BuildContext context) {
-//    return Card(
-//      margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
-//      child: ListTile(
-//        leading: CircleAvatar(
-//            backgroundImage: new NetworkImage(fellowTraveller.getUrlFromNameHash(genderInput: fellowTraveller.gender))),
-//        title: Text(fellowTraveller.name),
-//        subtitle: Text(' ${ride.fromText} -> ${ride.toText}'),
-//        trailing: Padding(
-//          padding: const EdgeInsets.only(right: 0.0),
-//          child: IconButton(
-//            onPressed: () async{
-//              UserModel currentUser = await db.getCurrentUserModel();
-//              //leaveReview(fellowTraveller, currentUser, context);
-//              Navigator.push(
-//                context,
-//                MaterialPageRoute(
-//                    builder: (context) => ReviewsScreen(reviewee: fellowTraveller, myUser: currentUser,)),
-//              );
-//            },
-//            icon: Icon(
-//              Icons.chat,
-//              size: 25.0,
-//              color: darkBlueColor,
-//            ),
-//          ),
-//        ),
-//      ),
-//    );
-//  }
-//}
 
 

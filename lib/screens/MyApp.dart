@@ -26,35 +26,12 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  //A typical passenger user story:
-  //Driver Bob creates RidesModel, RidesModel are public
-  //Passenger Alice Searches through RidesModel object list to find a ride that she wants
-  //Passenger Alice requests a Ride:
-  //sends the ride to driver Bob --> creates new UserRide to his UserModelObject-->
-  // ride1object.driver.addToUserRideList(ride1object,aliceUserObject,false) //false == not a driver
-  //At the same time she waits for a response,
-  //her Pending tab should have the drivers Bob name and the ride's from/to
-  //aliceUserObject.addToUserRideList(ride1object, bobUserObject, true)
-
-//  static var ridaki = FakeDB.ride55; //gets created at home screen
-//  static var driverr = FakeDB.randomDriver39;
-//  static var passengerr = FakeDB.randomPassenger12;
-
-  //Create a random User. Can be driver or passenger
-  //UserModel currentUser = passengerr;
-
-
   void printCurrentUserFromFireStore() async {
     UserModel currentUser = await db.getCurrentUserModel();
     print(currentUser.toString());
   }
 
   DataBase db;
-//  void enimeroseTonBob(){
-//    //TODO isDriver is wrong??
-//    ridaki.driver.addToUserRideList(incomingRide: ridaki, fellow: passengerr, isDriver: true);
-//  }
-
 
   //Selected Icon in the bottomNavBar
   int _selectedIndex = 0;

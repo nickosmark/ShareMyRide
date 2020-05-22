@@ -15,7 +15,6 @@ import 'package:flutter_app/widgets/RideResultCard.dart';
 import 'package:flutter_app/widgets/ReviewCard.dart';
 import 'package:flutter_app/models/ReviewModel.dart';
 import 'package:flutter_app/services/fakeDB.dart';
-import 'package:flutter_app/services/SearchEngine.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_app/services/DataBase.dart';
@@ -447,7 +446,6 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     );
   }
 
-  //TODO Make it work baby. This function will get your RidesModel to the firebase
   _onConfirmPressed() async{
     //Do your thing Mark
     //right on it baby <3 <3 :)

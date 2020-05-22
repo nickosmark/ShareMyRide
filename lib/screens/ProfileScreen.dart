@@ -314,7 +314,6 @@ class ProfileScreen extends StatelessWidget {
     }
 
 
-    //TODO show spinner or initData. InitData shows
     return FutureBuilder<UserModel>(
       //TODO add second future with wait
       //futureReviews
@@ -323,7 +322,6 @@ class ProfileScreen extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot){
         if(snapshot.hasData){
           print('we have profile data!!!');
-          //todo second argument future list
           return userScreen(snapshot.data, this.futureReviews);
         }else if(snapshot.hasError){
           print('error');

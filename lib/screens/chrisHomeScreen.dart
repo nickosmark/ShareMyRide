@@ -705,7 +705,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                     ),
                     title: Text(
                       driver.name,
-                      style: TextStyle(fontSize: 20.0),
+                      style: TextStyle(fontSize: 24.0),
                     ),
                     subtitle: Row(
                       children: <Widget>[
@@ -725,10 +725,10 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text(rating.toString()),
+                        Text(rating.toString(),style: TextStyle(fontSize: 18.0),),
                         Icon(
                           Icons.star,
-                          size: 15.0,
+                          size: 20.0,
                         ),
                       ],
                     ),

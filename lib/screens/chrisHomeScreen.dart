@@ -639,6 +639,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     return GestureDetector(
       onTap: () {
         if(!(polylines.containsKey(PolylineId(rideResultCard.ridesModel.driver.name)))){
+          _clearPolylines();
           _originLatitude = rideResultCard.ridesModel.randPoints[0].latitude;
           _originLongitude = rideResultCard.ridesModel.randPoints[0].longitude;
           _destLatitude = rideResultCard.ridesModel.toLatLng.latitude;

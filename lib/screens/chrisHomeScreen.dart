@@ -899,7 +899,7 @@ class _HomeScreenState extends State<ChrisHomeScreen> {
     _clearMarkers();
     _clearPolylines();
       showDialog(context: context, barrierDismissible: true, child:
-      new CupertinoAlertDialog(
+      new AlertDialog(
         title: Text('Request Ride Successful!'),
         content: Column(
           children: <Widget>[

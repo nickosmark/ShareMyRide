@@ -1,7 +1,7 @@
 name: flutter_app
-description: A new Flutter application.
+description: A carppoling app where you can find and search for rides
 
-version: 1.0.0+1
+version: 0.5.0
 
 environment:
   sdk: ">=2.3.0 <3.0.0"

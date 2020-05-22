@@ -86,22 +86,26 @@ class DataBase {
   //Dont return rides from current rides
   //returns only if destination is the same;
   Future<List<RidesModel>> getRidesModelsFromSearch(SearchModel searchModel) async{
-    GeoPoint toGeoPoint = GeoPoint(searchModel.toCords.latitude, searchModel.toCords.longitude);
+    String currentUser = await auth.getCurrentFireBaseUserID();
+
+    //Destination set when searching for ride
     GeoFirePoint toGeoFirePoint = GeoFirePoint(searchModel.toCords.latitude, searchModel.toCords.longitude);
     List<RidesModel> generatedList = [];
     var ridesModelCollection = db.collection(Paths.RidesModel);
-    var query = ridesModelCollection.where('toLatLng.geopoint', isEqualTo: toGeoPoint);
-    //var query = ridesModelCollection.where('toLatLng.geopoint', isEqualTo: toGeoPoint);
     var geoRef = geo.collection(collectionRef: ridesModelCollection)
-        .within(center: toGeoFirePoint, radius: 3, field: 'toLatLng');
-    var remoteDoc = await query.getDocuments();
-    //fixme
-    var res = await geoRef.toList();
+        .within(center: toGeoFirePoint, radius: 3, field: 'toLatLng', strictMode: true);
 
-    for(var i in remoteDoc.documents){
-      RidesModel ride = RidesModel.fromMap(i.data);
-      generatedList.add(ride);
+    var listFromStream = await geoRef.first;
+    for(var i in listFromStream){
+
+      //exclude rides created by current user
+      if(i.data['driver']['phone'] != currentUser){
+        RidesModel ride = RidesModel.fromMap(i.data);
+        generatedList.add(ride);
+      }
+
     }
+
     return generatedList;
   }
 

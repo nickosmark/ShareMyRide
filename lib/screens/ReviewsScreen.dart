@@ -57,6 +57,19 @@ class ReviewsScreen extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: IconButton(
+                    icon: Icon(Icons.clear),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MyApp(db: db, selectedIndex: 1,)),
+                      );
+                    },
+                  ),
+                ),
                 Container(
                   padding: EdgeInsets.only(top: 20.0),
                   child: CircleAvatar(

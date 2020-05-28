@@ -508,7 +508,7 @@ class _RidesScreenState extends State<RidesScreen> {
       };
     }
     if(action == 'complete'){
-      dialogTitle = 'Is the ride finshed?';
+      dialogTitle = 'Is the ride finished?';
       action1Text = 'Yes';
       action2Text = 'No, go back';
       onAction1Pressed = (){

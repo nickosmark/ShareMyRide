@@ -83,8 +83,7 @@ class DataBase {
     return generatedList;
   }
 
-  //Dont return rides from current rides
-  //returns only if destination is the same;
+
   Future<List<RidesModel>> getRidesModelsFromSearch(SearchModel searchModel) async{
     String currentUser = await auth.getCurrentFireBaseUserID();
 
@@ -92,6 +91,7 @@ class DataBase {
     GeoFirePoint toGeoFirePoint = GeoFirePoint(searchModel.toCords.latitude, searchModel.toCords.longitude);
     List<RidesModel> generatedList = [];
     var ridesModelCollection = db.collection(Paths.RidesModel);
+    //var query = ridesModelCollection.where('dateTime', isGreaterThanOrEqualTo: searchModel.searchDate.millisecondsSinceEpoch);
     var geoRef = geo.collection(collectionRef: ridesModelCollection)
         .within(center: toGeoFirePoint, radius: 3, field: 'toLatLng', strictMode: true);
 
@@ -99,7 +99,8 @@ class DataBase {
     for(var i in listFromStream){
 
       //exclude rides created by current user
-      if(i.data['driver']['phone'] != currentUser){
+      //exclude past rides
+      if(i.data['driver']['phone'] != currentUser && i.data['dateTime'] >= searchModel.searchDate.millisecondsSinceEpoch){
         RidesModel ride = RidesModel.fromMap(i.data);
         generatedList.add(ride);
       }

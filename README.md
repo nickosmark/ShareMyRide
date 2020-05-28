@@ -17,7 +17,7 @@ The app is entirely built with dart and the flutter framework.
   
   - Accept/Decline/Cornfirm/Cancel incoming rides
   
-  <img src="https://raw.githubusercontent.com/nickosmark/ShareMyRide/master/assets/images_readme/6.png" alt="drawing" width="200"/>
+  <img src="https://raw.githubusercontent.com/nickosmark/ShareMyRide/master/assets/images_readme/6.png" alt="drawing" width="200"/>  <img src="https://raw.githubusercontent.com/nickosmark/ShareMyRide/master/assets/images_readme/10.png" alt="drawing" width="200"/>
   
   - Write reviews for other users, passengers or drivers
   

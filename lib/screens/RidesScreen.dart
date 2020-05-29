@@ -477,12 +477,6 @@ class _RidesScreenState extends State<RidesScreen> {
     var onAction1Pressed ;
     var onAction2Pressed ;
 
-    //Change Strings and Functions according to  action
-    //if action == confirm
-    //if action == decline
-    //if action == complete
-    //if action == cancel
-
 
     if(action == 'confirm'){
       dialogTitle = 'Accept ride?';
@@ -607,12 +601,6 @@ class _RidesScreenState extends State<RidesScreen> {
                 }
               },
             ),
-            FlatButton(
-              child: Text('Close'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
           ],
         );
       },
@@ -652,16 +640,6 @@ class _RidesScreenState extends State<RidesScreen> {
                 Icons.close,
                 size: 25.0,
                 color: Colors.red,
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                rendevouzAlertDialog(context, userRide, 'more');
-              },
-              icon: Icon(
-                Icons.more_vert,
-                size: 25.0,
-                color: Colors.black,
               ),
             ),
           ],

@@ -395,6 +395,8 @@ class DataBase {
   }
 
 
+
+
   Future<void> deleteRideModelFromUserRide(UserRide userRide) async{
     var ridesCollection = db.collection(Paths.RidesModel);
     var query = ridesCollection

@@ -700,14 +700,41 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
-  void userInfoAlertDIalog(BuildContext context, UserRide userRide,
-      String action, UserModel fellowTraveller) {
+  List<Widget> reviewCardsWidgetsFromList(List<ReviewModel> reviews){
+    List<Widget> reviewWidgetList = [];
+    if (reviews.isEmpty || reviews == null) {
+      reviewWidgetList.add(
+        Text('You have no reviews yet'),
+      );
+    } else {
+      for (var item in reviews) {
+        reviewWidgetList.add(ReviewCard(reviewModel: item));
+      }
+    }
+    return reviewWidgetList;
+  }
+
+  double getRatingAverage(List<ReviewModel> reviewsList){
+
+    if(reviewsList.isEmpty){
+      return 0.0;
+    }else{
+      double sum = 0;
+      for (var item in reviewsList) {
+        var currentRating = item.rating;
+        sum = sum + currentRating;
+      }
+      return sum/reviewsList.length;
+    }
+  }
+
+  void userInfoAlertDIalog(BuildContext context, UserRide userRide, String action, UserModel fellowTraveller, List<ReviewModel> reviews) {
     showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('User Information'),
+          title: Text(fellowTraveller.name),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10.0))),
           content: SingleChildScrollView(
@@ -747,7 +774,7 @@ class _RidesScreenState extends State<RidesScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Text(
-                              fellowTraveller.rating.toString(),
+                              getRatingAverage(reviews).toString().substring(0,3),
                               style: GoogleFonts.oswald(
                                   textStyle: TextStyle(
                                 fontSize: 15.0,
@@ -771,6 +798,9 @@ class _RidesScreenState extends State<RidesScreen> {
                   leading: Icon(Icons.email),
                   title: Text(fellowTraveller.email),
                 ),
+                Column(
+                  children: reviewCardsWidgetsFromList(reviews),
+                ),
               ],
             ),
           ),
@@ -787,14 +817,20 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
-  Widget pendingCardDriver(UserRide userRide, UserModel fellowTraveller,
-      RidesModel ride, BuildContext context) {
+  Widget pendingCardDriver(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
-        leading: CircleAvatar(
-            backgroundImage: new NetworkImage(fellowTraveller
-                .getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        leading: InkWell(
+          onTap: () async{
+            var userReviews = await widget.db.getUserReviewsFromPhone(fellowTraveller.phone);
+            //todo show info AND phone/email
+            userInfoAlertDIalog(context, userRide, 'confirm', fellowTraveller, userReviews);
+          },
+          child: CircleAvatar(
+              backgroundImage: new NetworkImage(fellowTraveller
+                  .getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        ),
         title: Text(fellowTraveller.name),
         subtitle: Text('${ride.fromText} -> ${ride.toText}'),
         trailing: Row(
@@ -830,14 +866,20 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
-  Widget pendingCardPassenger(UserRide userRide, UserModel fellowTraveller,
-      RidesModel ride, BuildContext context) {
+  Widget pendingCardPassenger(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
-        leading: CircleAvatar(
-            backgroundImage: new NetworkImage(fellowTraveller
-                .getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        leading: InkWell(
+          onTap: () async{
+            var userReviews = await widget.db.getUserReviewsFromPhone(fellowTraveller.phone);
+            //todo show info AND phone/email
+            userInfoAlertDIalog(context, userRide, 'confirm', fellowTraveller, userReviews);
+          },
+          child: CircleAvatar(
+              backgroundImage: new NetworkImage(fellowTraveller
+                  .getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        ),
         title: Text(fellowTraveller.name),
         subtitle: Text(' ${ride.fromText} -> ${ride.toText}'),
         trailing: Padding(
@@ -855,15 +897,15 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
-  Widget confirmedCard(UserRide userRide, UserModel fellowTraveller,
-      RidesModel ride, BuildContext context) {
+  Widget confirmedCard(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
         leading: InkWell(
-          onTap: () {
+          onTap: () async{
+            var userReviews = await widget.db.getUserReviewsFromPhone(fellowTraveller.phone);
             //todo show info AND phone/email
-            userInfoAlertDIalog(context, userRide, 'confirm', fellowTraveller);
+            userInfoAlertDIalog(context, userRide, 'confirm', fellowTraveller, userReviews);
           },
           child: CircleAvatar(
               backgroundImage: new NetworkImage(fellowTraveller
@@ -904,14 +946,20 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
-  Widget completedCard(UserRide userRide, UserModel fellowTraveller,
-      RidesModel ride, BuildContext context) {
+  Widget completedCard(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
-        leading: CircleAvatar(
-            backgroundImage: new NetworkImage(fellowTraveller
-                .getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        leading: InkWell(
+          onTap: () async{
+            var userReviews = await widget.db.getUserReviewsFromPhone(fellowTraveller.phone);
+            //todo show info AND phone/email
+            userInfoAlertDIalog(context, userRide, 'confirm', fellowTraveller, userReviews);
+          },
+          child: CircleAvatar(
+              backgroundImage: new NetworkImage(fellowTraveller
+                  .getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        ),
         title: Text(fellowTraveller.name),
         subtitle: Text(' ${ride.fromText} -> ${ride.toText}'),
         trailing: Padding(
@@ -942,14 +990,20 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
-  Widget finishedCard(UserRide userRide, UserModel fellowTraveller,
-      RidesModel ride, BuildContext context) {
+  Widget finishedCard(UserRide userRide, UserModel fellowTraveller, RidesModel ride, BuildContext context) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
       child: ListTile(
-        leading: CircleAvatar(
-            backgroundImage: new NetworkImage(fellowTraveller
-                .getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        leading: InkWell(
+          onTap: () async{
+            var userReviews = await widget.db.getUserReviewsFromPhone(fellowTraveller.phone);
+            //todo show info AND phone/email
+            userInfoAlertDIalog(context, userRide, 'confirm', fellowTraveller, userReviews);
+          },
+          child: CircleAvatar(
+              backgroundImage: new NetworkImage(fellowTraveller
+                  .getUrlFromNameHash(genderInput: fellowTraveller.gender))),
+        ),
         title: Text(fellowTraveller.name),
         subtitle: Text(' ${ride.fromText} -> ${ride.toText}'),
         trailing: Padding(
